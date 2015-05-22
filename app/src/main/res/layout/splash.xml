@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center" >
+    
+    <!-- 启动画面 -->
+    <ImageView
+        android:id="@+id/splash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="@string/image_content" />
+    
+    <!-- 新特性介绍ViewPager -->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/feature"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+    
+</FrameLayout>
