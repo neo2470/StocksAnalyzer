@@ -1,5 +1,6 @@
 package com.alex.develop.stockanalyzer;
 
+import java.io.File;
 import java.util.Calendar;
 
 import net.youmi.android.AdManager;
@@ -9,6 +10,8 @@ import com.alex.develop.settings.Remote;
 import com.alex.develop.uihelper.ConfirmDialog;
 import com.alex.develop.uihelper.ConfirmDialog.OnConfirmListener;
 import com.alex.develop.util.ApplicationHelper;
+import com.alex.develop.util.FileHelper;
+import com.alex.develop.util.NetworkHelper;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -196,6 +199,9 @@ public class BaseActivity extends FragmentActivity {
 		// 创建LoadingDialog
 		loadingDialog = new ProgressDialog(this);
 		loadingDialog.setCancelable(false);
+
+		FileHelper.init(this);
+		NetworkHelper.init(this);
 	}
 
 	protected ProgressDialog loadingDialog;// 加载数据Dialog，不可取消，加载完成后dismiss即可

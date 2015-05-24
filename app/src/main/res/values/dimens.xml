@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="stock_id">15sp</dimen>
+    <dimen name="stock_name">20sp</dimen>
+    <dimen name="stock_float">20sp</dimen>
+</resources>

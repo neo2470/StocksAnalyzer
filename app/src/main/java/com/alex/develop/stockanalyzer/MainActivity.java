@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
 import com.alex.develop.fragment.StockFragment;
+import com.alex.develop.util.FileHelper;
 
 /**
  * App入口
