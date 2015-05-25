@@ -186,7 +186,7 @@ public class BaseActivity extends FragmentActivity {
 		
 		ApplicationHelper.add(this);
 		
-		backTwice2Exit = true;
+		backTwice2Exit = false;
 		blockBack = false;
 		
 		try {

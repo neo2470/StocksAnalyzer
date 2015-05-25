@@ -3,6 +3,8 @@ package com.alex.develop.stockanalyzer;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
+import com.alex.develop.entity.Stock;
+import com.alex.develop.fragment.CandleFragment;
 import com.alex.develop.fragment.StockFragment;
 import com.alex.develop.util.FileHelper;
 
@@ -23,6 +25,15 @@ public class MainActivity extends BaseActivity{
 	public void go2StockView() {
 		FragmentTransaction transaction = getTransaction();
 		transaction.replace(LAYOUT_CONTENT_ID, new StockFragment());
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+
+	public void go2CandleView(Stock stock) {
+		FragmentTransaction transaction = getTransaction();
+		CandleFragment candleFragment = new CandleFragment();
+		candleFragment.setStock(stock);
+		transaction.replace(LAYOUT_CONTENT_ID, candleFragment);
 		transaction.commit();
 	}
 

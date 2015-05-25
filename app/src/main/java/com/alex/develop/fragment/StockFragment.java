@@ -7,16 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
-import com.alex.develop.settings.Config;
+import com.alex.develop.settings.StockDataAPI;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,9 +40,18 @@ public class StockFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         intialize();
 
-        ListView stockList = (ListView) act.findViewById(R.id.stockList);
+        final ListView stockList = (ListView) act.findViewById(R.id.stockList);
         StockListAdapter stockListAdapter = new StockListAdapter();
         stockList.setAdapter(stockListAdapter);
+
+        stockList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Stock stock = stocks.get(position);
+                act.go2CandleView(stock);
+            }
+        });
 
         stockList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -156,17 +164,6 @@ public class StockFragment extends BaseFragment {
                     e.printStackTrace();
                 }
             }
-
-            StringBuilder query = new StringBuilder();
-            for(int i=0; i<10; ++i) {
-                Stock stock = stocks.get(i);
-                query.append(",sz");
-                query.append(stock.getId());
-            }
-
-            query.delete(0,1);
-            String data = NetworkHelper.getContent(Config.QUERY_TODAY + query.toString());
-            Log.d("Print", data);
 
             return result;
         }

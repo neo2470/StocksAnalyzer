@@ -2,6 +2,9 @@ package com.alex.develop.util;
 
 import android.content.Context;
 
+import com.alex.develop.entity.Stock;
+import com.alex.develop.settings.StockDataAPI;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,15 +23,22 @@ public class NetworkHelper {
     }
 
 
-    public static String getContent(String httpUrl) {
+    /**
+     * 获取当日行情数据
+     * @param stock
+     * @return
+     */
+    public static void getToday(Stock stock) {
 
         HttpURLConnection urlConnection = null;
         StringBuilder builder = new StringBuilder();
         try {
-            URL url = new URL(httpUrl);
+
+            String queryUrl = StockDataAPI.queryToday(stock.getId());
+            URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "gb2312"));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPI.SINA_CHARSET));
 
             String line = null;
             while (null != (line=bufferedReader.readLine())) {
@@ -43,7 +53,37 @@ public class NetworkHelper {
             }
         }
 
-        return builder.toString();
+
+    }
+
+    /**
+     * 获取历史行情数据
+     * @param stock
+     */
+    public static void getHistory(Stock stock) {
+
+        HttpURLConnection urlConnection = null;
+        StringBuilder builder = new StringBuilder();
+        try {
+
+            String queryUrl = StockDataAPI.queryHistory(stock.getId());
+            URL url = new URL(queryUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = urlConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPI.YAHOO_CHARSET));
+
+            String line = null;
+            while (null != (line=bufferedReader.readLine())) {
+                builder.append(line);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(null != urlConnection) {
+                urlConnection.disconnect();
+            }
+        }
     }
 
     private NetworkHelper(){};
