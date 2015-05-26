@@ -25,7 +25,6 @@ public class MainActivity extends BaseActivity{
 	public void go2StockView() {
 		FragmentTransaction transaction = getTransaction();
 		transaction.replace(LAYOUT_CONTENT_ID, new StockFragment());
-		transaction.addToBackStack(null);
 		transaction.commit();
 	}
 
@@ -34,6 +33,7 @@ public class MainActivity extends BaseActivity{
 		CandleFragment candleFragment = new CandleFragment();
 		candleFragment.setStock(stock);
 		transaction.replace(LAYOUT_CONTENT_ID, candleFragment);
+		transaction.addToBackStack(null);
 		transaction.commit();
 	}
 

@@ -38,7 +38,12 @@ public class StockFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        intialize();
+
+        if(null == stocks) {
+            stocks = new ArrayList();
+        }
+
+        new ReadStocksFromAsset().execute("sz");
 
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
         StockListAdapter stockListAdapter = new StockListAdapter();
@@ -66,14 +71,15 @@ public class StockFragment extends BaseFragment {
         });
     }
 
-    private void intialize() {
-        if(null == stocks) {
-            stocks = new ArrayList();
+    public Stock[] queryStockList(int start, int end) {
+        Stock[] stockList = new Stock[end-start+1];
+
+        for(int i = start,j=0; i<=end; ++i,++j) {
+            stockList[j] = stocks.get(i);
         }
 
-        new ReadStocksFromAsset().execute("sz");
+        return stockList;
     }
-
 
     private List<Stock> stocks;// 自选股列表
     private static  class ViewHolder {
@@ -116,6 +122,20 @@ public class StockFragment extends BaseFragment {
             Stock stock = stocks.get(position);
             ViewHolder holder = (ViewHolder) convertView.getTag();
 
+            int textColor = act.getResources().getColor(R.color.stock_rise);
+            float increase = stock.getToday().getIncrease();
+            String price = stock.getToday().getCloseString();
+            String increaseString = stock.getToday().getIncreaseString();
+
+            if(0 > increase) {
+                textColor = act.getResources().getColor(R.color.stock_fall);
+            }
+            if(stock.isSuspended()) {
+                textColor = act.getResources().getColor(R.color.stock_suspended);
+                price = stock.getToday().getLastCloseString();
+                increaseString = act.getString(R.string.trade_suspended);
+            }
+
             // 股票名称
             holder.stockName.setText(stock.getName());
 
@@ -123,10 +143,12 @@ public class StockFragment extends BaseFragment {
             holder.stockID.setText(stock.getId());
 
             // 股票价格（收盘价）
-            holder.stockClose.setText(stock.getCloseString());
+            holder.stockClose.setText(price);
+            holder.stockClose.setTextColor(textColor);
 
             // 股票涨幅
-            holder.stockIncrease.setText(stock.getIncreaseString());
+            holder.stockIncrease.setText(increaseString);
+            holder.stockIncrease.setTextColor(textColor);
 
             return convertView;
         }
@@ -164,6 +186,8 @@ public class StockFragment extends BaseFragment {
                     e.printStackTrace();
                 }
             }
+
+            NetworkHelper.queryToday(queryStockList(0,9));
 
             return result;
         }

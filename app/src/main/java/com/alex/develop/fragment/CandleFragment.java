@@ -55,7 +55,7 @@ public class CandleFragment extends BaseFragment {
             HttpURLConnection urlConnection = null;
             StringBuilder builder = new StringBuilder();
 
-            String api = StockDataAPI.queryHistory(stock.getId());
+            String api = StockDataAPI.getHistoryUrl(stock.getId());
             try {
                 URL url = new URL(api);
                 urlConnection = (HttpURLConnection) url.openConnection();

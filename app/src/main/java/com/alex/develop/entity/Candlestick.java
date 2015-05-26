@@ -6,6 +6,12 @@ package com.alex.develop.entity;
  */
 public class Candlestick extends BaseObject {
 
+    public Candlestick() {}
+
+    public Candlestick(String[] yahoo) {
+        fromYahoo(yahoo);
+    }
+
     public float getOpen() {
         return open;
     }
@@ -16,6 +22,18 @@ public class Candlestick extends BaseObject {
 
     public void setClose(float close) {
         this.close = close;
+    }
+
+    public float getLastClose() {
+        return lastClose;
+    }
+
+    public String getLastCloseString() {
+        return String.format("%.2f", lastClose);
+    }
+
+    public void setLastClose(float lastClose) {
+        this.lastClose = lastClose;
     }
 
     public float getHigh() {
@@ -51,21 +69,41 @@ public class Candlestick extends BaseObject {
     }
 
     public float getIncrease() {
-        return increase;
+        return increase = 100 * (close - lastClose) / lastClose;
     }
 
     public String getIncreaseString() {
+        increase = 100 * (close - lastClose) / lastClose;
         return String.format("%.2f", increase) + "%";
     }
 
-    public void setIncrease(float increase) {
-        this.increase = increase;
+    public float getMoney() {
+        return money;
+    }
+
+    public void setMoney(float money) {
+        this.money = money;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void fromYahoo(String[] data) {
+
     }
 
     private float open;// 开盘价
     private float close;// 收盘价
+    private float lastClose;// 昨日收盘价
     private float high;// 最高价
     private float low;// 最低价
     private float increase;// 当日涨幅
     private long volume;// 成交量
+    private float money;// 成交额
+    private String date;// 日期
 }

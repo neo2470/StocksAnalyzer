@@ -25,24 +25,33 @@ public class NetworkHelper {
 
     /**
      * 获取当日行情数据
-     * @param stock
+     * @param stocks
      * @return
      */
-    public static void getToday(Stock stock) {
+    public static void queryToday(Stock... stocks) {
 
         HttpURLConnection urlConnection = null;
-        StringBuilder builder = new StringBuilder();
         try {
 
-            String queryUrl = StockDataAPI.queryToday(stock.getId());
+            // 生成股票代码数组
+            String[] stockList = new String[stocks.length];
+            int i = 0;
+            for(Stock s : stocks) {
+                stockList[i] = s.getId();
+                ++i;
+            }
+
+            String queryUrl = StockDataAPI.getTodayUrl(stockList);
             URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPI.SINA_CHARSET));
 
             String line = null;
+            int index = 0;
             while (null != (line=bufferedReader.readLine())) {
-                builder.append(line);
+                StockDataAPI.sinaParser(stocks[index], line);
+                ++index;
             }
 
         } catch (IOException e) {
@@ -52,29 +61,33 @@ public class NetworkHelper {
                 urlConnection.disconnect();
             }
         }
-
-
     }
 
     /**
      * 获取历史行情数据
      * @param stock
      */
-    public static void getHistory(Stock stock) {
+    public static void queryHistory(Stock stock) {
 
         HttpURLConnection urlConnection = null;
         StringBuilder builder = new StringBuilder();
         try {
 
-            String queryUrl = StockDataAPI.queryHistory(stock.getId());
+            String queryUrl = StockDataAPI.getHistoryUrl(stock.getId());
             URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPI.YAHOO_CHARSET));
 
             String line = null;
+            boolean firstLine = true;// 第一行是列名称，可以忽略
             while (null != (line=bufferedReader.readLine())) {
-                builder.append(line);
+
+                if(firstLine) {
+                    firstLine = false;
+                } else {
+                    StockDataAPI.yahooParser(stock, line);
+                }
             }
 
         } catch (IOException e) {
