@@ -14,13 +14,17 @@ import com.alex.develop.util.NetworkHelper;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -184,7 +188,7 @@ public class BaseActivity extends FragmentActivity {
 	 * 判断网络是否可用
 	 * @return
 	 */
-	private boolean isNetworkAvailable() {
+	protected boolean isNetworkAvailable() {
 		boolean flag = false;
 		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		if(null != manager.getActiveNetworkInfo()) {
@@ -195,10 +199,34 @@ public class BaseActivity extends FragmentActivity {
 
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setIcon(android.R.drawable.ic_dialog_alert);
 			builder.setTitle(R.string.network_info);
 			builder.setMessage(R.string.network_not_available);
+			builder.setCancelable(false);
 			//----------TODO
+
+			builder.setNegativeButton(R.string.app_exit, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					ApplicationHelper.exitApplication();
+				}
+			});
+			builder.setPositiveButton(R.string.network_settings, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = null;
+					int sdk = Build.VERSION.SDK_INT;
+					if (10 < sdk) {
+						intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+					} else {
+						intent = new Intent();
+						ComponentName comp = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
+						intent.setComponent(comp);
+						intent.setAction("android.intent.action.VIEW");
+					}
+					startActivity(intent);
+				}
+			});
+			builder.show();
 		}
 
 		return flag;

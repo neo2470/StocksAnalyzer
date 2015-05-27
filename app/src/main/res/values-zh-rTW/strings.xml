@@ -34,7 +34,6 @@
     <string name="network_not_available">沒有網絡，我也不知道怎麼回事兒</string>
     <string name="app_exit">退出</string>
     <string name="network_settings">設置網絡</string>
-    <string name="try_again">重試</string>
 
     <!-- StockFragment.java -->
     <string name="trade_suspended">停牌</string>

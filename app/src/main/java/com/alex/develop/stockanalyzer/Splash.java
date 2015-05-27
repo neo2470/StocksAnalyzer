@@ -36,14 +36,16 @@ public class Splash extends BaseActivity {
 		blockBack(true);
 		
 //		initYoumiAd();// Youmi ads
-		
-		new Handler().postDelayed(new Runnable() {
 
-			@Override
-			public void run() {
-				startActivity(isFirstLaunch());
-			}
-		}, getResources().getInteger(R.integer.splash_duration));
+		if(isNetworkAvailable()) {
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					startActivity(isFirstLaunch());
+				}
+			}, getResources().getInteger(R.integer.splash_duration));
+		}
 	}
 	
 	/**

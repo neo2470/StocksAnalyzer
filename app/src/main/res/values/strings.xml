@@ -34,7 +34,6 @@
     <string name="network_not_available">NetWork is not available</string>
     <string name="app_exit">Exit</string>
     <string name="network_settings">Setting</string>
-    <string name="try_again">Try</string>
 
     <!-- StockFragment.java -->
     <string name="trade_suspended">SUSP</string>
