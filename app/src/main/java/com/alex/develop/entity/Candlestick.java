@@ -94,11 +94,18 @@ public class Candlestick extends BaseObject {
     }
 
     public void fromYahoo(String[] data) {
-
+        date = data[0];// 日期
+        open = Float.valueOf(data[1]);// 开盘价
+        high = Float.valueOf(data[2]);// 最高价
+        low = Float.valueOf(data[3]);// 最低价
+        close = Float.valueOf(data[4]);// 收盘价
+        volume = Long.valueOf(data[5]);// 成交量
+        adjClose = Float.valueOf(data[6]);// Adj Close
     }
 
     private float open;// 开盘价
     private float close;// 收盘价
+    private float adjClose;// Adj Close
     private float lastClose;// 昨日收盘价
     private float high;// 最高价
     private float low;// 最低价

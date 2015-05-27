@@ -16,11 +16,8 @@
     <string name="ok">好</string>
     <string name="cancel">不好</string>
     
-     <!-- splash.xml -->
+    <!-- splash.xml -->
     <string name="image_content">圖片</string>
-    
-    <!-- BaseActivity.java -->
-    <string name="back_twice_to_exit">再按一次，退出軟體</string>
     
     <!-- feature_1.xml -->
     <string name="feature_demo_1">Demo 1</string>
@@ -30,5 +27,16 @@
     
     <!-- feature_3.xml -->
     <string name="feature_demo_3">Demo 3</string>
+
+    <!-- BaseActivity.java -->
+    <string name="back_twice_to_exit">再按一次，退出軟體</string>
+    <string name="network_info">網絡錯誤</string>
+    <string name="network_not_available">沒有網絡，我也不知道怎麼回事兒</string>
+    <string name="app_exit">退出</string>
+    <string name="network_settings">設置網絡</string>
+    <string name="try_again">重試</string>
+
+    <!-- StockFragment.java -->
+    <string name="trade_suspended">停牌</string>
     
 </resources>

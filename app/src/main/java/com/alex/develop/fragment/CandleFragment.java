@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.alex.develop.entity.Stock;
 import com.alex.develop.settings.StockDataAPI;
 import com.alex.develop.stockanalyzer.R;
+import com.alex.develop.util.NetworkHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,6 +76,8 @@ public class CandleFragment extends BaseFragment {
                     urlConnection.disconnect();
                 }
             }
+
+            NetworkHelper.queryHistory(stock, "2014-01-01");
 
             return builder.toString();
         }

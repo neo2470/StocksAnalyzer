@@ -1,7 +1,9 @@
 package com.alex.develop.util;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.alex.develop.entity.Candlestick;
 import com.alex.develop.entity.Stock;
 import com.alex.develop.settings.StockDataAPI;
 
@@ -11,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by alex on 15-5-24.
@@ -66,11 +70,11 @@ public class NetworkHelper {
     /**
      * 获取历史行情数据
      * @param stock
+     * @param startDate 历史数据的开始时间(将读取从startDate到上个交易日的所有历史数据，如果startDate为空，则读取自股票上市到上个交易日的所有数据)
      */
-    public static void queryHistory(Stock stock) {
+    public static void queryHistory(Stock stock, String startDate) {
 
         HttpURLConnection urlConnection = null;
-        StringBuilder builder = new StringBuilder();
         try {
 
             String queryUrl = StockDataAPI.getHistoryUrl(stock.getId());
@@ -81,13 +85,30 @@ public class NetworkHelper {
 
             String line = null;
             boolean firstLine = true;// 第一行是列名称，可以忽略
+            List<String> close = new ArrayList();
             while (null != (line=bufferedReader.readLine())) {
-
                 if(firstLine) {
                     firstLine = false;
                 } else {
-                    StockDataAPI.yahooParser(stock, line);
+                    String[] data = line.split(StockDataAPI.YAHOO_PARSE_SPLIT);
+                    if(data[0].startsWith(startDate)) {
+                        break;
+                    }
+                    StockDataAPI.yahooParser(stock, data);
+                    close.add(data[2]);// 记录收盘价
                 }
+            }
+
+            // 解析昨日收盘价
+            int i = 1;
+            int size = close.size();
+            for(Candlestick cs : stock.getCandlesticks()) {
+
+                if(i<size) {
+                    cs.setLastClose(Float.valueOf(close.get(i)));
+                }
+
+                ++i;
             }
 
         } catch (IOException e) {

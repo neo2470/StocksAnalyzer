@@ -83,11 +83,11 @@ public class StockDataAPI {
      * @param stock
      * @param data
      */
-    public static void yahooParser(Stock stock, String data) {
+    public static void yahooParser(Stock stock, String[] data) {
         List<Candlestick> candlesticks = stock.getCandlesticks();
 
         if(null != candlesticks) {
-            candlesticks.add(new Candlestick(data.split(YAHOO_PARSE_SPLIT)));
+            candlesticks.add(new Candlestick(data));
         }
     }
 

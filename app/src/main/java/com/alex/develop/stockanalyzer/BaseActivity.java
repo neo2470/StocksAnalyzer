@@ -1,11 +1,9 @@
 package com.alex.develop.stockanalyzer;
 
-import java.io.File;
 import java.util.Calendar;
 
 import net.youmi.android.AdManager;
 
-import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.settings.Remote;
 import com.alex.develop.uihelper.ConfirmDialog;
 import com.alex.develop.uihelper.ConfirmDialog.OnConfirmListener;
@@ -14,11 +12,14 @@ import com.alex.develop.util.FileHelper;
 import com.alex.develop.util.NetworkHelper;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -90,7 +91,7 @@ public class BaseActivity extends FragmentActivity {
 
 	/**
 	 * 是否屏蔽Back键
-	 * @param backable true，屏蔽；false，不屏蔽；默认为false
+	 * @param blockBack true，屏蔽；false，不屏蔽；默认为false
 	 */
 	protected void blockBack(boolean blockBack) {
 		this.blockBack = blockBack;
@@ -180,9 +181,35 @@ public class BaseActivity extends FragmentActivity {
 	}
 
 	/**
+	 * 判断网络是否可用
+	 * @return
+	 */
+	private boolean isNetworkAvailable() {
+		boolean flag = false;
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		if(null != manager.getActiveNetworkInfo()) {
+			flag = manager.getActiveNetworkInfo().isAvailable();
+		}
+
+		if(flag) {
+
+		} else {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setIcon(android.R.drawable.ic_dialog_alert);
+			builder.setTitle(R.string.network_info);
+			builder.setMessage(R.string.network_not_available);
+			//----------TODO
+		}
+
+		return flag;
+	}
+
+	/**
 	 * 数据初始化
 	 */
 	private void initialize() {
+
+		isNetworkAvailable();
 		
 		ApplicationHelper.add(this);
 		

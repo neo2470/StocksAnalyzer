@@ -30,7 +30,13 @@
     
     <!-- BaseActivity.java -->
     <string name="back_twice_to_exit">BACK AGAIN TO EXIT APP</string>
+    <string name="network_info">NetWork Information</string>
+    <string name="network_not_available">NetWork is not available</string>
+    <string name="app_exit">Exit</string>
+    <string name="network_settings">Setting</string>
+    <string name="try_again">Try</string>
 
-    <string name="trade_suspended">停牌</string>
+    <!-- StockFragment.java -->
+    <string name="trade_suspended">SUSP</string>
 
 </resources>
