@@ -1,5 +1,6 @@
 package com.alex.develop.stockanalyzer;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 
 import net.youmi.android.AdManager;
@@ -22,6 +23,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -190,7 +192,7 @@ public class BaseActivity extends FragmentActivity {
 	 */
 	protected boolean isNetworkAvailable() {
 		boolean flag = false;
-		ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		if(null != manager.getActiveNetworkInfo()) {
 			flag = manager.getActiveNetworkInfo().isAvailable();
 		}
@@ -202,34 +204,63 @@ public class BaseActivity extends FragmentActivity {
 			builder.setTitle(R.string.network_info);
 			builder.setMessage(R.string.network_not_available);
 			builder.setCancelable(false);
-			//----------TODO
-
 			builder.setNegativeButton(R.string.app_exit, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					dialog.cancel();
 					ApplicationHelper.exitApplication();
 				}
 			});
 			builder.setPositiveButton(R.string.network_settings, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Intent intent = null;
-					int sdk = Build.VERSION.SDK_INT;
-					if (10 < sdk) {
-						intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-					} else {
-						intent = new Intent();
-						ComponentName comp = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
-						intent.setComponent(comp);
-						intent.setAction("android.intent.action.VIEW");
+					try {
+						Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+						field.setAccessible(true);
+						field.set(dialog, false);
+					} catch (NoSuchFieldException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
 					}
+					Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
 					startActivity(intent);
 				}
 			});
+			builder.setNeutralButton("重试", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					try {
+						Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+						field.setAccessible(true);
+						field.set(dialog, false);
+					} catch (NoSuchFieldException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			builder.create();
 			builder.show();
 		}
 
 		return flag;
+	}
+
+	/**
+	 * 获取网络连接的类型
+	 * @return ConnectivityManager.TYPE_WIFI, ConnectivityManager.TYPE_MOBILE
+	 */
+	protected int getNetworkType() {
+		int type = -1;
+		ConnectivityManager manager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+		if(null != networkInfo && networkInfo.isAvailable()) {
+			type = networkInfo.getType();
+		}
+
+		return type;
 	}
 
 	/**
