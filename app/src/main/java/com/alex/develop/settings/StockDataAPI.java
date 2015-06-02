@@ -48,18 +48,19 @@ public class StockDataAPI {
     public static void sinaParser(Stock stock, String data) {
 
         String[] temp = data.substring(11).split("=");
+
+        if("".equals(temp[1])) {
+            Log.e("Print-Error", stock.getId() + ", " + stock.getName() + " 未查到数据");
+        }
+
         temp[0] = temp[0].substring(2);
         temp[1] = temp[1].substring(1, temp[1].length()-2);
         String id = temp[0];
         String[] info = temp[1].split(SINA_PARSE_SPLIT);
 
-        if (1 < info.length) {
-            if (id.equals(stock.getId())) {
-                stock.fromSina(info);
-            }
-            Log.d("Print", stock.getId() + ", " + stock.getName());
-        } else {
-            Log.e("Print", stock.getId() + ", " + stock.getName());
+        if (id.equals(stock.getId())) {
+            stock.fromSina(info);
+            Log.d("Print-Parser", stock.getId() + ", " + stock.getName() + " 查询成功");
         }
     }
 
@@ -112,6 +113,7 @@ public class StockDataAPI {
     }
 
     // 新浪API
+    public final static int SINA_REFRESH_INTERVAL = 5000;// 5秒刷新间隔
     public final static int SINA_ENTRUST_LEVEL = 5;// 5档委托数据
     public final static String SINA_SH_PREFIX = "sh";// 上海股票前缀
     public final static String SINA_SZ_PREFIX = "sz";// 深圳股票前缀

@@ -95,6 +95,10 @@ public class Stock extends BaseObject {
         return suspend;
     }
 
+    public long getStamp() {
+        return stamp;
+    }
+
     public Candlestick getToday() {
         return today;
     }
@@ -130,6 +134,8 @@ public class Stock extends BaseObject {
 
         today.setDate(data[30]);
         time = data[31];
+
+        stamp = System.currentTimeMillis();
     }
 
     private String id;  // 股票代码
@@ -140,6 +146,7 @@ public class Stock extends BaseObject {
     private long[] buyVolume;// 委买数量(单位：手)
     private String time;// 时间
     private boolean suspend;// 是否停牌
+    private long stamp;// 查询时间戳
 
     private Candlestick today;// 今日行情
     private List<Candlestick> candlesticks;// 蜡烛线

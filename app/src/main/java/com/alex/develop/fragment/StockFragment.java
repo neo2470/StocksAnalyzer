@@ -69,19 +69,33 @@ public class StockFragment extends BaseFragment {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                new UpdateStockInfo().execute(firstVisibleItem, firstVisibleItem+visibleItemCount);
+
+                // 确定查询区间
+                if(firstVisibleItem != queryStart || firstVisibleItem+visibleItemCount != queryStop) {
+                    queryStart = firstVisibleItem;
+                    queryStop = firstVisibleItem+visibleItemCount;
+
+                    new UpdateStockInfo().execute(firstVisibleItem, firstVisibleItem+visibleItemCount);
+                    Log.d("Print", "-------------------------------------------");
+                }
             }
         });
     }
 
     private Stock[] queryStockList(int start, int end) {
-        Stock[] stockList = new Stock[end-start+1];
 
-        for(int i = start,j=0; i<=end; ++i,++j) {
-            stockList[j] = stocks.get(i);
+        List<Stock> temp = new ArrayList();
+        for(int i = start; i<=end; ++i) {
+            Stock stock = stocks.get(i);
+            long stamp = System.currentTimeMillis();
+            if(StockDataAPI.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {
+                temp.add(stock);
+            } else {
+                Log.e("Print-Parser", stock.getId() + ", " + stock.getName() + " w无需查询！！！！！");
+            }
         }
 
-        return stockList;
+        return temp.toArray(new Stock[temp.size()]);
     }
 
     private void loadStocksList(final String dbName) {
@@ -113,6 +127,8 @@ public class StockFragment extends BaseFragment {
         }).start();
     }
 
+    private int queryStart;
+    private int queryStop;
     private List<Stock> stocks;// 自选股列表
     private StockListAdapter stockListAdapter;
     private static  class ViewHolder {
