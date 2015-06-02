@@ -52,8 +52,14 @@ public class StockDataAPI {
         temp[1] = temp[1].substring(1, temp[1].length()-2);
         String id = temp[0];
         String[] info = temp[1].split(SINA_PARSE_SPLIT);
-        if(id.equals(stock.getId())) {
-            stock.fromSina(info);
+
+        if (1 < info.length) {
+            if (id.equals(stock.getId())) {
+                stock.fromSina(info);
+            }
+            Log.d("Print", stock.getId() + ", " + stock.getName());
+        } else {
+            Log.e("Print", stock.getId() + ", " + stock.getName());
         }
     }
 

@@ -6,9 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -43,10 +46,10 @@ public class StockFragment extends BaseFragment {
             stocks = new ArrayList();
         }
 
-        new ReadStocksFromAsset().execute("sz");
+        loadStocksList("sz");
 
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
-        StockListAdapter stockListAdapter = new StockListAdapter();
+        stockListAdapter = new StockListAdapter();
         stockList.setAdapter(stockListAdapter);
 
         stockList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,12 +69,12 @@ public class StockFragment extends BaseFragment {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
+                new UpdateStockInfo().execute(firstVisibleItem, firstVisibleItem+visibleItemCount);
             }
         });
     }
 
-    public Stock[] queryStockList(int start, int end) {
+    private Stock[] queryStockList(int start, int end) {
         Stock[] stockList = new Stock[end-start+1];
 
         for(int i = start,j=0; i<=end; ++i,++j) {
@@ -81,7 +84,37 @@ public class StockFragment extends BaseFragment {
         return stockList;
     }
 
+    private void loadStocksList(final String dbName) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream inputStream = null;
+                try {
+                    inputStream = act.getAssets().open(dbName);
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line = null;
+                    while (null != (line = bufferedReader.readLine())) {
+                        String[] data = line.split(",");
+                        stocks.add(new Stock(data[0], data[1]));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (null != inputStream) {
+                            inputStream.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
     private List<Stock> stocks;// 自选股列表
+    private StockListAdapter stockListAdapter;
     private static  class ViewHolder {
         TextView stockName;
         TextView stockID;
@@ -153,53 +186,19 @@ public class StockFragment extends BaseFragment {
             return convertView;
         }
     }
-    private class ReadStocksFromAsset extends AsyncTask<String, Integer, Boolean> {
+
+    private class UpdateStockInfo extends AsyncTask<Integer, Void, Void> {
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        protected Void doInBackground(Integer... params) {
+            NetworkHelper.queryToday(queryStockList(params[0], params[1]));
+            return null;
         }
 
         @Override
-        protected Boolean doInBackground(String... params) {
-            boolean result = false;
-            InputStream inputStream = null;
-            try {
-                inputStream = act.getAssets().open(params[0]);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = null;
-                while(null != (line=bufferedReader.readLine())) {
-                    String[] data = line.split(",");
-                    stocks.add(new Stock(data[0], data[1]));
-                }
-                result = true;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if(null != inputStream) {
-                        inputStream.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            NetworkHelper.queryToday(queryStockList(0,9));
-
-            return result;
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            stockListAdapter.notifyDataSetChanged();
         }
     }
 }
