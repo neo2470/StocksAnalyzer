@@ -34,6 +34,10 @@ public class NetworkHelper {
      */
     public static void queryToday(Stock... stocks) {
 
+        if(0 == stocks.length) {
+            return;
+        }
+
         HttpURLConnection urlConnection = null;
         try {
 

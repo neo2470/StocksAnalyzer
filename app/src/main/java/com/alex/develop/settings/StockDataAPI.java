@@ -1,8 +1,5 @@
 package com.alex.develop.settings;
 
-import android.text.Editable;
-import android.util.Log;
-
 import com.alex.develop.entity.Candlestick;
 import com.alex.develop.entity.Stock;
 
@@ -47,12 +44,11 @@ public class StockDataAPI {
      */
     public static void sinaParser(Stock stock, String data) {
 
-        String[] temp = data.substring(11).split("=");
-
-        if("".equals(temp[1])) {
-            Log.e("Print-Error", stock.getId() + ", " + stock.getName() + " 未查到数据");
+        if(data.endsWith("=\"\";")) {
+            return ;
         }
 
+        String[] temp = data.substring(11).split("=");
         temp[0] = temp[0].substring(2);
         temp[1] = temp[1].substring(1, temp[1].length()-2);
         String id = temp[0];
@@ -60,7 +56,6 @@ public class StockDataAPI {
 
         if (id.equals(stock.getId())) {
             stock.fromSina(info);
-            Log.d("Print-Parser", stock.getId() + ", " + stock.getName() + " 查询成功");
         }
     }
 
@@ -119,12 +114,14 @@ public class StockDataAPI {
     public final static String SINA_SZ_PREFIX = "sz";// 深圳股票前缀
     public final static String SINA_CHARSET = "gb2312";// 字符编码
     public final static String SINA_PARSE_SPLIT = ",";// 数据分割字符
+    public final static String SINA_SUSPEND_VOLUME = "0";// 停牌时的成交量
 
     // 雅虎API
     public final static String YAHOO_SH_SUFFIX = ".ss";// 上海股票后缀
     public final static String YAHOO_SZ_SUFFIX = ".sz";// 深圳股票后缀
     public final static String YAHOO_CHARSET = "utf-8";// 字符编码
     public final static String YAHOO_PARSE_SPLIT = ",";// 数据分隔字符
+    public final static String YAHOO_SUSPEND_VOLUME = "000";// 停牌时的成交量
 
     /**
      * 新浪的股票行情实时接口

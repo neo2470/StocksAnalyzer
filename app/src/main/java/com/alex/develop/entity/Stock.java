@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import com.alex.develop.settings.StockDataAPI;
 
 import java.util.ArrayList;
@@ -84,7 +82,7 @@ public class Stock extends BaseObject {
     }
 
     public String getTime() {
-        return time;
+        return null == time ? "" : time;
     }
 
     public void setTime(String time) {
@@ -127,8 +125,8 @@ public class Stock extends BaseObject {
             salePrice[k] = Float.valueOf(data[n]);// 卖k+1报价（单位：元）
         }
 
-        // 是否停牌
-        if("0.00".equals(data[1])) {
+        // 根据成交量判断是否停牌
+        if(StockDataAPI.SINA_SUSPEND_VOLUME.equals(data[8])) {
             suspend = true;
         }
 
