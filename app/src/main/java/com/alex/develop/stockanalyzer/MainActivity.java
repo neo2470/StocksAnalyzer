@@ -23,7 +23,6 @@ public class MainActivity extends BaseActivity{
 	}
 
 	public void go2StockView() {
-		getActionBar().hide();
 		FragmentTransaction transaction = getTransaction();
 		transaction.replace(LAYOUT_CONTENT_ID, new StockFragment());
 		transaction.commit();

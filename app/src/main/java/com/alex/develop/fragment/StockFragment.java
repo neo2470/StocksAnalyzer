@@ -1,9 +1,12 @@
 package com.alex.develop.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -11,8 +14,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
@@ -34,6 +40,12 @@ import java.util.List;
 public class StockFragment extends BaseFragment {
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.stock_fragment, container, false);
     }
@@ -49,6 +61,14 @@ public class StockFragment extends BaseFragment {
         loadStocksList("sz");
 
         loadView = (ImageView) act.findViewById(R.id.loading);
+        addStock = (Button) act.findViewById(R.id.addStock);
+        addStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopWindow(v);
+            }
+        });
+
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
         stockList.setAdapter(stockListAdapter);
@@ -65,19 +85,23 @@ public class StockFragment extends BaseFragment {
         stockList.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(SCROLL_STATE_IDLE == scrollState) {
+                if (SCROLL_STATE_IDLE == scrollState) {
                     if (queryStart < queryStop) {
                         new UpdateStockInfo().execute(queryStart, queryStop);
                     }
+
+                    addStock.setVisibility(View.VISIBLE);
+                } else {
+                    addStock.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 queryStart = firstVisibleItem;
-                queryStop = firstVisibleItem+visibleItemCount;
+                queryStop = firstVisibleItem + visibleItemCount;
 
-                if(flag && 0 < visibleItemCount) {
+                if (flag && 0 < visibleItemCount) {
                     new UpdateStockInfo().execute(queryStart, queryStop);
                     flag = false;
                 }
@@ -87,10 +111,28 @@ public class StockFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.stock_fragment_actions, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    private void showPopWindow(View view) {
+        if(null == popupWindow) {
+            View popView = act.getLayoutInflater().inflate(R.layout.popwindow_add_stock, null);
+            popupWindow = new PopupWindow(popView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.setTouchable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setBackgroundDrawable(new BitmapDrawable(act.getResources(), (Bitmap)null));
+        }
+
+        popupWindow.showAsDropDown(view);
+    }
+
     private Stock[] queryStockList(int start, int end) {
 
         List<Stock> temp = new ArrayList();
-        for(int i = start; i<=end; ++i) {
+        for(int i = start; i<end; ++i) {
             Stock stock = stocks.get(i);
             long stamp = System.currentTimeMillis();
             if(StockDataAPI.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {//5秒内不重复查询
@@ -135,7 +177,9 @@ public class StockFragment extends BaseFragment {
     private int queryStart;
     private int queryStop;
     private List<Stock> stocks;// 自选股列表
-    private ImageView loadView;//
+    private ImageView loadView;// 加载
+    private Button addStock;// 添加自选股
+    private PopupWindow popupWindow;
     private StockListAdapter stockListAdapter;
     private static  class ViewHolder {
         TextView stockName;
