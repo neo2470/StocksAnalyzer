@@ -1,4 +1,4 @@
-package com.alex.develop.settings;
+package com.alex.develop.util;
 
 import com.alex.develop.entity.Candlestick;
 import com.alex.develop.entity.Stock;
@@ -9,7 +9,7 @@ import java.util.List;
  * Created by alex on 15-5-24.
  * 股票数据查询接口处理
  */
-public class StockDataAPI {
+public class StockDataAPIHelper {
 
     /**
      * 生成查询当日股票行情的新浪API字符串

@@ -1,12 +1,10 @@
 package com.alex.develop.fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -14,15 +12,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
-import com.alex.develop.settings.StockDataAPI;
+import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
 
@@ -42,7 +37,12 @@ public class StockFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+
+        if(null == stocks) {
+            stocks = new ArrayList();
+        }
+
+        loadStocksList("sz");
     }
 
     @Override
@@ -54,20 +54,7 @@ public class StockFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(null == stocks) {
-            stocks = new ArrayList();
-        }
-
-        loadStocksList("sz");
-
         loadView = (ImageView) act.findViewById(R.id.loading);
-        addStock = (Button) act.findViewById(R.id.addStock);
-        addStock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopWindow(v);
-            }
-        });
 
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
@@ -89,10 +76,6 @@ public class StockFragment extends BaseFragment {
                     if (queryStart < queryStop) {
                         new UpdateStockInfo().execute(queryStart, queryStop);
                     }
-
-                    addStock.setVisibility(View.VISIBLE);
-                } else {
-                    addStock.setVisibility(View.GONE);
                 }
             }
 
@@ -111,31 +94,13 @@ public class StockFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.stock_fragment_actions, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    private void showPopWindow(View view) {
-        if(null == popupWindow) {
-            View popView = act.getLayoutInflater().inflate(R.layout.popwindow_add_stock, null);
-            popupWindow = new PopupWindow(popView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
-            popupWindow.setTouchable(true);
-            popupWindow.setOutsideTouchable(true);
-            popupWindow.setBackgroundDrawable(new BitmapDrawable(act.getResources(), (Bitmap)null));
-        }
-
-        popupWindow.showAsDropDown(view);
-    }
-
     private Stock[] queryStockList(int start, int end) {
 
         List<Stock> temp = new ArrayList();
         for(int i = start; i<end; ++i) {
             Stock stock = stocks.get(i);
             long stamp = System.currentTimeMillis();
-            if(StockDataAPI.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {//5秒内不重复查询
+            if(StockDataAPIHelper.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {//5秒内不重复查询
                 if(!stock.getTime().startsWith("15")) {// 15:00:00以后不重复查询
                     temp.add(stock);
                 }
@@ -178,8 +143,6 @@ public class StockFragment extends BaseFragment {
     private int queryStop;
     private List<Stock> stocks;// 自选股列表
     private ImageView loadView;// 加载
-    private Button addStock;// 添加自选股
-    private PopupWindow popupWindow;
     private StockListAdapter stockListAdapter;
     private static  class ViewHolder {
         TextView stockName;

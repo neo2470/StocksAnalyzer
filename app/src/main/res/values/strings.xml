@@ -38,4 +38,9 @@
     <!-- StockFragment.java -->
     <string name="trade_suspended">SUSP</string>
 
+    <!-- stock_fragment.xml-->
+    <string name="stock_code">NameCode</string>
+    <string name="stock_price">LatestPrice</string>
+    <string name="stock_increase">Extent</string>
+
 </resources>

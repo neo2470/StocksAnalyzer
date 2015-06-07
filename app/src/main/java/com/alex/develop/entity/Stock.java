@@ -1,6 +1,8 @@
 package com.alex.develop.entity;
 
-import com.alex.develop.settings.StockDataAPI;
+import android.provider.BaseColumns;
+
+import com.alex.develop.util.StockDataAPIHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,24 @@ import java.util.List;
  * Created by alex on 15-5-22.
  * 一只股票
  */
-public class Stock extends BaseObject {
+public final class Stock extends BaseObject {
+
+    public static class Table {
+
+        public static abstract class Column implements BaseColumns {
+            public static final String STOCK_CODE = "stock_code";
+            public static final String STOCK_CODE_CN = "stock_code_cn";
+            public static final String STOCK_NAME = "stock_name";
+        }
+
+        public static final String NAME = "stock_list";
+        public static final String SQL_CREATE =
+                "CREATE TABLE " + NAME + " (" +
+                        Column._ID + " INTEGER PRIMARY KEY," +
+                        Column.STOCK_CODE + " char(10)," +
+                        Column.STOCK_CODE_CN + " char(10)," +
+                        Column.STOCK_NAME + " nchar(10)" + ")";
+    }
 
     public Stock(String id, String name) {
         this.id = id;
@@ -25,19 +44,19 @@ public class Stock extends BaseObject {
         }
 
         if(null == salePrice) {
-            salePrice = new float[StockDataAPI.SINA_ENTRUST_LEVEL];
+            salePrice = new float[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
         if(null == saleVolume) {
-            saleVolume = new long[StockDataAPI.SINA_ENTRUST_LEVEL];
+            saleVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
         if(null == buyPrice) {
-            buyPrice = new float[StockDataAPI.SINA_ENTRUST_LEVEL];
+            buyPrice = new float[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
         if(null == buyVolume) {
-            buyVolume = new long[StockDataAPI.SINA_ENTRUST_LEVEL];
+            buyVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
     }
 
@@ -114,7 +133,7 @@ public class Stock extends BaseObject {
         today.setVolume(Long.valueOf(data[8]));// 成交量(单位：股)
         today.setMoney(Float.valueOf(data[9]));// 成交额(单位：元)
 
-        for(int i=10,j=11,m=20,n=21,k=0;k<StockDataAPI.SINA_ENTRUST_LEVEL;i+=2,j+=2,m+=2,n+=2,++k) {
+        for(int i=10,j=11,m=20,n=21,k=0;k< StockDataAPIHelper.SINA_ENTRUST_LEVEL;i+=2,j+=2,m+=2,n+=2,++k) {
 
             // 委买
             buyVolume[k] = Long.valueOf(data[i]);// 买k+1数量(单位：股)
@@ -126,7 +145,7 @@ public class Stock extends BaseObject {
         }
 
         // 根据成交量判断是否停牌
-        if(StockDataAPI.SINA_SUSPEND_VOLUME.equals(data[8])) {
+        if(StockDataAPIHelper.SINA_SUSPEND_VOLUME.equals(data[8])) {
             suspend = true;
         }
 

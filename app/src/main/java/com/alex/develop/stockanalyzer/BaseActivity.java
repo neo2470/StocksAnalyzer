@@ -5,18 +5,17 @@ import java.util.Calendar;
 
 import net.youmi.android.AdManager;
 
-import com.alex.develop.settings.Remote;
+import com.alex.develop.entity.Remote;
 import com.alex.develop.uihelper.ConfirmDialog;
 import com.alex.develop.uihelper.ConfirmDialog.OnConfirmListener;
 import com.alex.develop.util.ApplicationHelper;
 import com.alex.develop.util.FileHelper;
 import com.alex.develop.util.NetworkHelper;
+import com.alex.develop.util.SQLiteHelper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -24,7 +23,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
@@ -288,8 +286,13 @@ public class BaseActivity extends FragmentActivity {
 
 		FileHelper.init(this);
 		NetworkHelper.init(this);
+
+		if(null == sqliteHelper) {
+			sqliteHelper = new SQLiteHelper(this, getString(R.string.stock_db_name), null, getResources().getInteger(R.integer.stock_db_version));
+		}
 	}
 
+	public SQLiteHelper sqliteHelper;
 	protected ProgressDialog loadingDialog;// 加载数据Dialog，不可取消，加载完成后dismiss即可
 	protected PackageInfo pkgInfo;// App的Package信息
 	private boolean backTwice2Exit;// 是否Back2次退出App

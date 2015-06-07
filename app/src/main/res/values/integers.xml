@@ -15,5 +15,7 @@
     
     <!-- 默认亮色主题应用结束时间（下午6点） -->
     <integer name="dark_theme_start">18</integer>
+
+    <integer name="stock_db_version">1</integer>
     
 </resources>

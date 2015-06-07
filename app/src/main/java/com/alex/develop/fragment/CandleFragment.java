@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
-import com.alex.develop.settings.StockDataAPI;
+import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
 
@@ -56,7 +56,7 @@ public class CandleFragment extends BaseFragment {
             HttpURLConnection urlConnection = null;
             StringBuilder builder = new StringBuilder();
 
-            String api = StockDataAPI.getHistoryUrl(stock.getId());
+            String api = StockDataAPIHelper.getHistoryUrl(stock.getId());
             try {
                 URL url = new URL(api);
                 urlConnection = (HttpURLConnection) url.openConnection();

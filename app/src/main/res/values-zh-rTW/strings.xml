@@ -37,5 +37,10 @@
 
     <!-- StockFragment.java -->
     <string name="trade_suspended">停牌</string>
+
+    <!-- stock_fragment.xml-->
+    <string name="stock_code">名稱代碼</string>
+    <string name="stock_price">最新價</string>
+    <string name="stock_increase">漲跌幅</string>
     
 </resources>

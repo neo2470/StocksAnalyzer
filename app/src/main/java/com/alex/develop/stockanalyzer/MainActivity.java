@@ -2,8 +2,13 @@ package com.alex.develop.stockanalyzer;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.alex.develop.entity.Stock;
+import com.alex.develop.fragment.AddStockFragment;
 import com.alex.develop.fragment.CandleFragment;
 import com.alex.develop.fragment.StockFragment;
 import com.alex.develop.util.FileHelper;
@@ -20,6 +25,31 @@ public class MainActivity extends BaseActivity{
 		changeThemeByTime();
 		setContentView(R.layout.main_activity);
 		go2StockView();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_activity_actions, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.actions_search :
+				go2AddStockView();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	public void go2AddStockView() {
+		FragmentTransaction transaction = getTransaction();
+		transaction.replace(LAYOUT_CONTENT_ID, new AddStockFragment());
+		transaction.addToBackStack(null);
+		transaction.commit();
 	}
 
 	public void go2StockView() {

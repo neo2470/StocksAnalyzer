@@ -26,7 +26,7 @@ public class BaseFragment extends Fragment {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected MainActivity act;
 	protected PackageInfo pkgInfo;
 }

@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:paddingLeft="@dimen/stock_fragment_padding_left"
+    android:paddingRight="@dimen/stock_fragment_padding_right">
 
     <LinearLayout
         android:layout_width="0dp"

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:alex="http://schemas.android.com/apk/res-auto">
 
-    <!-- This file is not used -->
-
     <item
-        android:id="@+id/searchStock"
+        android:id="@+id/actions_search"
         android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="always"
         android:title="查找"
-        alex:showAsAction="always" />
+        alex:showAsAction="ifRoom" />
 
 </menu>

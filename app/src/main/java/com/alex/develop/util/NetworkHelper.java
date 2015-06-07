@@ -1,11 +1,9 @@
 package com.alex.develop.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.alex.develop.entity.Candlestick;
 import com.alex.develop.entity.Stock;
-import com.alex.develop.settings.StockDataAPI;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,7 +23,6 @@ public class NetworkHelper {
     public static void init(Context context) {
         NetworkHelper.context = context;
     }
-
 
     /**
      * 获取当日行情数据
@@ -49,16 +46,16 @@ public class NetworkHelper {
                 ++i;
             }
 
-            String queryUrl = StockDataAPI.getTodayUrl(stockList);
+            String queryUrl = StockDataAPIHelper.getTodayUrl(stockList);
             URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPI.SINA_CHARSET));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPIHelper.SINA_CHARSET));
 
             String line = null;
             int index = 0;
             while (null != (line=bufferedReader.readLine())) {
-                StockDataAPI.sinaParser(stocks[index], line);
+                StockDataAPIHelper.sinaParser(stocks[index], line);
                 ++index;
             }
 
@@ -81,11 +78,11 @@ public class NetworkHelper {
         HttpURLConnection urlConnection = null;
         try {
 
-            String queryUrl = StockDataAPI.getHistoryUrl(stock.getId());
+            String queryUrl = StockDataAPIHelper.getHistoryUrl(stock.getId());
             URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPI.YAHOO_CHARSET));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPIHelper.YAHOO_CHARSET));
 
             String line = null;
             boolean firstLine = true;// 第一行是列名称，可以忽略
@@ -94,11 +91,11 @@ public class NetworkHelper {
                 if(firstLine) {
                     firstLine = false;
                 } else {
-                    String[] data = line.split(StockDataAPI.YAHOO_PARSE_SPLIT);
+                    String[] data = line.split(StockDataAPIHelper.YAHOO_PARSE_SPLIT);
                     if(data[0].startsWith(startDate)) {
                         break;
                     }
-                    StockDataAPI.yahooParser(stock, data);
+                    StockDataAPIHelper.yahooParser(stock, data);
                     close.add(data[2]);// 记录收盘价
                 }
             }

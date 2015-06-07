@@ -1,4 +1,4 @@
-package com.alex.develop.settings;
+package com.alex.develop.entity;
 
 /**
  * 服务器上待更新App的信息，在检测App升级的时候使用

@@ -3,4 +3,7 @@
     <dimen name="stock_id">15sp</dimen>
     <dimen name="stock_name">20sp</dimen>
     <dimen name="stock_float">20sp</dimen>
+
+    <dimen name="stock_fragment_padding_left">10dp</dimen>
+    <dimen name="stock_fragment_padding_right">10dp</dimen>
 </resources>
