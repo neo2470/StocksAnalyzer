@@ -1,8 +1,12 @@
 package com.alex.develop.util;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.alex.develop.entity.Candlestick;
+import com.alex.develop.entity.Remote;
 import com.alex.develop.entity.Stock;
 
 import java.io.BufferedReader;
@@ -10,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +27,34 @@ public class NetworkHelper {
 
     public static void init(Context context) {
         NetworkHelper.context = context;
+    }
+
+    /**
+     *
+     * @param webUrl
+     * @return
+     */
+    public static String readWebUrl(String webUrl) {
+        HttpURLConnection urlConnection = null;
+        StringBuilder builder = new StringBuilder();
+        try {
+            URL url = new URL(webUrl);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = urlConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+
+            String line = null;
+            while (null != (line=bufferedReader.readLine())) {
+                builder.append(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(null != urlConnection) {
+                urlConnection.disconnect();
+            }
+        }
+        return builder.toString();
     }
 
     /**
@@ -113,6 +146,36 @@ public class NetworkHelper {
             }
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(null != urlConnection) {
+                urlConnection.disconnect();
+            }
+        }
+    }
+
+    public static void loadDataFromGithub() {
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(Remote.GITHUB_STOCK_LIST_URL);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            InputStream inputStream = urlConnection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+
+            String line = null;
+            SQLiteDatabase db = SQLiteHelper.getInstance().getWritableDatabase();
+            while (null != (line=bufferedReader.readLine())) {
+                String[] data = line.split(",");
+                Log.d("Print", data[0] + ", " + data[1]);
+
+                ContentValues values = new ContentValues();
+                values.put(Stock.Table.Column.STOCK_CODE, data[0]);
+                values.put(Stock.Table.Column.STOCK_CODE_CN, "");
+                values.put(Stock.Table.Column.STOCK_NAME, data[1]);
+
+                db.insert(Stock.Table.NAME, null, values);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if(null != urlConnection) {

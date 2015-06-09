@@ -11,8 +11,10 @@ import com.alex.develop.entity.Stock;
  */
 public class SQLiteHelper extends SQLiteOpenHelper {
 
-    public SQLiteHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    public static void init(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        if(null == sqLiteHelper) {
+            sqLiteHelper = new SQLiteHelper(context, name, factory, version);
+        }
     }
 
     @Override
@@ -24,4 +26,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
+
+    public static SQLiteHelper getInstance() {
+        return sqLiteHelper;
+    }
+
+    private SQLiteHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+    }
+
+    private static SQLiteHelper sqLiteHelper;
 }

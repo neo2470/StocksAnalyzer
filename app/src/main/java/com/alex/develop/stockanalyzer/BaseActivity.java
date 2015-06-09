@@ -286,13 +286,9 @@ public class BaseActivity extends FragmentActivity {
 
 		FileHelper.init(this);
 		NetworkHelper.init(this);
-
-		if(null == sqliteHelper) {
-			sqliteHelper = new SQLiteHelper(this, getString(R.string.stock_db_name), null, getResources().getInteger(R.integer.stock_db_version));
-		}
+		SQLiteHelper.init(this, getString(R.string.stock_db_name), null, getResources().getInteger(R.integer.stock_db_version));
 	}
 
-	public SQLiteHelper sqliteHelper;
 	protected ProgressDialog loadingDialog;// 加载数据Dialog，不可取消，加载完成后dismiss即可
 	protected PackageInfo pkgInfo;// App的Package信息
 	private boolean backTwice2Exit;// 是否Back2次退出App

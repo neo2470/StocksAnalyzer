@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,10 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.alex.develop.entity.Remote;
+import com.alex.develop.util.NetworkHelper;
 
 /**
  * App的启动画面，持续2.5s，可用于<br>
@@ -35,38 +41,86 @@ public class Splash extends BaseActivity {
 		initialize();
 		blockBack(true);
 		
-//		initYoumiAd();// Youmi ads
-
 		if(isNetworkAvailable()) {
-			new Handler().postDelayed(new Runnable() {
-
-				@Override
-				public void run() {
-					startActivity(isFirstLaunch());
-				}
-			}, getResources().getInteger(R.integer.splash_duration));
+			startApp();
 		}
 	}
-	
+
 	/**
-	 * 使用SharedPreferences写入标志位的方式判断App的每次运行是否为安装后第一次运行
-	 * 若是，则需要跳转到新特性介绍画面；若不是，则直接进入主界面
-	 * @return true，App安装后第一次运行；false，不是第一次运行
+	 * 从网络读取数据
 	 */
-	private boolean isFirstLaunch() {
+	private void startApp() {
 		
 		String preferFiles = getPackageName();
 		SharedPreferences prefer = getSharedPreferences(preferFiles, Context.MODE_PRIVATE);
 		
-		boolean firstLaunch = prefer.getBoolean(getString(R.string.key_first_launch), true);
-		
+		final boolean firstLaunch = true;//prefer.getBoolean(getString(R.string.key_first_launch), true);
 		if(firstLaunch) {
 			SharedPreferences.Editor editor = prefer.edit();
 			editor.putBoolean(getString(R.string.key_first_launch), false);
 			editor.commit();
 		}
-		
-		return firstLaunch;
+		final TextView firstInstall = (TextView) findViewById(R.id.firstInstall);;
+		final String download = getString(R.string.download_data);
+
+		new AsyncTask<Void, Integer, Void>() {
+
+			@Override
+			protected void onPreExecute() {
+				super.onPreExecute();
+				start = System.currentTimeMillis();
+
+				if(firstLaunch) {
+					firstInstall.setVisibility(View.VISIBLE);
+					firstInstall.setText(String.format(download, 0));
+				}
+			}
+
+			@Override
+			protected Void doInBackground(Void... params) {
+
+				if (firstLaunch) {// 第一次运行下载行情数据
+					NetworkHelper.loadDataFromGithub();
+				}
+
+				String manifest = NetworkHelper.readWebUrl(Remote.GITHUB_MANIFEST_URL);
+				Remote.init(manifest);
+				return null;
+			}
+
+			@Override
+			protected void onProgressUpdate(Integer... values) {
+				super.onProgressUpdate(values);
+				if(firstLaunch) {
+					Log.d("Print", values[0]+"");
+					firstInstall.setText(String.format(download, values[0]) + "%");
+				}
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				super.onPostExecute(aVoid);
+				if(firstLaunch) {
+					firstInstall.setVisibility(View.GONE);
+				}
+
+				long interval = System.currentTimeMillis()-start;
+				int duration = getResources().getInteger(R.integer.splash_duration);
+				if(interval > duration) {
+					startActivity(firstLaunch);
+				} else {
+					new Handler().postDelayed(new Runnable() {
+
+						@Override
+						public void run() {
+							startActivity(firstLaunch);
+						}
+					}, duration-interval);
+				}
+			}
+
+			private long start;
+		}.execute();
 	}
 	
 	private void startActivity(boolean isFirst) {

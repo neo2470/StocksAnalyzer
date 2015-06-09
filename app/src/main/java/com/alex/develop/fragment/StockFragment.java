@@ -1,7 +1,5 @@
 package com.alex.develop.fragment;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -119,18 +117,9 @@ public class StockFragment extends BaseFragment {
                     inputStream = act.getAssets().open(dbName);
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-//                    SQLiteDatabase db = act.sqliteHelper.getWritableDatabase();
                     String line = null;
                     while (null != (line = bufferedReader.readLine())) {
                         String[] data = line.split(",");
-
-//                        ContentValues values = new ContentValues();
-//                        values.put(Stock.Table.Column.STOCK_CODE, data[0]);
-//                        values.put(Stock.Table.Column.STOCK_CODE_CN, "");
-//                        values.put(Stock.Table.Column.STOCK_NAME, data[1]);
-//
-//                        db.insert(Stock.Table.NAME, null, values);
-
                         stocks.add(new Stock(data[0], data[1]));
                     }
                 } catch (IOException e) {

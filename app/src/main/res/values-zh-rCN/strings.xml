@@ -42,5 +42,8 @@
     <string name="stock_code">名称代码</string>
     <string name="stock_price">最新价</string>
     <string name="stock_increase">涨跌幅</string>
+
+    <!-- splash.xml-->
+    <string name="download_data">首次安装，下载行情 %1$d</string>
     
 </resources>

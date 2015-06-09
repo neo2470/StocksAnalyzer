@@ -43,4 +43,7 @@
     <string name="stock_price">LatestPrice</string>
     <string name="stock_increase">Extent</string>
 
+    <!-- splash.xml-->
+    <string name="download_data">First install, downloading %1$d</string>
+
 </resources>
