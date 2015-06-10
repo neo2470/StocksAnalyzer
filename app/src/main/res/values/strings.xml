@@ -44,6 +44,7 @@
     <string name="stock_increase">Extent</string>
 
     <!-- splash.xml-->
-    <string name="download_data">First install, downloading %1$d</string>
+    <string name="start_tips_install">First install, downloading %1$d</string>
+    <string name="start_tips_update">Update data %1$d</string>
 
 </resources>

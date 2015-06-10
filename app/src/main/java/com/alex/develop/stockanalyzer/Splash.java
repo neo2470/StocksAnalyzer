@@ -1,9 +1,11 @@
 package com.alex.develop.stockanalyzer;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +22,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Remote;
+import com.alex.develop.entity.Stock;
 import com.alex.develop.util.NetworkHelper;
+import com.alex.develop.util.SQLiteHelper;
+
+import org.w3c.dom.Text;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * App的启动画面，持续2.5s，可用于<br>
@@ -54,68 +66,50 @@ public class Splash extends BaseActivity {
 		String preferFiles = getPackageName();
 		SharedPreferences prefer = getSharedPreferences(preferFiles, Context.MODE_PRIVATE);
 		
-		final boolean firstLaunch = true;//prefer.getBoolean(getString(R.string.key_first_launch), true);
+		final boolean firstLaunch = prefer.getBoolean(getString(R.string.key_first_launch), true);
 		if(firstLaunch) {
 			SharedPreferences.Editor editor = prefer.edit();
 			editor.putBoolean(getString(R.string.key_first_launch), false);
 			editor.commit();
 		}
-		final TextView firstInstall = (TextView) findViewById(R.id.firstInstall);;
-		final String download = getString(R.string.download_data);
 
-		new AsyncTask<Void, Integer, Void>() {
+		new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute() {
 				super.onPreExecute();
 				start = System.currentTimeMillis();
-
-				if(firstLaunch) {
-					firstInstall.setVisibility(View.VISIBLE);
-					firstInstall.setText(String.format(download, 0));
-				}
 			}
 
 			@Override
 			protected Void doInBackground(Void... params) {
-
-				if (firstLaunch) {// 第一次运行下载行情数据
-					NetworkHelper.loadDataFromGithub();
-				}
-
 				String manifest = NetworkHelper.readWebUrl(Remote.GITHUB_MANIFEST_URL);
 				Remote.init(manifest);
 				return null;
 			}
 
 			@Override
-			protected void onProgressUpdate(Integer... values) {
-				super.onProgressUpdate(values);
-				if(firstLaunch) {
-					Log.d("Print", values[0]+"");
-					firstInstall.setText(String.format(download, values[0]) + "%");
-				}
-			}
-
-			@Override
 			protected void onPostExecute(Void aVoid) {
 				super.onPostExecute(aVoid);
+
 				if(firstLaunch) {
-					firstInstall.setVisibility(View.GONE);
-				}
 
-				long interval = System.currentTimeMillis()-start;
-				int duration = getResources().getInteger(R.integer.splash_duration);
-				if(interval > duration) {
-					startActivity(firstLaunch);
+					new AddStockAsync(getString(R.string.start_tips_install)).execute(Remote.GITHUB_STOCK_LIST_URL);
+
 				} else {
-					new Handler().postDelayed(new Runnable() {
+					long interval = System.currentTimeMillis() - start;
+					int duration = getResources().getInteger(R.integer.splash_duration);
+					if (interval > duration) {
+						startActivity(false);
+					} else {
+						new Handler().postDelayed(new Runnable() {
 
-						@Override
-						public void run() {
-							startActivity(firstLaunch);
-						}
-					}, duration-interval);
+							@Override
+							public void run() {
+								startActivity(false);
+							}
+						}, duration - interval);
+					}
 				}
 			}
 
@@ -174,11 +168,14 @@ public class Splash extends BaseActivity {
 		feature = (ViewPager) findViewById(R.id.feature);
 		feature.setAdapter(featureAdapter);
 		feature.setOnPageChangeListener(featureAdapter);
+
+		startTips = (TextView) findViewById(R.id.startTips);
 	}
 
 	private Intent intent;// 启动Activity
 	private View[] views;// 存储ViewPager中的页面
 	private ViewPager feature;// 新特性介绍
+	private TextView startTips;
 	private class FeatureAdapter extends PagerAdapter implements ViewPager.OnPageChangeListener {
 
 		public FeatureAdapter(View[] views) {
@@ -268,5 +265,72 @@ public class Splash extends BaseActivity {
 		private View[] views;// 每个特性界面的布局
 		private boolean lastPageWasScolledLeft;// 在ViewPager最后一页是否向左滑动
 		private boolean isScolling;// 是否正在滑动
+	}
+
+	private class AddStockAsync extends AsyncTask<String, Integer, Void> {
+
+		public AddStockAsync(String startTipsText) {
+			this.startTipsText = startTipsText;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			startTips.setVisibility(View.VISIBLE);
+			startTips.setText(String.format(startTipsText, 0) + "%");
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+
+			// 第一次运行下载行情数据
+			HttpURLConnection urlConnection = null;
+			try {
+				URL url = new URL(params[0]);
+				urlConnection = (HttpURLConnection) url.openConnection();
+				urlConnection.setRequestProperty("Accept-Encoding", "identity");
+				InputStream inputStream = urlConnection.getInputStream();
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, Remote.GITHUB_FILE_CHARSET));
+
+				int length = urlConnection.getContentLength();
+				long total = 0;
+
+				String line = null;
+				SQLiteDatabase db = SQLiteHelper.getInstance().getWritableDatabase();
+				while (null != (line = bufferedReader.readLine())) {
+					total += line.getBytes(Remote.GITHUB_FILE_CHARSET).length;
+					String[] data = line.split(",");
+					ContentValues values = new ContentValues();
+					values.put(Stock.Table.Column.STOCK_CODE, data[0]);
+					values.put(Stock.Table.Column.STOCK_CODE_CN, "");
+					values.put(Stock.Table.Column.STOCK_NAME, data[1]);
+					db.insert(Stock.Table.NAME, null, values);
+
+					publishProgress((int) total * 100 / length);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (null != urlConnection) {
+					urlConnection.disconnect();
+				}
+			}
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			startTips.setText(String.format(startTipsText, values[0]) + "%");
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			startTips.setVisibility(View.GONE);
+			startActivity(true);
+		}
+
+		private String startTipsText;
 	}
 }

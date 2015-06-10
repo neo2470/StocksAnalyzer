@@ -1,5 +1,7 @@
 package com.alex.develop.fragment;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
+import com.alex.develop.util.SQLiteHelper;
 import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
@@ -40,7 +43,7 @@ public class StockFragment extends BaseFragment {
             stocks = new ArrayList();
         }
 
-        loadStocksList("sh_list.csv");
+        loadStocksList();
     }
 
     @Override
@@ -108,33 +111,16 @@ public class StockFragment extends BaseFragment {
         return temp.toArray(new Stock[temp.size()]);
     }
 
-    private void loadStocksList(final String dbName) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                InputStream inputStream = null;
-                try {
-                    inputStream = act.getAssets().open(dbName);
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line = null;
-                    while (null != (line = bufferedReader.readLine())) {
-                        String[] data = line.split(",");
-                        stocks.add(new Stock(data[0], data[1]));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        if (null != inputStream) {
-                            inputStream.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
+    private void loadStocksList() {
+        SQLiteDatabase db = SQLiteHelper.getInstance().getReadableDatabase();
+        Cursor cursor = db.query(Stock.Table.NAME, null, null, null, null, null, null);
+        if(null != cursor && cursor.moveToFirst()) {
+            do {
+                String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_CODE));
+                String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_NAME));
+                stocks.add(new Stock(stockCode, stockName));
+            } while (cursor.moveToNext());
+        }
     }
 
     private int queryStart;

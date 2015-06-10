@@ -35,4 +35,5 @@ public class Remote {
 	public final static String GITHUB_STORE_RUL = "https://github.com/zxfhacker/zxdstore/raw/master/StocksAnalyzer/";
 	public final static String GITHUB_STOCK_LIST_URL = GITHUB_STORE_RUL + "data/sh_sz_list.csv";
 	public final static String GITHUB_MANIFEST_URL = GITHUB_STORE_RUL + "manifest.xml";
+	public final static String GITHUB_FILE_CHARSET = "UTF-8";
 }

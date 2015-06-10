@@ -13,10 +13,9 @@
         android:contentDescription="@string/image_content" />
 
     <TextView
-        android:id="@+id/firstInstall"
+        android:id="@+id/startTips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="12412"
         android:gravity="center"
         android:layout_gravity="center_horizontal|bottom"
         android:paddingBottom="30dp"

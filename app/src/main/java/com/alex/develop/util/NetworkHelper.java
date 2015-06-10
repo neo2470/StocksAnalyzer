@@ -154,36 +154,6 @@ public class NetworkHelper {
         }
     }
 
-    public static void loadDataFromGithub() {
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(Remote.GITHUB_STOCK_LIST_URL);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
-
-            String line = null;
-            SQLiteDatabase db = SQLiteHelper.getInstance().getWritableDatabase();
-            while (null != (line=bufferedReader.readLine())) {
-                String[] data = line.split(",");
-                Log.d("Print", data[0] + ", " + data[1]);
-
-                ContentValues values = new ContentValues();
-                values.put(Stock.Table.Column.STOCK_CODE, data[0]);
-                values.put(Stock.Table.Column.STOCK_CODE_CN, "");
-                values.put(Stock.Table.Column.STOCK_NAME, data[1]);
-
-                db.insert(Stock.Table.NAME, null, values);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if(null != urlConnection) {
-                urlConnection.disconnect();
-            }
-        }
-    }
-
     private NetworkHelper(){};
     private static Context context;
 }
