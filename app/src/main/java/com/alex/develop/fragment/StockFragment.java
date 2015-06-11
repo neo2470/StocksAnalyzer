@@ -1,7 +1,5 @@
 package com.alex.develop.fragment;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,15 +15,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
-import com.alex.develop.util.SQLiteHelper;
+import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +38,7 @@ public class StockFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        stocks = ((Analyzer) act.getApplication()).getStockList();
         loadView = (ImageView) act.findViewById(R.id.loading);
 
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
@@ -54,8 +49,7 @@ public class StockFragment extends BaseFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Stock stock = stocks.get(position);
-                act.go2CandleView(stock);
+                act.go2CandleView(position);
             }
         });
 

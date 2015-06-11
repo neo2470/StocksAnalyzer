@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
+import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
@@ -18,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Created by alex on 15-5-25.
@@ -25,8 +27,8 @@ import java.net.URL;
  */
 public class CandleFragment extends BaseFragment {
 
-    public void setStock(Stock stock) {
-        this.stock = stock;
+    public void setStockIndex(int stockIndex) {
+        this.stockIndex = stockIndex;
     }
 
     @Override
@@ -38,9 +40,24 @@ public class CandleFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         stockData = (TextView) act.findViewById(R.id.stockData);
+
+        List<Stock> stocks = ((Analyzer) act.getApplication()).getStockList();
+
+        if(null == savedInstanceState) {
+            stock = stocks.get(stockIndex);
+        } else {
+            stock = stocks.get(savedInstanceState.getInt("stockIndex"));
+        }
         new PullStockHistory().execute(stock.getId());
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("stockIndex", stockIndex);
+        super.onSaveInstanceState(outState);
+    }
+
+    private int stockIndex;
     private Stock stock;
     private TextView stockData;
     private class PullStockHistory extends AsyncTask<String, Integer, String> {

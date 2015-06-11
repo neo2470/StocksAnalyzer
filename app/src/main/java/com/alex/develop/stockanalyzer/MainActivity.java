@@ -5,15 +5,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.alex.develop.entity.Stock;
 import com.alex.develop.fragment.AddStockFragment;
 import com.alex.develop.fragment.CandleFragment;
 import com.alex.develop.fragment.StockFragment;
-import com.alex.develop.util.FileHelper;
-
-import java.util.List;
 
 /**
  * App入口
@@ -26,8 +21,10 @@ public class MainActivity extends BaseActivity{
 		super.onCreate(savedInstanceState);
 		changeThemeByTime();
 		setContentView(R.layout.main_activity);
-		Analyzer analyzer = (Analyzer) getApplication();
-		go2StockView(analyzer.getStockList());
+
+		if(null == savedInstanceState) {
+			go2StockView();
+		}
 	}
 
 	@Override
@@ -55,18 +52,16 @@ public class MainActivity extends BaseActivity{
 		transaction.commit();
 	}
 
-	public void go2StockView(List<Stock> stockList) {
+	public void go2StockView() {
 		FragmentTransaction transaction = getTransaction();
-		StockFragment stockFragment = new StockFragment();
-		stockFragment.setStockList(stockList);
-		transaction.replace(LAYOUT_CONTENT_ID, stockFragment);
+		transaction.replace(LAYOUT_CONTENT_ID, new StockFragment());
 		transaction.commit();
 	}
 
-	public void go2CandleView(Stock stock) {
+	public void go2CandleView(int stockIndex) {
 		FragmentTransaction transaction = getTransaction();
 		CandleFragment candleFragment = new CandleFragment();
-		candleFragment.setStock(stock);
+		candleFragment.setStockIndex(stockIndex);
 		transaction.replace(LAYOUT_CONTENT_ID, candleFragment);
 		transaction.addToBackStack(null);
 		transaction.commit();
