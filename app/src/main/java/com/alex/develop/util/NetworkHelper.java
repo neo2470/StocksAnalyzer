@@ -1,12 +1,6 @@
 package com.alex.develop.util;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
 import com.alex.develop.entity.Candlestick;
-import com.alex.develop.entity.Remote;
 import com.alex.develop.entity.Stock;
 
 import java.io.BufferedReader;
@@ -14,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +18,12 @@ import java.util.List;
  */
 public class NetworkHelper {
 
-    public static void init(Context context) {
-        NetworkHelper.context = context;
-    }
-
     /**
-     *
-     * @param webUrl
-     * @return
+     * 读取一张网页的内容
+     * @param webUrl 网页对应的URL
+     * @return 网页内容字符串
      */
-    public static String readWebUrl(String webUrl) {
+    public static String getWebContent(String webUrl) {
         HttpURLConnection urlConnection = null;
         StringBuilder builder = new StringBuilder();
         try {
@@ -43,7 +32,7 @@ public class NetworkHelper {
             InputStream inputStream = urlConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 
-            String line = null;
+            String line;
             while (null != (line=bufferedReader.readLine())) {
                 builder.append(line);
             }
@@ -59,8 +48,7 @@ public class NetworkHelper {
 
     /**
      * 获取当日行情数据
-     * @param stocks
-     * @return
+     * @param stocks 股票列表
      */
     public static void queryToday(Stock... stocks) {
 
@@ -85,7 +73,7 @@ public class NetworkHelper {
             InputStream inputStream = urlConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPIHelper.SINA_CHARSET));
 
-            String line = null;
+            String line;
             int index = 0;
             while (null != (line=bufferedReader.readLine())) {
                 StockDataAPIHelper.sinaParser(stocks[index], line);
@@ -103,7 +91,7 @@ public class NetworkHelper {
 
     /**
      * 获取历史行情数据
-     * @param stock
+     * @param stock 股票
      * @param startDate 历史数据的开始时间(将读取从startDate到上个交易日的所有历史数据，如果startDate为空，则读取自股票上市到上个交易日的所有数据)
      */
     public static void queryHistory(Stock stock, String startDate) {
@@ -117,9 +105,9 @@ public class NetworkHelper {
             InputStream inputStream = urlConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StockDataAPIHelper.YAHOO_CHARSET));
 
-            String line = null;
+            String line;
             boolean firstLine = true;// 第一行是列名称，可以忽略
-            List<String> close = new ArrayList();
+            List<String> close = new ArrayList<>();
             while (null != (line=bufferedReader.readLine())) {
                 if(firstLine) {
                     firstLine = false;
@@ -154,6 +142,5 @@ public class NetworkHelper {
         }
     }
 
-    private NetworkHelper(){};
-    private static Context context;
+    private NetworkHelper(){}
 }

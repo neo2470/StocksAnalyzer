@@ -285,7 +285,6 @@ public class BaseActivity extends FragmentActivity {
 		loadingDialog.setCancelable(false);
 
 		FileHelper.init(this);
-		NetworkHelper.init(this);
 		SQLiteHelper.init(this, getString(R.string.stock_db_name), null, getResources().getInteger(R.integer.stock_db_version));
 	}
 

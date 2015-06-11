@@ -36,17 +36,6 @@ import java.util.List;
 public class StockFragment extends BaseFragment {
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if(null == stocks) {
-            stocks = new ArrayList();
-        }
-
-        loadStocksList();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.stock_fragment, container, false);
     }
@@ -95,9 +84,13 @@ public class StockFragment extends BaseFragment {
         });
     }
 
+    public void setStockList(List<Stock> stocks) {
+        this.stocks = stocks;
+    }
+
     private Stock[] queryStockList(int start, int end) {
 
-        List<Stock> temp = new ArrayList();
+        List<Stock> temp = new ArrayList<>();
         for(int i = start; i<end; ++i) {
             Stock stock = stocks.get(i);
             long stamp = System.currentTimeMillis();
@@ -109,18 +102,6 @@ public class StockFragment extends BaseFragment {
         }
 
         return temp.toArray(new Stock[temp.size()]);
-    }
-
-    private void loadStocksList() {
-        SQLiteDatabase db = SQLiteHelper.getInstance().getReadableDatabase();
-        Cursor cursor = db.query(Stock.Table.NAME, null, null, null, null, null, null);
-        if(null != cursor && cursor.moveToFirst()) {
-            do {
-                String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_CODE));
-                String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_NAME));
-                stocks.add(new Stock(stockCode, stockName));
-            } while (cursor.moveToNext());
-        }
     }
 
     private int queryStart;

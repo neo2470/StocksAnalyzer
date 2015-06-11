@@ -5,13 +5,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +23,15 @@ import android.widget.TextView;
 
 import com.alex.develop.entity.Remote;
 import com.alex.develop.entity.Stock;
-import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.SQLiteHelper;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * App的启动画面，持续2.5s，可用于<br>
@@ -70,7 +69,7 @@ public class Splash extends BaseActivity {
 		if(firstLaunch) {
 			SharedPreferences.Editor editor = prefer.edit();
 			editor.putBoolean(getString(R.string.key_first_launch), false);
-			editor.commit();
+			editor.apply();
 		}
 
 		new AsyncTask<Void, Void, Void>() {
@@ -83,8 +82,28 @@ public class Splash extends BaseActivity {
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				String manifest = NetworkHelper.readWebUrl(Remote.GITHUB_MANIFEST_URL);
-				Remote.init(manifest);
+				Remote.init(Remote.GIT_MANIFEST);
+
+				// 从SQLite中读取数据
+				if(!firstLaunch) {
+					List<Stock> stocks = new ArrayList<>();
+					SQLiteDatabase db = SQLiteHelper.getInstance().getReadableDatabase();
+					Cursor cursor = db.query(Stock.Table.NAME, null, null, null, null, null, null);
+					if(null != cursor && cursor.moveToFirst()) {
+						do {
+							String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_CODE));
+							String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_NAME));
+							stocks.add(new Stock(stockCode, stockName));
+						} while (cursor.moveToNext());
+					}
+
+					if(null != cursor) {
+						cursor.close();
+					}
+
+					Analyzer analyzer = (Analyzer) getApplication();
+					analyzer.setStockList(stocks);
+				}
 				return null;
 			}
 
@@ -94,7 +113,7 @@ public class Splash extends BaseActivity {
 
 				if(firstLaunch) {
 
-					new AddStockAsync(getString(R.string.start_tips_install)).execute(Remote.GITHUB_STOCK_LIST_URL);
+					new AddStockAsync(getString(R.string.start_tips_install)).execute(Remote.GIT_STOCK_LIST);
 
 				} else {
 					long interval = System.currentTimeMillis() - start;
@@ -288,26 +307,29 @@ public class Splash extends BaseActivity {
 			try {
 				URL url = new URL(params[0]);
 				urlConnection = (HttpURLConnection) url.openConnection();
-				urlConnection.setRequestProperty("Accept-Encoding", "identity");
 				InputStream inputStream = urlConnection.getInputStream();
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, Remote.GITHUB_FILE_CHARSET));
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, Remote.GIT_CHARSET));
 
-				int length = urlConnection.getContentLength();
-				long total = 0;
+				int total = Remote.stockAmount;
+				int count = 0;
 
-				String line = null;
+				String line;
+				List<Stock> stocks = new ArrayList<>();
 				SQLiteDatabase db = SQLiteHelper.getInstance().getWritableDatabase();
 				while (null != (line = bufferedReader.readLine())) {
-					total += line.getBytes(Remote.GITHUB_FILE_CHARSET).length;
 					String[] data = line.split(",");
 					ContentValues values = new ContentValues();
 					values.put(Stock.Table.Column.STOCK_CODE, data[0]);
 					values.put(Stock.Table.Column.STOCK_CODE_CN, "");
 					values.put(Stock.Table.Column.STOCK_NAME, data[1]);
 					db.insert(Stock.Table.NAME, null, values);
+					stocks.add(new Stock(data[0], data[1]));
+					++count;
 
-					publishProgress((int) total * 100 / length);
+					publishProgress(count*100/total);
 				}
+				Analyzer analyzer = (Analyzer) getApplication();
+				analyzer.setStockList(stocks);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

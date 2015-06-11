@@ -1,70 +1,30 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.alex.develop.stockanalyzer">
 
-    <!-- Youmi ads -->
-    <!--
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    -->
-    <!-- alternative permission -->
-    <!--
-    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    -->
-    <!-- Youmi ads end -->
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".Analyzer"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-        <!-- Youmi ads -->
-
-        <!--
-        <activity
-            android:name="net.youmi.android.AdBrowser"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Light.NoTitleBar" />
-        <service
-            android:name="net.youmi.android.AdService"
-            android:exported="false" />
-        <receiver
-            android:name="net.youmi.android.AdReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <data android:scheme="package"/>
-            </intent-filter>
-        </receiver>
-
-        <provider
-            android:name="net.youmi.android.spot.SpotAdContentProvider"
-            android:authorities="com.alex.develop" />
-        -->
-        <!-- Youmi ads end -->
-
         <!-- 启动画面 -->
         <activity
-            android:name="com.alex.develop.stockanalyzer.Splash"
-            android:theme="@style/AppTheme.Splash"
-            android:screenOrientation="portrait" >
-            <intent-filter >
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+            android:name=".Splash"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <!-- 主界面 -->
         <activity
-            android:name="com.alex.develop.stockanalyzer.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name" />
     </application>
 
