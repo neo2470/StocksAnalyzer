@@ -27,10 +27,6 @@ import java.util.List;
  */
 public class CandleFragment extends BaseFragment {
 
-    public void setStockIndex(int stockIndex) {
-        this.stockIndex = stockIndex;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.candle_fragment, container, false);
@@ -41,23 +37,25 @@ public class CandleFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         stockData = (TextView) act.findViewById(R.id.stockData);
 
-        List<Stock> stocks = ((Analyzer) act.getApplication()).getStockList();
-
-        if(null == savedInstanceState) {
-            stock = stocks.get(stockIndex);
-        } else {
+        if(null != savedInstanceState) {
+            List<Stock> stocks = ((Analyzer) act.getApplication()).getStockList();
             stock = stocks.get(savedInstanceState.getInt("stockIndex"));
+            new PullStockHistory().execute(stock.getId());
         }
-        new PullStockHistory().execute(stock.getId());
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("stockIndex", stockIndex);
-        super.onSaveInstanceState(outState);
+    public void onResume() {
+        super.onResume();
+        act.setBackTwice2Exit(false);
     }
 
-    private int stockIndex;
+    @Override
+    public void onStop() {
+        super.onStop();
+        act.setBackTwice2Exit(true);
+    }
+
     private Stock stock;
     private TextView stockData;
     private class PullStockHistory extends AsyncTask<String, Integer, String> {

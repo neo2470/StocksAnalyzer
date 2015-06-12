@@ -8,29 +8,17 @@ import android.view.ViewGroup;
 import com.alex.develop.stockanalyzer.R;
 
 /**
- * Created by alex on 15-6-5.
+ * Created by alex on 15-6-12.
  */
-public class AddStockFragment extends BaseFragment {
+public class BottomSwitcher extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.add_stock_fragment, container, false);
+        return inflater.inflate(R.layout.bottom_switcher, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        act.setBackTwice2Exit(false);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        act.setBackTwice2Exit(true);
     }
 }

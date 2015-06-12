@@ -1,6 +1,7 @@
 package com.alex.develop.stockanalyzer;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +20,7 @@ public class MainActivity extends BaseActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setBackTwice2Exit(true);
 		changeThemeByTime();
 		setContentView(R.layout.main_activity);
 
@@ -45,24 +47,29 @@ public class MainActivity extends BaseActivity{
 		}
 	}
 
-	public void go2AddStockView() {
-		FragmentTransaction transaction = getTransaction();
-		transaction.replace(LAYOUT_CONTENT_ID, new AddStockFragment());
-		transaction.addToBackStack(null);
-		transaction.commit();
-	}
-
 	public void go2StockView() {
 		FragmentTransaction transaction = getTransaction();
 		transaction.replace(LAYOUT_CONTENT_ID, new StockFragment());
+		transaction.addToBackStack(null);
 		transaction.commit();
 	}
 
 	public void go2CandleView(int stockIndex) {
 		FragmentTransaction transaction = getTransaction();
 		CandleFragment candleFragment = new CandleFragment();
-		candleFragment.setStockIndex(stockIndex);
+
+		Bundle bundle = new Bundle();
+		bundle.putInt("stockIndex", stockIndex);
+		candleFragment.setArguments(bundle);
+
 		transaction.replace(LAYOUT_CONTENT_ID, candleFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+
+	public void go2AddStockView() {
+		FragmentTransaction transaction = getTransaction();
+		transaction.replace(LAYOUT_CONTENT_ID, new AddStockFragment());
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}

@@ -107,7 +107,7 @@ public class BaseActivity extends FragmentActivity {
 	 * @param backTwice2Exit
 	 *            true，退出；false，退出；默认为true
 	 */
-	protected void setBackTwice2Exit(boolean backTwice2Exit) {
+	public void setBackTwice2Exit(boolean backTwice2Exit) {
 		this.backTwice2Exit = backTwice2Exit;
 	}
 	

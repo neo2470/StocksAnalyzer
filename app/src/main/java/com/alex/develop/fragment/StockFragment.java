@@ -78,10 +78,6 @@ public class StockFragment extends BaseFragment {
         });
     }
 
-    public void setStockList(List<Stock> stocks) {
-        this.stocks = stocks;
-    }
-
     private Stock[] queryStockList(int start, int end) {
 
         List<Stock> temp = new ArrayList<>();
