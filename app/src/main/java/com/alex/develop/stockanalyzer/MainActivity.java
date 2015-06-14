@@ -1,11 +1,14 @@
 package com.alex.develop.stockanalyzer;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.alex.develop.fragment.AddStockFragment;
 import com.alex.develop.fragment.CandleFragment;
@@ -25,7 +28,7 @@ public class MainActivity extends BaseActivity{
 		setContentView(R.layout.main_activity);
 
 		if(null == savedInstanceState) {
-			go2StockView();
+			go2StockView(false);
 		}
 	}
 
@@ -47,19 +50,25 @@ public class MainActivity extends BaseActivity{
 		}
 	}
 
-	public void go2StockView() {
+	public void go2StockView(boolean isCollectView) {
 		FragmentTransaction transaction = getTransaction();
-		transaction.replace(LAYOUT_CONTENT_ID, new StockFragment());
+
+		StockFragment stockFragment = new StockFragment();
+		Bundle bundle = new Bundle();
+		bundle.putBoolean(StockFragment.ARG_IS_COLLECT_VIEW, isCollectView);
+		stockFragment.setArguments(bundle);
+
+		transaction.replace(LAYOUT_CONTENT_ID, stockFragment);
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}
 
 	public void go2CandleView(int stockIndex) {
 		FragmentTransaction transaction = getTransaction();
-		CandleFragment candleFragment = new CandleFragment();
 
+		CandleFragment candleFragment = new CandleFragment();
 		Bundle bundle = new Bundle();
-		bundle.putInt("stockIndex", stockIndex);
+		bundle.putInt(CandleFragment.ARG_STOCK_INDEX, stockIndex);
 		candleFragment.setArguments(bundle);
 
 		transaction.replace(LAYOUT_CONTENT_ID, candleFragment);
@@ -71,6 +80,22 @@ public class MainActivity extends BaseActivity{
 		FragmentTransaction transaction = getTransaction();
 		transaction.replace(LAYOUT_CONTENT_ID, new AddStockFragment());
 		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+
+	public void showBottomSwitcher(boolean show) {
+		Fragment bottomSwitcher = getSupportFragmentManager().findFragmentById(R.id.bottomSwithcer);
+
+		FragmentTransaction transaction = getTransaction();
+		if(show) {
+			if(bottomSwitcher.isHidden()) {
+				transaction.show(bottomSwitcher);
+			}
+		} else {
+			if(!bottomSwitcher.isHidden()) {
+				transaction.hide(bottomSwitcher);
+			}
+		}
 		transaction.commit();
 	}
 

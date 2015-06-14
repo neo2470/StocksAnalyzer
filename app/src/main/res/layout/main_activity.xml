@@ -11,10 +11,21 @@
         android:layout_height="match_parent" />
 
     <fragment
+        android:id="@+id/bottomSwithcer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="com.alex.develop.fragment.BottomSwitcher"
         android:layout_gravity="bottom"
         tools:layout="@layout/bottom_switcher" />
+
+    <ImageView
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleX="0.7"
+        android:scaleY="0.7"
+        android:src="@drawable/loading"
+        android:visibility="gone" />
 
 </FrameLayout>

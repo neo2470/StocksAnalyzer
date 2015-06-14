@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
 /**
  * Created by alex on 15-5-22.
  * 蜡烛线（K线）
@@ -101,6 +103,8 @@ public class Candlestick extends BaseObject {
         close = Float.valueOf(data[4]);// 收盘价
         volume = Long.valueOf(data[5]);// 成交量
         adjClose = Float.valueOf(data[6]);// Adj Close
+
+        Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume);
     }
 
     private float open;// 开盘价

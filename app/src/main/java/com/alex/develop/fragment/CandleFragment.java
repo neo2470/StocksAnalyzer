@@ -1,24 +1,22 @@
 package com.alex.develop.fragment;
 
+import android.app.ActionBar;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
-import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
+import com.alex.develop.util.StockDataAPIHelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -35,12 +33,12 @@ public class CandleFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        stockData = (TextView) act.findViewById(R.id.stockData);
 
-        if(null != savedInstanceState) {
+        Bundle bundle = getArguments();
+        if(null != bundle) {
             List<Stock> stocks = ((Analyzer) act.getApplication()).getStockList();
-            stock = stocks.get(savedInstanceState.getInt("stockIndex"));
-            new PullStockHistory().execute(stock.getId());
+            stock = stocks.get(bundle.getInt(ARG_STOCK_INDEX));
+            new AsyncStockHistory().execute(stock.getCode());
         }
     }
 
@@ -48,6 +46,13 @@ public class CandleFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         act.setBackTwice2Exit(false);
+
+        // 隐藏不需要的部分
+        act.showBottomSwitcher(false);
+        ActionBar actionBar = act.getActionBar();
+        if(null != actionBar) {
+            actionBar.hide();
+        }
     }
 
     @Override
@@ -56,56 +61,33 @@ public class CandleFragment extends BaseFragment {
         act.setBackTwice2Exit(true);
     }
 
+    public static final String ARG_STOCK_INDEX = "stockIndex";
+
     private Stock stock;
-    private TextView stockData;
-    private class PullStockHistory extends AsyncTask<String, Integer, String> {
+    private class AsyncStockHistory extends AsyncTask<String, Void, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            loadView = (ImageView) act.findViewById(R.id.loading);
+            Animation anim = AnimationUtils.loadAnimation(act, R.anim.loading_data);
+            loadView.setVisibility(View.VISIBLE);
+            loadView.startAnimation(anim);
         }
 
         @Override
-        protected String doInBackground(String... params) {
-
-            HttpURLConnection urlConnection = null;
-            StringBuilder builder = new StringBuilder();
-
-            String api = StockDataAPIHelper.getHistoryUrl(stock.getId());
-            try {
-                URL url = new URL(api);
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                InputStream inputStream = urlConnection.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line = null;
-                while(null != (line=reader.readLine())) {
-                    builder.append(line);
-                    builder.append("\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if(null != urlConnection) {
-                    urlConnection.disconnect();
-                }
-            }
-
-            NetworkHelper.queryHistory(stock, "2014-01-01");
-
-            return builder.toString();
+        protected Void doInBackground(String... params) {
+            float[] data = NetworkHelper.queryHistory(stock, StockDataAPIHelper.YAHOO_HISTORY_START);
+            Log.d("Print", data[0] + ", " + data[1]);
+            return null;
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
+        protected void onPostExecute(Void aVoid) {
+            loadView.setVisibility(View.GONE);
+            loadView.clearAnimation();
         }
 
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            stockData.setText(s);
-        }
+        private ImageView loadView;
     }
 }

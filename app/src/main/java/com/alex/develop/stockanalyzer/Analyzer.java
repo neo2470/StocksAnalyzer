@@ -19,5 +19,9 @@ public class Analyzer extends Application {
         this.stockList = stockList;
     }
 
+    public List<Stock> getCollectStockList() {
+        return null;
+    }
+
     private List<Stock> stockList;
 }

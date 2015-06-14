@@ -16,22 +16,26 @@ public final class Stock extends BaseObject {
     public static class Table {
 
         public static abstract class Column implements BaseColumns {
-            public static final String STOCK_CODE = "stock_code";
-            public static final String STOCK_CODE_CN = "stock_code_cn";
-            public static final String STOCK_NAME = "stock_name";
+            public static final String CODE = "code";// 股票代码
+            public static final String CODE_CN = "code_cn";// 股票拼音首字母代码
+            public static final String NAME = "name";// 股票名称
+            public static final String COLLECT = "collect";// 股票是否被收藏
+            public static final String SEARCH = "search";// 股票被搜索的次数
         }
 
         public static final String NAME = "stock_list";
         public static final String SQL_CREATE =
                 "CREATE TABLE " + NAME + " (" +
                         Column._ID + " INTEGER PRIMARY KEY," +
-                        Column.STOCK_CODE + " char(10)," +
-                        Column.STOCK_CODE_CN + " char(10)," +
-                        Column.STOCK_NAME + " nchar(10)" + ")";
+                        Column.CODE + " char(10)," +
+                        Column.CODE_CN + " char(10)," +
+                        Column.NAME + " nchar(10)," +
+                        Column.COLLECT + " INTEGER," +
+                        Column.SEARCH + " INTEGER)";
     }
 
-    public Stock(String id, String name) {
-        this.id = id;
+    public Stock(String code, String name) {
+        this.code = code;
         this.name = name;
 
         if(null == candlesticks) {
@@ -60,8 +64,16 @@ public final class Stock extends BaseObject {
         }
     }
 
-    public String getId() {
-        return id;
+    public String getCodeCN() {
+        return codeCN;
+    }
+
+    public void setCodeCN(String codeCN) {
+        this.codeCN = codeCN;
+    }
+
+    public String getCode() {
+        return code;
     }
 
     public String getName() {
@@ -124,6 +136,26 @@ public final class Stock extends BaseObject {
         return candlesticks;
     }
 
+    public int getCollect() {
+        return collect;
+    }
+
+    public boolean isCollected() {
+        return 1 == collect;
+    }
+
+    public void setCollect(int collect) {
+        this.collect = collect;
+    }
+
+    public int getSearch() {
+        return search;
+    }
+
+    public void setSearch(int search) {
+        this.search = search;
+    }
+
     public void fromSina(String[] data) {
         today.setOpen(Float.valueOf(data[1]));// 开盘价
         today.setLastClose(Float.valueOf(data[2])); // 昨日收盘价
@@ -155,7 +187,8 @@ public final class Stock extends BaseObject {
         stamp = System.currentTimeMillis();
     }
 
-    private String id;  // 股票代码
+    private String code;  // 股票代码
+    private String codeCN;// 股票拼音首字母代码
     private String name;// 股票名称
     private float[] salePrice;// 委卖价格（单位：元）
     private long[] saleVolume;// 委卖数量(单位：手)
@@ -164,6 +197,8 @@ public final class Stock extends BaseObject {
     private String time;// 时间
     private boolean suspend;// 是否停牌
     private long stamp;// 查询时间戳
+    private int collect;// 股票是否被收藏
+    private int search;// 股票被搜索的次数
 
     private Candlestick today;// 今日行情
     private List<Candlestick> candlesticks;// 蜡烛线

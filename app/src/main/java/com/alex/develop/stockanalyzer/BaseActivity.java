@@ -6,11 +6,10 @@ import java.util.Calendar;
 import net.youmi.android.AdManager;
 
 import com.alex.develop.entity.Remote;
-import com.alex.develop.uihelper.ConfirmDialog;
-import com.alex.develop.uihelper.ConfirmDialog.OnConfirmListener;
+import com.alex.develop.ui.ConfirmDialog;
+import com.alex.develop.ui.ConfirmDialog.OnConfirmListener;
 import com.alex.develop.util.ApplicationHelper;
 import com.alex.develop.util.FileHelper;
-import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.SQLiteHelper;
 
 import android.annotation.SuppressLint;

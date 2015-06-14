@@ -54,7 +54,7 @@ public class StockDataAPIHelper {
         String id = temp[0];
         String[] info = temp[1].split(SINA_PARSE_SPLIT);
 
-        if (id.equals(stock.getId())) {
+        if (id.equals(stock.getCode())) {
             stock.fromSina(info);
         }
     }
@@ -122,6 +122,7 @@ public class StockDataAPIHelper {
     public final static String YAHOO_CHARSET = "utf-8";// 字符编码
     public final static String YAHOO_PARSE_SPLIT = ",";// 数据分隔字符
     public final static String YAHOO_SUSPEND_VOLUME = "000";// 停牌时的成交量
+    public final static String YAHOO_HISTORY_START = "2014-01-01";//
 
     /**
      * 新浪的股票行情实时接口

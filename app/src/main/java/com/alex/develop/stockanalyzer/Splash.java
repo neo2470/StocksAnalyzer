@@ -91,9 +91,18 @@ public class Splash extends BaseActivity {
 					Cursor cursor = db.query(Stock.Table.NAME, null, null, null, null, null, null);
 					if(null != cursor && cursor.moveToFirst()) {
 						do {
-							String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_CODE));
-							String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.STOCK_NAME));
-							stocks.add(new Stock(stockCode, stockName));
+							String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.CODE));
+							String stockCodeCN = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.CODE_CN));
+							String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.NAME));
+							int collect = cursor.getInt(cursor.getColumnIndex(Stock.Table.Column.COLLECT));
+							int search = cursor.getInt(cursor.getColumnIndex(Stock.Table.Column.SEARCH));
+
+							Stock stock = new Stock(stockCode, stockName);
+							stock.setCodeCN(stockCodeCN);
+							stock.setCollect(collect);
+							stock.setSearch(search);
+
+							stocks.add(stock);
 						} while (cursor.moveToNext());
 					}
 
@@ -318,11 +327,15 @@ public class Splash extends BaseActivity {
 				SQLiteDatabase db = SQLiteHelper.getInstance().getWritableDatabase();
 				while (null != (line = bufferedReader.readLine())) {
 					String[] data = line.split(",");
+
 					ContentValues values = new ContentValues();
-					values.put(Stock.Table.Column.STOCK_CODE, data[0]);
-					values.put(Stock.Table.Column.STOCK_CODE_CN, "");
-					values.put(Stock.Table.Column.STOCK_NAME, data[1]);
+					values.put(Stock.Table.Column.CODE, data[0]);
+					values.put(Stock.Table.Column.CODE_CN, "");
+					values.put(Stock.Table.Column.NAME, data[1]);
+					values.put(Stock.Table.Column.COLLECT, 0);
+					values.put(Stock.Table.Column.SEARCH, 0);
 					db.insert(Stock.Table.NAME, null, values);
+
 					stocks.add(new Stock(data[0], data[1]));
 					++count;
 

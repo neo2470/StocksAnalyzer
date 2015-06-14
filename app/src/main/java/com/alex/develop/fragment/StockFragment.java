@@ -38,8 +38,20 @@ public class StockFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        stocks = ((Analyzer) act.getApplication()).getStockList();
-        loadView = (ImageView) act.findViewById(R.id.loading);
+        Bundle bundle = getArguments();
+        if(null != bundle) {
+            boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
+            Analyzer analyzer = (Analyzer) act.getApplication();
+
+            if (isCollectView) {
+                stocks = analyzer.getStockList();
+            } else {
+                stocks = analyzer.getStockList();
+            }
+        }
+
+        Analyzer analyzer = (Analyzer) act.getApplication();
+        stocks = analyzer.getStockList();
 
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
@@ -94,10 +106,11 @@ public class StockFragment extends BaseFragment {
         return temp.toArray(new Stock[temp.size()]);
     }
 
+    public static final String ARG_IS_COLLECT_VIEW = "collect";
+
     private int queryStart;
     private int queryStop;
     private List<Stock> stocks;// 自选股列表
-    private ImageView loadView;// 加载
     private StockListAdapter stockListAdapter;
     private static  class ViewHolder {
         TextView stockName;
@@ -119,7 +132,7 @@ public class StockFragment extends BaseFragment {
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
@@ -157,7 +170,7 @@ public class StockFragment extends BaseFragment {
             holder.stockName.setText(stock.getName());
 
             // 股票代码
-            holder.stockID.setText(stock.getId());
+            holder.stockID.setText(stock.getCode());
 
             // 股票价格（收盘价）
             holder.stockClose.setText(price);
@@ -176,6 +189,7 @@ public class StockFragment extends BaseFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            loadView = (ImageView) act.findViewById(R.id.loading);
             Animation anim = AnimationUtils.loadAnimation(act, R.anim.loading_data);
             loadView.setVisibility(View.VISIBLE);
             loadView.startAnimation(anim);
@@ -190,9 +204,11 @@ public class StockFragment extends BaseFragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            loadView.clearAnimation();
             loadView.setVisibility(View.GONE);
+            loadView.clearAnimation();
             stockListAdapter.notifyDataSetChanged();
         }
+
+        private ImageView loadView;
     }
 }

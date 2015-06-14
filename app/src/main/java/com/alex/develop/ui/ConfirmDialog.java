@@ -1,4 +1,4 @@
-package com.alex.develop.uihelper;
+package com.alex.develop.ui;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;

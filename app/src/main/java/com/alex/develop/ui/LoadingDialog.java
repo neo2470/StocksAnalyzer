@@ -1,4 +1,4 @@
-package com.alex.develop.uihelper;
+package com.alex.develop.ui;
 
 import com.alex.develop.stockanalyzer.R;
 
