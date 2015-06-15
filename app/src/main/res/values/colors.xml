@@ -12,4 +12,6 @@
     <color name="stock_rise">#EE4952</color>
     <color name="stock_fall">#1ABE5B</color>
     <color name="stock_suspended">#919FAC</color>
+
+    <color name="nav_bg">#252a33</color>
 </resources>

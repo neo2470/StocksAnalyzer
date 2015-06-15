@@ -1,35 +1,52 @@
 package com.alex.develop.stockanalyzer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.View;
+import android.widget.RadioButton;
 
-import com.alex.develop.fragment.AddStockFragment;
-import com.alex.develop.fragment.CandleFragment;
 import com.alex.develop.fragment.StockFragment;
+import com.alex.develop.ui.NonSlidableViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * App入口
  * @author Created by alex 2014/10/23
  */
-public class MainActivity extends BaseActivity{
+public class MainActivity extends BaseActivity implements StockFragment.OnStockSelectedListener {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setBackTwice2Exit(true);
-		changeThemeByTime();
 		setContentView(R.layout.main_activity);
 
-		if(null == savedInstanceState) {
-			go2StockView(false);
+		if(null == viewList) {
+			viewList = new ArrayList<>();
+
+			// 市场行情
+			viewList.add(new StockFragment());
+
+			// 自选股
+			StockFragment stockFragment = new StockFragment();
+			Bundle bundle = new Bundle();
+			bundle.putBoolean(StockFragment.ARG_IS_COLLECT_VIEW, true);
+			stockFragment.setArguments(bundle);
+
+			viewList.add(new StockFragment());
 		}
+
+		ViewHolder viewHolder = new ViewHolder(getSupportFragmentManager());
+		viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);
+		viewPager.setAdapter(viewHolder);
+		viewPager.setOffscreenPageLimit(3);
 	}
 
 	@Override
@@ -42,62 +59,58 @@ public class MainActivity extends BaseActivity{
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.actions_search :
-				go2AddStockView();
+			case R.id.action_search :
+				Intent intent = new Intent();
+				intent.setClass(this, SearchActivity.class);
+				startActivity(intent);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
+
 		}
 	}
 
-	public void go2StockView(boolean isCollectView) {
-		FragmentTransaction transaction = getTransaction();
-
-		StockFragment stockFragment = new StockFragment();
-		Bundle bundle = new Bundle();
-		bundle.putBoolean(StockFragment.ARG_IS_COLLECT_VIEW, isCollectView);
-		stockFragment.setArguments(bundle);
-
-		transaction.replace(LAYOUT_CONTENT_ID, stockFragment);
-		transaction.addToBackStack(null);
-		transaction.commit();
+	@Override
+	public void onStockSelected(int index) {
+		Intent intent = new Intent();
+		intent.setClass(this, CandleActivity.class);
+		intent.putExtra(CandleActivity.ARG_STOCK_INDEX, index);
+		startActivity(intent);
 	}
 
-	public void go2CandleView(int stockIndex) {
-		FragmentTransaction transaction = getTransaction();
-
-		CandleFragment candleFragment = new CandleFragment();
-		Bundle bundle = new Bundle();
-		bundle.putInt(CandleFragment.ARG_STOCK_INDEX, stockIndex);
-		candleFragment.setArguments(bundle);
-
-		transaction.replace(LAYOUT_CONTENT_ID, candleFragment);
-		transaction.addToBackStack(null);
-		transaction.commit();
-	}
-
-	public void go2AddStockView() {
-		FragmentTransaction transaction = getTransaction();
-		transaction.replace(LAYOUT_CONTENT_ID, new AddStockFragment());
-		transaction.addToBackStack(null);
-		transaction.commit();
-	}
-
-	public void showBottomSwitcher(boolean show) {
-		Fragment bottomSwitcher = getSupportFragmentManager().findFragmentById(R.id.bottomSwithcer);
-
-		FragmentTransaction transaction = getTransaction();
-		if(show) {
-			if(bottomSwitcher.isHidden()) {
-				transaction.show(bottomSwitcher);
-			}
-		} else {
-			if(!bottomSwitcher.isHidden()) {
-				transaction.hide(bottomSwitcher);
-			}
+	public void onNavClicked(View view) {
+		boolean isChecked = ((RadioButton) view).isChecked();
+		switch (view.getId()) {
+			case R.id.marketStock :
+				if(isChecked) {
+					viewPager.setCurrentItem(0);
+				}
+				break;
+			case R.id.collectStock :
+				if(isChecked) {
+					viewPager.setCurrentItem(1);
+				}
+				break;
 		}
-		transaction.commit();
 	}
 
-	private final int LAYOUT_CONTENT_ID = R.id.content;// 用于放置各种不同的Fragment
+	private NonSlidableViewPager viewPager;
+	private List<Fragment> viewList;
+
+	private class ViewHolder extends FragmentPagerAdapter {
+
+		public ViewHolder(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			return viewList.get(position);
+		}
+
+		@Override
+		public int getCount() {
+			return viewList.size();
+		}
+	}
 }

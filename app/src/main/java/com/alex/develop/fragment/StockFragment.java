@@ -1,8 +1,10 @@
 package com.alex.develop.fragment;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -29,29 +31,53 @@ import java.util.List;
  */
 public class StockFragment extends BaseFragment {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.stock_fragment, container, false);
+    public interface OnStockSelectedListener {
+        void onStockSelected(int index);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
-        Bundle bundle = getArguments();
-        if(null != bundle) {
-            boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            stockSelectedListener = (OnStockSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + "must implement the OnStockSelectedListener");
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.stock_fragment, container, false);
+
+        if(null == savedInstanceState) {
+            Bundle bundle = getArguments();
             Analyzer analyzer = (Analyzer) act.getApplication();
-
-            if (isCollectView) {
-                stocks = analyzer.getStockList();
+            if (null != bundle) {
+                boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
+                if (isCollectView) {
+                    stocks = analyzer.getStockList();
+                } else {
+                    stocks = analyzer.getStockList();
+                }
             } else {
                 stocks = analyzer.getStockList();
             }
         }
 
-        Analyzer analyzer = (Analyzer) act.getApplication();
-        stocks = analyzer.getStockList();
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         final ListView stockList = (ListView) act.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
@@ -61,7 +87,7 @@ public class StockFragment extends BaseFragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                act.go2CandleView(position);
+                stockSelectedListener.onStockSelected(position);
             }
         });
 
@@ -90,6 +116,18 @@ public class StockFragment extends BaseFragment {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_refresh :
+                new UpdateStockInfo().execute(queryStart, queryStop);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
     private Stock[] queryStockList(int start, int end) {
 
         List<Stock> temp = new ArrayList<>();
@@ -111,6 +149,7 @@ public class StockFragment extends BaseFragment {
     private int queryStart;
     private int queryStop;
     private List<Stock> stocks;// 自选股列表
+    private OnStockSelectedListener stockSelectedListener;
     private StockListAdapter stockListAdapter;
     private static  class ViewHolder {
         TextView stockName;

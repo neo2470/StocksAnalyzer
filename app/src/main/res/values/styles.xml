@@ -29,8 +29,8 @@
         <item name="android:activityCloseExitAnimation">@anim/out_from_right</item>
     </style>
     
-    <!-- Splash全屏并可以设置启动和退出动画 -->
-    <style name="AppTheme.Splash">
+    <!-- 全屏并可以设置启动和退出动画 -->
+    <style name="AppTheme.FullScreen">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>

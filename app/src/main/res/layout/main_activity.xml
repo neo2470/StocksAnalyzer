@@ -1,22 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/content"
+
+    <com.alex.develop.ui.NonSlidableViewPager
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <fragment
-        android:id="@+id/bottomSwithcer"
+    <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:name="com.alex.develop.fragment.BottomSwitcher"
+        android:layout_height="50dp"
         android:layout_gravity="bottom"
-        tools:layout="@layout/bottom_switcher" />
+        android:background="@color/nav_bg"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/marketStock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/market_normal"
+            android:gravity="center"
+            android:onClick="onNavClicked"
+            android:text="行情" />
+
+        <RadioButton
+            android:id="@+id/collectStock"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableTop="@drawable/collect_normal"
+            android:gravity="center"
+            android:onClick="onNavClicked"
+            android:text="自选" />
+
+    </RadioGroup>
+
 
     <ImageView
         android:id="@+id/loading"
