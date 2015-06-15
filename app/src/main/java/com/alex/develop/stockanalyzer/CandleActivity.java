@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.alex.develop.entity.Stock;
+import com.alex.develop.ui.CandleView;
 import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.StockDataAPIHelper;
 
@@ -22,16 +23,21 @@ public class CandleActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.candle_activity);
 
+        candleView = (CandleView) findViewById(R.id.candleView);
         int index = getIntent().getExtras().getInt(ARG_STOCK_INDEX);
         Analyzer analyzer = (Analyzer) getApplication();
         stock = analyzer.getStockList().get(index);
+
+        // 请求历史数据
+        new AsyncStockHistory().execute();
     }
 
     public static final String ARG_STOCK_INDEX = "stockIndex";
 
     private Stock stock;
+    private CandleView candleView;
 
-    private class AsyncStockHistory extends AsyncTask<String, Void, Void> {
+    private class AsyncStockHistory extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -43,7 +49,7 @@ public class CandleActivity extends BaseActivity {
         }
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(Void... params) {
             float[] data = NetworkHelper.queryHistory(stock, StockDataAPIHelper.YAHOO_HISTORY_START);
             Log.d("Print", data[0] + ", " + data[1]);
             return null;
@@ -53,6 +59,7 @@ public class CandleActivity extends BaseActivity {
         protected void onPostExecute(Void aVoid) {
             loadView.setVisibility(View.GONE);
             loadView.clearAnimation();
+            candleView.setCandles(stock.getCandlesticks());
         }
 
         private ImageView loadView;

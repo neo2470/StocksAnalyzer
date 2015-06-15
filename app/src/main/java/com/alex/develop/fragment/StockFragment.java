@@ -57,29 +57,20 @@ public class StockFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.stock_fragment, container, false);
 
-        if(null == savedInstanceState) {
-            Bundle bundle = getArguments();
-            Analyzer analyzer = (Analyzer) act.getApplication();
-            if (null != bundle) {
-                boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
-                if (isCollectView) {
-                    stocks = analyzer.getStockList();
-                } else {
-                    stocks = analyzer.getStockList();
-                }
+        Bundle bundle = getArguments();
+        Analyzer analyzer = (Analyzer) act.getApplication();
+        if (null != bundle) {
+            boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
+            if (isCollectView) {
+                stocks = analyzer.getStockList();
             } else {
                 stocks = analyzer.getStockList();
             }
+        } else {
+            stocks = analyzer.getStockList();
         }
 
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        final ListView stockList = (ListView) act.findViewById(R.id.stockList);
+        final ListView stockList = (ListView) view.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
         stockList.setAdapter(stockListAdapter);
 
@@ -114,6 +105,8 @@ public class StockFragment extends BaseFragment {
 
             private boolean flag = true;
         });
+
+        return view;
     }
 
     @Override

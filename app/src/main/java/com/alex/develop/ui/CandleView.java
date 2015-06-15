@@ -30,20 +30,27 @@ public class CandleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        pen.setColor(Color.WHITE);
-        canvas.drawText("CandleView", 100, 100, pen);
+        if(null != candles) {
+            float x = 0;
+            for (Candlestick candle : candles) {
+                candle.draw(x, canvas, pen);
+                x += (Candlestick.WIDTH + Candlestick.SPACE);
+            }
+        }
+
     }
 
     public void setCandles(List<Candlestick> candles) {
         this.candles = candles;
+        invalidate();
     }
 
 
     private void initialize() {
-        pen = new Paint(Color.WHITE);
+        pen = new Paint();
         pen.setTextSize(30);
-        pen.setStyle(Paint.Style.STROKE);
-        pen.setStrokeWidth(2);
+        pen.setStyle(Paint.Style.FILL_AND_STROKE);
+        pen.setStrokeWidth(1);
     }
 
     private List<Candlestick> candles;

@@ -66,7 +66,6 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
-
 		}
 	}
 
