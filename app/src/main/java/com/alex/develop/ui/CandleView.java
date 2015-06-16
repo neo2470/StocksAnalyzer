@@ -3,8 +3,12 @@ package com.alex.develop.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.PathEffect;
+import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.alex.develop.entity.Candlestick;
@@ -27,6 +31,23 @@ public class CandleView extends View {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN :
+                touch.set(event.getX(), event.getY());
+                invalidate();
+                return true;
+            case MotionEvent.ACTION_MOVE :
+                touch.set(event.getX(), event.getY());
+                invalidate();
+                return true;
+            default:
+                return super.onTouchEvent(event);
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
@@ -38,6 +59,11 @@ public class CandleView extends View {
             }
         }
 
+        if (0 < touch.x && 0 < touch.y) {
+            canvas.drawLine(0, touch.y, 1000, touch.y, pen);
+            canvas.drawLine(touch.x, 0, touch.x, 1000, pen);
+            canvas.drawCircle(touch.x, touch.y, 10, pen);
+        }
     }
 
     public void setCandles(List<Candlestick> candles) {
@@ -51,8 +77,11 @@ public class CandleView extends View {
         pen.setTextSize(30);
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
         pen.setStrokeWidth(1);
+
+        touch = new PointF();
     }
 
     private List<Candlestick> candles;
+    private PointF touch;
     private Paint pen;
 }

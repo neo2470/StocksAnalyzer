@@ -12,8 +12,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
@@ -29,7 +31,7 @@ import java.util.List;
  * Created by alex on 15-5-22.
  * 自选股列表
  */
-public class StockFragment extends BaseFragment {
+public class StockFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener {
 
     public interface OnStockSelectedListener {
         void onStockSelected(int index);
@@ -69,6 +71,13 @@ public class StockFragment extends BaseFragment {
         } else {
             stocks = analyzer.getStockList();
         }
+
+        RadioButton codeRadio = (RadioButton) view.findViewById(R.id.codeRadio);
+        codeRadio.setOnCheckedChangeListener(this);
+        RadioButton priceRadio = (RadioButton) view.findViewById(R.id.priceRadio);
+        priceRadio.setOnCheckedChangeListener(this);
+        RadioButton increaseRadio = (RadioButton) view.findViewById(R.id.increaseRadio);
+        increaseRadio.setOnCheckedChangeListener(this);
 
         final ListView stockList = (ListView) view.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
@@ -118,6 +127,21 @@ public class StockFragment extends BaseFragment {
             default:
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.codeRadio :
+                ;
+                break;
+            case R.id.priceRadio :
+                ;
+                break;
+            case R.id.increaseRadio :
+                ;
+                break;
         }
     }
 

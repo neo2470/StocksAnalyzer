@@ -112,13 +112,13 @@ public class Candlestick extends BaseObject {
 
     public void draw(float x, Canvas canvas, Paint pen) {
         getIncrease();
-        if(0 > increase) {
+        if(0 <= increase) {
             pen.setColor(Color.parseColor("#1ABE5B"));
         } else {
             pen.setColor(Color.parseColor("#EE4952"));
         }
 
-        canvas.drawText(increase+"",x,100, pen);
+        canvas.drawRect(x, 20, x+10, 40, pen);
     }
 
     public static final float WIDTH = 10.0f;// K线宽度
