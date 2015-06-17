@@ -107,6 +107,26 @@ public class StockDataAPIHelper {
         return flag;
     }
 
+    public enum SohuDataPeriod {
+        Day,
+        Week,
+        Month;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case Day:
+                    return "d";
+                case Week:
+                    return "w";
+                case Month:
+                    return "m";
+                default:
+                    return super.toString();
+            }
+        }
+    }
+
     // 新浪API
     public final static int SINA_REFRESH_INTERVAL = 5000;// 5秒刷新间隔
     public final static int SINA_ENTRUST_LEVEL = 5;// 5档委托数据
@@ -138,5 +158,12 @@ public class StockDataAPIHelper {
      * EG-SZ : http://table.finance.yahoo.com/table.csv?s=000001.sz
      */
     private final static String QUERY_HISTORY = "http://table.finance.yahoo.com/table.csv?s=";
+
+    /**
+     * 搜狐的股票历史数据接口
+     * http://q.stock.sohu.com/hisHq?code=cn_600966&start=20100930&end=20131231&stat=1&order=D&period=w
+     * http://q.stock.sohu.com/hisHq?code=zs_399001&start=20100930&end=20131231&stat=1&order=D&period=w
+     */
+    private final static String SOHU_HISTORY = "http://q.stock.sohu.com/hisHq?code=";
 
 }
