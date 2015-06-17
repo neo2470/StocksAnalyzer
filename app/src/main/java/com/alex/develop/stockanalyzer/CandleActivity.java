@@ -8,7 +8,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import com.alex.develop.entity.Stock;
+import com.alex.develop.entity.*;
+import com.alex.develop.entity.Enum;
 import com.alex.develop.ui.CandleView;
 import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.StockDataAPIHelper;
@@ -29,7 +30,7 @@ public class CandleActivity extends BaseActivity {
         stock = analyzer.getStockList().get(index);
 
         // 请求历史数据
-        new AsyncStockHistory().execute();
+        new AsyncSohuStockHistory().execute("20150601", "20150603", Enum.Period.Day.toString());
     }
 
     public static final String ARG_STOCK_INDEX = "stockIndex";
@@ -37,7 +38,7 @@ public class CandleActivity extends BaseActivity {
     private Stock stock;
     private CandleView candleView;
 
-    private class AsyncStockHistory extends AsyncTask<Void, Void, Void> {
+    private class AsyncSohuStockHistory extends AsyncTask<String, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -49,14 +50,19 @@ public class CandleActivity extends BaseActivity {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            float[] data = NetworkHelper.queryHistory(stock, StockDataAPIHelper.YAHOO_HISTORY_START);
-            Log.d("Print", data[0] + ", " + data[1]);
-            return null;
+        protected Boolean doInBackground(String... params) {
+            String url = StockDataAPIHelper.getSohuHistoryUrl(stock.getCode(), params[0], params[1], params[2]);
+            Log.d("Print", url);
+            String data = NetworkHelper.getWebContent(url, StockDataAPIHelper.SOHU_CHARSET);
+            Log.d("Print", data);
+
+            stock.formSohu(data);
+
+            return true;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Boolean result) {
             loadView.setVisibility(View.GONE);
             loadView.clearAnimation();
             candleView.setCandles(stock.getCandlesticks());

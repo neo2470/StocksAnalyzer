@@ -23,14 +23,14 @@ public class NetworkHelper {
      * @param webUrl 网页对应的URL
      * @return 网页内容字符串
      */
-    public static String getWebContent(String webUrl) {
+    public static String getWebContent(String webUrl, String charset) {
         HttpURLConnection urlConnection = null;
         StringBuilder builder = new StringBuilder();
         try {
             URL url = new URL(webUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, charset));
 
             String line;
             while (null != (line=bufferedReader.readLine())) {
@@ -50,7 +50,7 @@ public class NetworkHelper {
      * 获取当日行情数据
      * @param stocks 股票列表
      */
-    public static void queryToday(Stock... stocks) {
+    public static void querySinaToday(Stock... stocks) {
 
         if(0 == stocks.length) {
             return;
@@ -67,7 +67,7 @@ public class NetworkHelper {
                 ++i;
             }
 
-            String queryUrl = StockDataAPIHelper.getTodayUrl(stockList);
+            String queryUrl = StockDataAPIHelper.getSinaTodayUrl(stockList);
             URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();
@@ -94,7 +94,7 @@ public class NetworkHelper {
      * @param stock 股票
      * @param startDate 历史数据的开始时间(将读取从startDate到上个交易日的所有历史数据，如果startDate为空，则读取自股票上市到上个交易日的所有数据)
      */
-    public static float[] queryHistory(Stock stock, String startDate) {
+    public static float[] queryYahooHistory(Stock stock, String startDate) {
 
         float[] floats = new float[2];
         floats[0] = Float.MIN_VALUE;
@@ -102,7 +102,7 @@ public class NetworkHelper {
         HttpURLConnection urlConnection = null;
         try {
 
-            String queryUrl = StockDataAPIHelper.getHistoryUrl(stock.getCode());
+            String queryUrl = StockDataAPIHelper.getYahooHistoryUrl(stock.getCode());
             URL url = new URL(queryUrl);
             urlConnection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = urlConnection.getInputStream();

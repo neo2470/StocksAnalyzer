@@ -218,7 +218,6 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             }
             if(stock.isSuspended()) {
                 textColor = act.getResources().getColor(R.color.stock_suspended);
-                price = stock.getToday().getLastCloseString();
                 increaseString = act.getString(R.string.trade_suspended);
             }
 
@@ -253,7 +252,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
         @Override
         protected Void doInBackground(Integer... params) {
-            NetworkHelper.queryToday(queryStockList(params[0], params[1]));
+            NetworkHelper.querySinaToday(queryStockList(params[0], params[1]));
             return null;
         }
 

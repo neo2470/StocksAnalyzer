@@ -1,7 +1,7 @@
 package com.alex.develop.util;
 
-import com.alex.develop.entity.Candlestick;
-import com.alex.develop.entity.Stock;
+import com.alex.develop.entity.*;
+import com.alex.develop.entity.Enum;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class StockDataAPIHelper {
      * @param stockIDs 股票代码列表
      * @return
      */
-    public static String getTodayUrl(String... stockIDs) {
+    public static String getSinaTodayUrl(String... stockIDs) {
         StringBuilder builder = new StringBuilder();
 
         for(String id : stockIDs) {
@@ -32,7 +32,7 @@ public class StockDataAPIHelper {
         }
 
         builder.delete(0, 1);
-        builder.insert(0, QUERY_TODAY);
+        builder.insert(0, SINA_TODAY);
 
         return builder.toString();
     }
@@ -64,10 +64,10 @@ public class StockDataAPIHelper {
      * @param stockID
      * @return
      */
-    public static String getHistoryUrl(String stockID) {
+    public static String getYahooHistoryUrl(String stockID) {
 
         StringBuilder builder = new StringBuilder();
-        builder.append(QUERY_HISTORY);
+        builder.append(YAHOO_HISTORY);
 
         String suffix = YAHOO_SZ_SUFFIX;
         if(shOrsz(stockID)) {
@@ -107,24 +107,49 @@ public class StockDataAPIHelper {
         return flag;
     }
 
-    public enum SohuDataPeriod {
-        Day,
-        Week,
-        Month;
+    public static String getSohuHistoryUrl(String stockCode, String start, String end) {
+        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.ASC.toString(), Enum.Period.Day.toString());
+    }
 
-        @Override
-        public String toString() {
-            switch (this) {
-                case Day:
-                    return "d";
-                case Week:
-                    return "w";
-                case Month:
-                    return "m";
-                default:
-                    return super.toString();
-            }
+    public static String getSohuHistoryUrl(String stockCode, String start, String end, String period) {
+        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.ASC.toString(), period);
+    }
+
+    public static String getSohuHistoryUrl(String stockCode, String start, String end, boolean statistics, String order, String period) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(SOHU_HISTORY);
+
+        if(Constant.ZS_SZZS_CODE.equals(stockCode)) {// 上证指数
+            builder.append("zs_000001");
+        } else if(Constant.ZS_SZCZ_CODE.equals(stockCode)) {// 深证成指
+            builder.append("zs_399001");
+        } else {// 股票代码
+            builder.append("cn_");
+            builder.append(stockCode);
         }
+
+        // 起始日期
+        builder.append("&start=");
+        builder.append(start);
+
+        // 结束日期
+        builder.append("&end=");
+        builder.append(end);
+
+        // 是否统计
+        if(statistics) {
+            builder.append("&stat=1");
+        }
+
+        // 排序方式
+        builder.append("&order=");
+        builder.append(order.toString());
+
+        // 查询周期
+        builder.append("&period=");
+        builder.append(period.toString());
+
+        return builder.toString();
     }
 
     // 新浪API
@@ -144,20 +169,28 @@ public class StockDataAPIHelper {
     public final static String YAHOO_SUSPEND_VOLUME = "000";// 停牌时的成交量
     public final static String YAHOO_HISTORY_START = "2014-01-01";//
 
+    // 搜狐API
+    public final static String SOHU_CHARSET = "gbk";
+    public final static String SOHU_JSON_STATUS = "status";
+    public final static String SOHU_JSON_HQ = "hq";
+    public final static String SOHU_JSON_CODE = "code";
+    public final static String SOHU_JSON_STATUS_OK = "0";
+
+
     /**
      * 新浪的股票行情实时接口
      * EG-SH : http://hq.sinajs.cn/list=sh601919（上海A股）
      * EG-SZ : http://hq.sinajs.cn/list=sz000783（深圳A股）
      *  MORE : http://hq.sinajs.cn/list=sz000783,sz000698,sh601919
      */
-    private final static String QUERY_TODAY = "http://hq.sinajs.cn/list=";
+    private final static String SINA_TODAY = "http://hq.sinajs.cn/list=";
 
     /**
      * 雅虎的股票历史数据接口
      * EG-SS : http://table.finance.yahoo.com/table.csv?s=600000.ss
      * EG-SZ : http://table.finance.yahoo.com/table.csv?s=000001.sz
      */
-    private final static String QUERY_HISTORY = "http://table.finance.yahoo.com/table.csv?s=";
+    private final static String YAHOO_HISTORY = "http://table.finance.yahoo.com/table.csv?s=";
 
     /**
      * 搜狐的股票历史数据接口

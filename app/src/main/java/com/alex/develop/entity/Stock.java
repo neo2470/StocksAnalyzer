@@ -4,6 +4,10 @@ import android.provider.BaseColumns;
 
 import com.alex.develop.util.StockDataAPIHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,7 +162,6 @@ public final class Stock extends BaseObject {
 
     public void fromSina(String[] data) {
         today.setOpen(Float.valueOf(data[1]));// 开盘价
-        today.setLastClose(Float.valueOf(data[2])); // 昨日收盘价
         today.setClose(Float.valueOf(data[3]));// 当前价格
         today.setHigh(Float.valueOf(data[4]));// 今日最高价
         today.setLow(Float.valueOf(data[5]));// 今日最低价
@@ -185,6 +188,32 @@ public final class Stock extends BaseObject {
         time = data[31];
 
         stamp = System.currentTimeMillis();
+    }
+
+    public boolean formSohu(String data) {
+        try {
+            JSONArray array = new JSONArray(data);
+            JSONObject info = array.getJSONObject(0);
+
+            String status = info.optString(StockDataAPIHelper.SOHU_JSON_STATUS);
+            if(!status.equals(StockDataAPIHelper.SOHU_JSON_STATUS_OK)) {
+                return false;
+            }
+
+            String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
+            if(code.endsWith(this.code)) {
+                JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
+                for(int i=0; i<candle.length(); ++i) {
+                    Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
+                    candlesticks.add(candlestick);
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return true;
     }
 
     private String code;  // 股票代码
