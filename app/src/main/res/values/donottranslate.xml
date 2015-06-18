@@ -12,4 +12,6 @@
     <string name="youmi_pub_id">48ca1f69992df596</string>
     <string name="youmi_ads_key">f8ae9444a6e560a7</string>
     <string name="stock_db_name">stock_data_2015.db</string>
+
+    <string name="stock_default">- -</string>
 </resources>

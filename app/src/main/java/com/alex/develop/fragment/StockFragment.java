@@ -134,13 +134,10 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.codeRadio :
-                ;
                 break;
             case R.id.priceRadio :
-                ;
                 break;
             case R.id.increaseRadio :
-                ;
                 break;
         }
     }
@@ -220,6 +217,13 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
                 textColor = act.getResources().getColor(R.color.stock_suspended);
                 price = stock.getToday().getLastCloseString();
                 increaseString = act.getString(R.string.trade_suspended);
+            }
+
+            // 如果没有查询到股票数据则显示默认的字符
+            if ("".equals(stock.getTime())) {
+                price = act.getString(R.string.stock_default);
+                increaseString = price;
+                textColor = act.getResources().getColor(R.color.stock_suspended);
             }
 
             // 股票名称

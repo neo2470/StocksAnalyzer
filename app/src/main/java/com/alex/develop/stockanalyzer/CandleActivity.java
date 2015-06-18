@@ -1,5 +1,6 @@
 package com.alex.develop.stockanalyzer;
 
+import android.app.ActionBar;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,15 @@ public class CandleActivity extends BaseActivity {
         int index = getIntent().getExtras().getInt(ARG_STOCK_INDEX);
         Analyzer analyzer = (Analyzer) getApplication();
         stock = analyzer.getStockList().get(index);
+
+        ActionBar actionBar = getActionBar();
+        if(null != actionBar) {
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(R.layout.candle_action_bar_layout);
+
+            View view = actionBar.getCustomView();
+            
+        }
 
         // 请求历史数据
         new AsyncSohuStockHistory().execute("20150601", "20150603", Enum.Period.Day.toString());

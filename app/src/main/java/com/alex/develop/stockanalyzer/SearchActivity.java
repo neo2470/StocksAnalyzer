@@ -15,7 +15,6 @@ public class SearchActivity extends BaseActivity {
 
         ActionBar actionBar = getActionBar();
         if(null != actionBar) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.search_action_bar_titile);
         }
