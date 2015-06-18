@@ -162,11 +162,13 @@ public final class Stock extends BaseObject {
 
     public void fromSina(String[] data) {
         today.setOpen(Float.valueOf(data[1]));// 开盘价
+        today.setLastClose(Float.valueOf(data[2])); // 昨日收盘价
         today.setClose(Float.valueOf(data[3]));// 当前价格
         today.setHigh(Float.valueOf(data[4]));// 今日最高价
         today.setLow(Float.valueOf(data[5]));// 今日最低价
         today.setVolume(Long.valueOf(data[8]));// 成交量(单位：股)
         today.setMoney(Float.valueOf(data[9]));// 成交额(单位：元)
+        today.initialize();
 
         for(int i=10,j=11,m=20,n=21,k=0;k< StockDataAPIHelper.SINA_ENTRUST_LEVEL;i+=2,j+=2,m+=2,n+=2,++k) {
 

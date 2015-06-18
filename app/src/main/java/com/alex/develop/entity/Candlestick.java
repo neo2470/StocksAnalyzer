@@ -13,7 +13,8 @@ import org.json.JSONArray;
  */
 public class Candlestick extends BaseObject {
 
-    public Candlestick() {}
+    public Candlestick() {
+    }
 
     public Candlestick(String[] yahoo) {
         fromYahoo(yahoo);
@@ -33,6 +34,18 @@ public class Candlestick extends BaseObject {
 
     public void setClose(float close) {
         this.close = close;
+    }
+
+    public void setLastClose(float lastClose) {
+        this.lastClose = lastClose;
+    }
+
+    public float getLastClose() {
+        return lastClose;
+    }
+
+    public String getLastCloseString() {
+        return String.format("%.2f", lastClose);
     }
 
     public float getHigh() {
@@ -72,7 +85,7 @@ public class Candlestick extends BaseObject {
     }
 
     public String getIncreaseString() {
-        return increase + "%";
+        return String.format("%.2f", increase) + "%";
     }
 
     public float getMoney() {
@@ -89,6 +102,10 @@ public class Candlestick extends BaseObject {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void initialize() {
+        increase = 100 * (close - lastClose) / lastClose;
     }
 
     public void fromYahoo(String[] data) {
@@ -111,7 +128,7 @@ public class Candlestick extends BaseObject {
 
         // 涨幅(%)
         String inStr = data.optString(4);
-        inStr = inStr.substring(0, inStr.length()-1);
+        inStr = inStr.substring(0, inStr.length() - 1);
         increase = Float.valueOf(inStr);
 
         low = (float) data.optDouble(5);// 最低价
@@ -121,7 +138,7 @@ public class Candlestick extends BaseObject {
 
         // 换手率(%)
         String exStr = data.optString(9);
-        exStr = exStr.substring(0, exStr.length()-1);
+        exStr = exStr.substring(0, exStr.length() - 1);
         turnover = Float.valueOf(exStr);
 
         Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
@@ -129,14 +146,13 @@ public class Candlestick extends BaseObject {
     }
 
     public void draw(float x, Canvas canvas, Paint pen) {
-        getIncrease();
-        if(0 <= increase) {
+        if (0 <= increase) {
             pen.setColor(Color.parseColor("#1ABE5B"));
         } else {
             pen.setColor(Color.parseColor("#EE4952"));
         }
 
-        canvas.drawRect(x, 20, x+10, 40, pen);
+        canvas.drawRect(x, 20, x + 10, 40, pen);
     }
 
     public float getTurnover() {
@@ -158,6 +174,7 @@ public class Candlestick extends BaseObject {
     private float close;// 收盘价
     private float vary;// 涨跌变化 (Sohu)
     private float adjClose;// Adj Close (Yahoo)
+    private float lastClose;// 昨日收盘价
     private float high;// 最高价
     private float low;// 最低价
     private float increase;// 当日涨幅

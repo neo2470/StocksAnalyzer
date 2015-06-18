@@ -37,6 +37,7 @@
         android:layout_weight="2"
         android:gravity="center"
         android:textColor="@color/stock_rise"
+        android:text="--.--"
         android:textSize="@dimen/stock_float" />
 
     <TextView
@@ -46,6 +47,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:textColor="@color/stock_rise"
+        android:text="--.--%"
         android:textSize="@dimen/stock_float" />
 
 </LinearLayout>

@@ -218,6 +218,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             }
             if(stock.isSuspended()) {
                 textColor = act.getResources().getColor(R.color.stock_suspended);
+                price = stock.getToday().getLastCloseString();
                 increaseString = act.getString(R.string.trade_suspended);
             }
 
