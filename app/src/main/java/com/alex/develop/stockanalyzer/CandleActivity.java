@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -30,17 +31,20 @@ public class CandleActivity extends BaseActivity {
         Analyzer analyzer = (Analyzer) getApplication();
         stock = analyzer.getStockList().get(index);
 
-        ActionBar actionBar = getActionBar();
-        if(null != actionBar) {
-            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-            actionBar.setCustomView(R.layout.candle_action_bar_layout);
-
-            View view = actionBar.getCustomView();
-            
-        }
-
         // 请求历史数据
         new AsyncSohuStockHistory().execute("20150601", "20150603", Enum.Period.Day.toString());
+    }
+
+    private void createActionBarView() {
+
+        ActionBar actionBar = getActionBar();
+        if(null != actionBar) {
+            View view = LayoutInflater.from(this).inflate(R.layout.candle_action_bar_layout, null);
+
+            actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            actionBar.setCustomView(view);
+        }
+
     }
 
     public static final String ARG_STOCK_INDEX = "stockIndex";
