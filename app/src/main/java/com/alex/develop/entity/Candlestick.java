@@ -28,6 +28,10 @@ public class Candlestick extends BaseObject {
         return open;
     }
 
+    public String getOpenString() {
+        return String.format("%.2f", open);
+    }
+
     public void setOpen(float open) {
         this.open = open;
     }
@@ -52,6 +56,10 @@ public class Candlestick extends BaseObject {
         return high;
     }
 
+    public String getHighString() {
+        return String.format("%.2f", high);
+    }
+
     public void setHigh(float high) {
         this.high = high;
     }
@@ -60,12 +68,20 @@ public class Candlestick extends BaseObject {
         return low;
     }
 
+    public String getLowString() {
+        return String.format("%.2f", low);
+    }
+
     public void setLow(float low) {
         this.low = low;
     }
 
     public long getVolume() {
         return volume;
+    }
+
+    public String getVolumeString() {
+        return volume+"";
     }
 
     public void setVolume(long volume) {
@@ -90,6 +106,10 @@ public class Candlestick extends BaseObject {
 
     public float getMoney() {
         return money;
+    }
+
+    public String getMoneyString() {
+        return money+"";
     }
 
     public void setMoney(float money) {

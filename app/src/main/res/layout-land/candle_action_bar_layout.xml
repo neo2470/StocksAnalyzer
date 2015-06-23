@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/stockName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上证指数" />
+
+        <TextView
+            android:id="@+id/stockCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="000001" />
+
+    </LinearLayout>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/candlePrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最新 %f" />
+
+            <TextView
+                android:id="@+id/candleOpen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="今开 %f" />
+
+            <TextView
+                android:id="@+id/candleHigh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最高 %f" />
+
+            <TextView
+                android:id="@+id/candleVolume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="成交量 %f" />
+
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/candleIncrease"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="涨幅 %f" />
+
+            <TextView
+                android:id="@+id/candleTurnover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="换手 %f" />
+
+            <TextView
+                android:id="@+id/candleLow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最低 %f" />
+
+            <TextView
+                android:id="@+id/candleMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="成交额 %f" />
+
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

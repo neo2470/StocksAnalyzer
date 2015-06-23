@@ -46,5 +46,16 @@
     <!-- splash.xml-->
     <string name="start_tips_install">首次安装，下载数据 %1$d</string>
     <string name="start_tips_update">更新数据 %1$d</string>
+
+    <!-- candle_action_bar_layout.xml-->
+    <string name="candle_price">最新 %1$s</string>
+    <string name="candle_open">今开 %1$s</string>
+    <string name="candle_high">最高 %1$s</string>
+    <string name="candle_volume">成交量 %1$s</string>
+
+    <string name="candle_increase">涨幅 %1$s</string>
+    <string name="candle_turnover">换手 %1$s</string>
+    <string name="candle_low">最低 %1$s</string>
+    <string name="candle_money">成交额 %1$s</string>
     
 </resources>

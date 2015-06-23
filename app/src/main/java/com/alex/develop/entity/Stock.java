@@ -47,7 +47,6 @@ public final class Stock extends BaseObject {
 
             if(null == today) {
                 today = new Candlestick();
-                candlesticks.add(today);
             }
         }
 

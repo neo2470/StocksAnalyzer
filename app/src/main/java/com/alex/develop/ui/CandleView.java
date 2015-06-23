@@ -20,6 +20,10 @@ import java.util.List;
  */
 public class CandleView extends View {
 
+    public interface onCandlestickSelectedListener {
+        void onSelected(Candlestick candlestick);
+    }
+
     public CandleView(Context context) {
         super(context);
         initialize();
