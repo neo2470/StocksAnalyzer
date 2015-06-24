@@ -6,4 +6,6 @@
 
     <dimen name="stock_fragment_padding_left">10dp</dimen>
     <dimen name="stock_fragment_padding_right">10dp</dimen>
+
+    <dimen name="action_bar_header_space">5dp</dimen>
 </resources>

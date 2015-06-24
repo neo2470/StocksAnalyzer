@@ -42,19 +42,22 @@
                 android:id="@+id/candleOpen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="今开 %f" />
+                android:text="今开 %f"
+                android:layout_marginLeft="@dimen/action_bar_header_space"/>
 
             <TextView
                 android:id="@+id/candleHigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最高 %f" />
+                android:text="最高 %f"
+                android:layout_marginLeft="@dimen/action_bar_header_space"/>
 
             <TextView
                 android:id="@+id/candleVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="成交量 %f" />
+                android:text="成交量 %f"
+                android:layout_marginLeft="@dimen/action_bar_header_space"/>
 
         </TableRow>
 
@@ -70,19 +73,22 @@
                 android:id="@+id/candleTurnover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="换手 %f" />
+                android:text="换手 %f"
+                android:layout_marginLeft="@dimen/action_bar_header_space"/>
 
             <TextView
                 android:id="@+id/candleLow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最低 %f" />
+                android:text="最低 %f"
+                android:layout_marginLeft="@dimen/action_bar_header_space"/>
 
             <TextView
                 android:id="@+id/candleMoney"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="成交额 %f" />
+                android:text="成交额 %f"
+                android:layout_marginLeft="@dimen/action_bar_header_space"/>
 
         </TableRow>
     </TableLayout>

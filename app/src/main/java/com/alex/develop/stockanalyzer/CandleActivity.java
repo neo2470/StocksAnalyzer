@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +31,16 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         super.onCreate(savedInstanceState);
         setContentView(R.layout.candle_activity);
 
-        candleView = (CandleView) findViewById(R.id.candleView);
         int index = getIntent().getExtras().getInt(ARG_STOCK_INDEX);
         Analyzer analyzer = (Analyzer) getApplication();
         stock = analyzer.getStockList().get(index);
 
         // 自定义ActionBar内容
         createActionBarView();
+
+        candleView = (CandleView) findViewById(R.id.candleView);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        candleView.notifyDisplayChanged(dm);
 
         // 请求历史数据
         new AsyncSohuStockHistory().execute("20150601", "20150603", Enum.Period.Day.toString());
@@ -75,6 +79,8 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
                 holder.candleTurnover = (TextView) view.findViewById(R.id.candleTurnover);
                 holder.candleLow = (TextView) view.findViewById(R.id.candleLow);
                 holder.candleMoney = (TextView) view.findViewById(R.id.candleMoney);
+
+                updateHeaderInfo(null);
             }
 
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -86,6 +92,22 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
 
         int orientation = getResources().getConfiguration().orientation;
         if(Configuration.ORIENTATION_PORTRAIT == orientation) {
+            return;
+        }
+
+        if(null == candlestick) {
+            String data = getString(R.string.stock_default);
+
+            holder.candlePrice.setText(String.format(getString(R.string.candle_price), data));
+            holder.candleOpen.setText(String.format(getString(R.string.candle_open), data));
+            holder.candleHigh.setText(String.format(getString(R.string.candle_high), data));
+            holder.candleVolume.setText(String.format(getString(R.string.candle_volume), data));
+
+            holder.candleIncrease.setText(String.format(getString(R.string.candle_increase), data));
+            holder.candleTurnover.setText(String.format(getString(R.string.candle_turnover), data));
+            holder.candleLow.setText(String.format(getString(R.string.candle_low), data));
+            holder.candleMoney.setText(String.format(getString(R.string.candle_money), data));
+
             return;
         }
 

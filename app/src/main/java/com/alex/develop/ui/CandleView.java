@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PathEffect;
 import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,14 +25,15 @@ public class CandleView extends View {
         void onSelected(Candlestick candlestick);
     }
 
-    public CandleView(Context context) {
-        super(context);
-        initialize();
-    }
-
     public CandleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initialize();
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -39,22 +41,27 @@ public class CandleView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN :
+                drawCoordinate = true;
                 touch.set(event.getX(), event.getY());
-                invalidate();
-                return true;
+                break;
             case MotionEvent.ACTION_MOVE :
                 touch.set(event.getX(), event.getY());
-                invalidate();
-                return true;
-            default:
-                return super.onTouchEvent(event);
+                break;
+            case MotionEvent.ACTION_UP:
+                drawCoordinate = false;
+                break;
+
         }
+
+        invalidate();
+        return true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        // 绘制K线
         if(null != candles) {
             float x = 0;
             for (Candlestick candle : candles) {
@@ -63,15 +70,31 @@ public class CandleView extends View {
             }
         }
 
-        if (0 < touch.x && 0 < touch.y) {
-            canvas.drawLine(0, touch.y, 1000, touch.y, pen);
-            canvas.drawLine(touch.x, 0, touch.x, 1000, pen);
-            canvas.drawCircle(touch.x, touch.y, 10, pen);
+        // 绘制分割线
+        canvas.drawLine(0, candleHeight, width, candleHeight, pen);
+
+        // 绘制指标
+
+        if (drawCoordinate) {
+            canvas.drawLine(0, touch.y, width, touch.y, pen);
+            canvas.drawLine(touch.x, 0, touch.x, height, pen);
         }
     }
 
     public void setCandles(List<Candlestick> candles) {
         this.candles = candles;
+    }
+
+    public void notifyDisplayChanged(DisplayMetrics dm) {
+        width = dm.widthPixels;
+        height = dm.heightPixels;
+
+        if(width < height) {
+            height = height / 2;
+        }
+
+        candleHeight = (int) (height * 0.7f);
+        quotaHeight = height - candleHeight;
         invalidate();
     }
 
@@ -83,9 +106,17 @@ public class CandleView extends View {
         pen.setStrokeWidth(1);
 
         touch = new PointF();
+        drawCoordinate = false;
     }
 
+    private Paint pen;// 画笔
+    private PointF touch;// 触点
+    private boolean drawCoordinate;// 是否绘制坐标线
+
+    private int width;// view的宽度
+    private int height;// view的高度
+    private int candleHeight;// K线部分view的高度
+    private int quotaHeight;// 指标部分view的高度
+
     private List<Candlestick> candles;
-    private PointF touch;
-    private Paint pen;
 }
