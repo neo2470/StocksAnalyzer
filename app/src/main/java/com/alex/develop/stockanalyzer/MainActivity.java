@@ -28,19 +28,19 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
 
-		if(null == viewList) {
-			viewList = new ArrayList<>();
+		if(null == fragList) {
+
+			fragList = new ArrayList<>();
 
 			// 市场行情
-			viewList.add(new StockFragment());
+			fragList.add(new StockFragment());
 
 			// 自选股
 			StockFragment stockFragment = new StockFragment();
 			Bundle bundle = new Bundle();
 			bundle.putBoolean(StockFragment.ARG_IS_COLLECT_VIEW, true);
 			stockFragment.setArguments(bundle);
-
-			viewList.add(new StockFragment());
+			fragList.add(stockFragment);
 		}
 
 		ViewHolder viewHolder = new ViewHolder(getSupportFragmentManager());
@@ -94,7 +94,7 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 	}
 
 	private NonSlidableViewPager viewPager;
-	private List<Fragment> viewList;
+	private List<Fragment> fragList;
 
 	private class ViewHolder extends FragmentPagerAdapter {
 
@@ -104,12 +104,12 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 
 		@Override
 		public Fragment getItem(int position) {
-			return viewList.get(position);
+			return fragList.get(position);
 		}
 
 		@Override
 		public int getCount() {
-			return viewList.size();
+			return fragList.size();
 		}
 	}
 }

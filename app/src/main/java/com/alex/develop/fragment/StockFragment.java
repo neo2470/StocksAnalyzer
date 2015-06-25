@@ -3,6 +3,7 @@ package com.alex.develop.fragment;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,8 +64,9 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         Analyzer analyzer = (Analyzer) act.getApplication();
         if (null != bundle) {
             boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
+            Log.d("Print", isCollectView+"");
             if (isCollectView) {
-                stocks = analyzer.getStockList();
+                stocks = analyzer.getCollectStockList();
             } else {
                 stocks = analyzer.getStockList();
             }

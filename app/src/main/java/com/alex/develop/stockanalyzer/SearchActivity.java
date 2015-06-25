@@ -2,6 +2,8 @@ package com.alex.develop.stockanalyzer;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 /**
  * Created by alex on 15-6-15.
@@ -19,6 +21,5 @@ public class SearchActivity extends BaseActivity {
             actionBar.setCustomView(R.layout.search_action_bar_titile);
         }
     }
-
 
 }

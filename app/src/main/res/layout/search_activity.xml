@@ -11,4 +11,8 @@
         android:drawableLeft="@android:drawable/ic_menu_search"
         android:textColor="@android:color/black"/>
 
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
