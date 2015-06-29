@@ -97,9 +97,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (SCROLL_STATE_IDLE == scrollState) {
-                    if (queryStart < queryStop) {
-                        new UpdateStockInfo().execute(queryStart, queryStop);
-                    }
+                    new UpdateStockInfo().execute(queryStart, queryStop);
                 }
             }
 
