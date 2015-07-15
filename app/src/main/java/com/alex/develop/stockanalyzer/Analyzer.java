@@ -1,8 +1,10 @@
 package com.alex.develop.stockanalyzer;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.alex.develop.entity.Stock;
+import com.alex.develop.util.SQLiteHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,16 @@ import java.util.List;
  * Created by alex on 15-6-11.
  */
 public class Analyzer extends Application {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        context = getApplicationContext();
+    }
+
+    public static Context getContext() {
+        return context;
+    }
 
     public List<Stock> getStockList() {
         return stockList;
@@ -78,6 +90,8 @@ public class Analyzer extends Application {
 
         return array;
     }
+
+    private static Context context;
 
     private List<Stock> stockList;
     private List<Stock> stockCollected;

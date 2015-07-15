@@ -2,6 +2,7 @@ package com.alex.develop.entity;
 
 import android.provider.BaseColumns;
 
+import com.alex.develop.task.CollectStockTask;
 import com.alex.develop.util.StockDataAPIHelper;
 
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ public final class Stock extends BaseObject {
             public static final String CODE_CN = "code_cn";// 股票拼音首字母代码
             public static final String NAME = "name";// 股票名称
             public static final String COLLECT = "collect";// 股票是否被收藏
+            public static final String COLLECT_STAMP = "collect_stamp";// 股票被收藏的时间戳
             public static final String SEARCH = "search";// 股票被搜索的次数
         }
 
@@ -35,6 +37,7 @@ public final class Stock extends BaseObject {
                         Column.CODE_CN + " char(10)," +
                         Column.NAME + " nchar(10)," +
                         Column.COLLECT + " INTEGER," +
+                        Column.COLLECT_STAMP + " TEXT," +
                         Column.SEARCH + " INTEGER)";
     }
 
@@ -149,6 +152,13 @@ public final class Stock extends BaseObject {
 
     public void setCollect(int collect) {
         this.collect = collect;
+    }
+
+    public void collect(int collect) {
+        this.collect = collect;
+
+        // 更新数据库
+        new CollectStockTask(collect).execute(this);
     }
 
     public int getSearch() {

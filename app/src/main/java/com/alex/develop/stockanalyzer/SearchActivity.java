@@ -2,6 +2,7 @@ package com.alex.develop.stockanalyzer;
 
 import android.app.ActionBar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class SearchActivity extends BaseActivity {
         SearchAdapter adapter = new SearchAdapter(analyzer.getStockList());
 
         AutoCompleteTextView stockSearch = (AutoCompleteTextView) findViewById(R.id.stockSearch);
+        stockSearch.setThreshold(1);
         stockSearch.setAdapter(adapter);
 
     }
@@ -97,7 +99,7 @@ public class SearchActivity extends BaseActivity {
                 holder.stockCollectBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        stock.setCollect(isChecked ? 1 : 0);
+                        stock.collect(isChecked ? 1 : 0);
                     }
                 });
 

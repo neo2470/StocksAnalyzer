@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:layout_height="match_parent">
 
     <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOn=""
+        android:id="@+id/stockCollectBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/btn_collect_style"
         android:textOff=""
-        android:background="@drawable/collect_normal"
-        android:id="@+id/stockCollectBtn"/>
+        android:textOn="" />
 
     <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="601919"
-        android:textSize="@dimen/stock_name"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:id="@+id/stockCode"/>
-
-    <TextView
+        android:id="@+id/stockCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="601919"
+        android:textSize="@dimen/stock_name" />
+
+    <TextView
+        android:id="@+id/stockName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:text="中国远洋"
-        android:textSize="@dimen/stock_name"
-        android:id="@+id/stockName"/>
+        android:textSize="@dimen/stock_name" />
 
-
-</LinearLayout>
+</RelativeLayout>

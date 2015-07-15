@@ -9,6 +9,7 @@ import com.alex.develop.entity.Stock;
 
 /**
  * Created by alex on 15-6-6.
+ * Create SQLite database
  */
 public class SQLiteHelper extends SQLiteOpenHelper {
 
