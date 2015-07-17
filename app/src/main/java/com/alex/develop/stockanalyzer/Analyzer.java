@@ -2,15 +2,19 @@ package com.alex.develop.stockanalyzer;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.alex.develop.entity.Stock;
 import com.alex.develop.util.SQLiteHelper;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by alex on 15-6-11.
+ * 存储全局数据
  */
 public class Analyzer extends Application {
 
@@ -24,30 +28,50 @@ public class Analyzer extends Application {
         return context;
     }
 
-    public List<Stock> getStockList() {
+    public static List<Stock> getStockList() {
         return stockList;
     }
 
-    public void setStockList(List<Stock> stockList) {
-        this.stockList = stockList;
+    public static void setStockList(List<Stock> stockList) {
+        Analyzer.stockList = stockList;
     }
 
     /**
      * 获取被收藏的股票列表(自选股)
-     * @return
+     * @return 自选股列表
      */
-    public List<Stock> getCollectStockList() {
+    public static List<Stock> getCollectStockList() {
 
-        if(null == stockCollected) {
-            stockCollected = new ArrayList<>();
-        } else {
-            return stockCollected;
-        }
+        List<Stock> stockCollected = new ArrayList<>();
 
         for(Stock stock : stockList) {
             if(stock.isCollected()) {
                 stockCollected.add(stock);
             }
+        }
+
+        // 按照收藏的先后顺序排列
+        Collections.sort(stockCollected, new Comparator<Stock>() {
+            @Override
+            public int compare(Stock lhs, Stock rhs) {
+
+                int result;
+                long flag = lhs.getCollectStamp() - rhs.getCollectStamp();
+
+                if(0 > flag) {
+                    result = -1;
+                } else if(0 < flag) {
+                    result = 1;
+                } else {
+                    result = 0;
+                }
+
+                return -result;
+            }
+        });
+
+        for(Stock stock : stockCollected) {
+            Log.d("Print", stock.getName() + ", " + stock.getCollectStamp());
         }
 
         return stockCollected;
@@ -57,13 +81,9 @@ public class Analyzer extends Application {
      * 获取被搜索的股票列表
      * @return
      */
-    public List<Stock> getSearchStockList() {
+    public static List<Stock> getSearchStockList() {
 
-        if(null == stockSearched) {
-            stockSearched = new ArrayList<>();
-        } else {
-            return stockSearched;
-        }
+        List<Stock> stockSearched = new ArrayList<>();
 
         for(Stock stock : stockList) {
             if(0 < stock.getSearch()) {
@@ -74,26 +94,6 @@ public class Analyzer extends Application {
         return stockSearched;
     }
 
-    /**
-     * 获取股票代码列表，用于搜索
-     * @return
-     */
-    public String[] getStockCodeArray() {
-        int size = stockList.size();
-        String[] array = new String[size];
-
-        int i = 0;
-        for(Stock stock : stockList) {
-            array[i] = stock.getCode();
-            ++i;
-        }
-
-        return array;
-    }
-
     private static Context context;
-
-    private List<Stock> stockList;
-    private List<Stock> stockCollected;
-    private List<Stock> stockSearched;
+    private static List<Stock> stockList;
 }

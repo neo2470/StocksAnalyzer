@@ -142,6 +142,14 @@ public final class Stock extends BaseObject {
         return candlesticks;
     }
 
+    public long getCollectStamp() {
+        return collectStamp;
+    }
+
+    public void setCollectStamp(long collectStamp) {
+        this.collectStamp = collectStamp;
+    }
+
     public int getCollect() {
         return collect;
     }
@@ -237,6 +245,7 @@ public final class Stock extends BaseObject {
     private String time;// 时间
     private boolean suspend;// 是否停牌
     private long stamp;// 查询时间戳
+    private long collectStamp;// 被收藏的时间戳
     private int collect;// 股票是否被收藏
     private int search;// 股票被搜索的次数
 

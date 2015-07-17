@@ -22,7 +22,7 @@ import java.util.List;
  * @author Created by alex 2014/10/23
  */
 public class MainActivity extends BaseActivity implements StockFragment.OnStockSelectedListener {
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,11 +62,19 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 			case R.id.action_search :
 				Intent intent = new Intent();
 				intent.setClass(this, SearchActivity.class);
-				startActivity(intent);
+				startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		// 自选股数据刷新
+		fragList.get(1).onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -93,9 +101,6 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 		}
 	}
 
-	private NonSlidableViewPager viewPager;
-	private List<Fragment> fragList;
-
 	private class ViewHolder extends FragmentPagerAdapter {
 
 		public ViewHolder(FragmentManager fm) {
@@ -112,4 +117,7 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 			return fragList.size();
 		}
 	}
+
+	private NonSlidableViewPager viewPager;
+	private List<Fragment> fragList;
 }

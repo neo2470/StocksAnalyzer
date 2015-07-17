@@ -1,6 +1,7 @@
 package com.alex.develop.stockanalyzer;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import java.util.Objects;
 
 /**
  * Created by alex on 15-6-15.
+ * Search Stocks by AutoCompleteTextView
  */
 public class SearchActivity extends BaseActivity {
 
@@ -39,18 +41,12 @@ public class SearchActivity extends BaseActivity {
 
         Analyzer analyzer = (Analyzer) getApplication();
 
-        SearchAdapter adapter = new SearchAdapter(analyzer.getStockList());
+        SearchAdapter adapter = new SearchAdapter(Analyzer.getStockList());
 
         AutoCompleteTextView stockSearch = (AutoCompleteTextView) findViewById(R.id.stockSearch);
         stockSearch.setThreshold(1);
         stockSearch.setAdapter(adapter);
-
-    }
-
-    private static class ViewHolder {
-        ToggleButton stockCollectBtn;
-        TextView stockCode;
-        TextView stockName;
+        setResult(Activity.RESULT_OK);
     }
 
     private class SearchAdapter extends BaseAdapter implements Filterable {
@@ -95,14 +91,6 @@ public class SearchActivity extends BaseActivity {
 
                 holder = new ViewHolder();
                 holder.stockCollectBtn = (ToggleButton) convertView.findViewById(R.id.stockCollectBtn);
-
-                holder.stockCollectBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        stock.collect(isChecked ? 1 : 0);
-                    }
-                });
-
                 holder.stockCode = (TextView) convertView.findViewById(R.id.stockCode);
                 holder.stockName = (TextView) convertView.findViewById(R.id.stockName);
 
@@ -111,19 +99,25 @@ public class SearchActivity extends BaseActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
+
+            holder.stockCollectBtn.setOnCheckedChangeListener(null);
             if (stock.isCollected()) {
                 holder.stockCollectBtn.setChecked(true);
+            } else {
+                holder.stockCollectBtn.setChecked(false);
             }
+
+            holder.stockCollectBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    stock.collect(isChecked ? 1 : 0);
+                }
+            });
 
             holder.stockCode.setText(stock.getCode());
             holder.stockName.setText(stock.getName());
             return convertView;
         }
-
-        private List<Stock> stocks;
-        private List<Stock> originalStocks;
-        private final Object mLock = new Object();
-        private StockFilter filter;
 
         private class StockFilter extends Filter {
 
@@ -172,5 +166,17 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         }
+
+
+        private List<Stock> stocks;
+        private List<Stock> originalStocks;
+        private final Object mLock = new Object();
+        private StockFilter filter;
+    }
+
+    private static class ViewHolder {
+        ToggleButton stockCollectBtn;
+        TextView stockCode;
+        TextView stockName;
     }
 }

@@ -95,11 +95,13 @@ public class Splash extends BaseActivity {
 							String stockCodeCN = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.CODE_CN));
 							String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.NAME));
 							int collect = cursor.getInt(cursor.getColumnIndex(Stock.Table.Column.COLLECT));
+							long collectStamp = cursor.getLong(cursor.getColumnIndex(Stock.Table.Column.COLLECT_STAMP));
 							int search = cursor.getInt(cursor.getColumnIndex(Stock.Table.Column.SEARCH));
 
 							Stock stock = new Stock(stockCode, stockName);
 							stock.setCodeCN(stockCodeCN);
 							stock.setCollect(collect);
+							stock.setCollectStamp(collectStamp);
 							stock.setSearch(search);
 
 							stocks.add(stock);
@@ -110,8 +112,7 @@ public class Splash extends BaseActivity {
 						cursor.close();
 					}
 
-					Analyzer analyzer = (Analyzer) getApplication();
-					analyzer.setStockList(stocks);
+					Analyzer.setStockList(stocks);
 				}
 				return null;
 			}
@@ -341,8 +342,7 @@ public class Splash extends BaseActivity {
 
 					publishProgress(count*100/total);
 				}
-				Analyzer analyzer = (Analyzer) getApplication();
-				analyzer.setStockList(stocks);
+				Analyzer.setStockList(stocks);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

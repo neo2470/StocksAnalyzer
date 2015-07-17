@@ -1,36 +1,33 @@
 package com.alex.develop.fragment;
 
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
+import com.alex.develop.task.QueryStockToday;
 import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
-import com.alex.develop.util.NetworkHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by alex on 15-5-22.
- * 自选股列表
+ * 股票行情列表
  */
 public class StockFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener {
 
@@ -61,17 +58,15 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         View view = inflater.inflate(R.layout.stock_fragment, container, false);
 
         Bundle bundle = getArguments();
-        Analyzer analyzer = (Analyzer) act.getApplication();
         if (null != bundle) {
-            boolean isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
-            Log.d("Print", isCollectView+"");
+            isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
             if (isCollectView) {
-                stocks = analyzer.getCollectStockList();
+                stocks = Analyzer.getCollectStockList();
             } else {
-                stocks = analyzer.getStockList();
+                stocks = Analyzer.getStockList();
             }
         } else {
-            stocks = analyzer.getStockList();
+            stocks = Analyzer.getStockList();
         }
 
         RadioButton codeRadio = (RadioButton) view.findViewById(R.id.codeRadio);
@@ -81,6 +76,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         RadioButton increaseRadio = (RadioButton) view.findViewById(R.id.increaseRadio);
         increaseRadio.setOnCheckedChangeListener(this);
 
+        load = act.findViewById(R.id.loading);
         final ListView stockList = (ListView) view.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
         stockList.setAdapter(stockListAdapter);
@@ -97,7 +93,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (SCROLL_STATE_IDLE == scrollState) {
-                    new UpdateStockInfo().execute(queryStart, queryStop);
+                    queryStockToday();
                 }
             }
 
@@ -107,7 +103,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
                 queryStop = firstVisibleItem + visibleItemCount;
 
                 if (flag && 0 < visibleItemCount) {
-                    new UpdateStockInfo().execute(queryStart, queryStop);
+                    queryStockToday();
                     flag = false;
                 }
             }
@@ -122,11 +118,27 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_refresh :
-                new UpdateStockInfo().execute(queryStart, queryStop);
+                queryStockToday();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(Activity.RESULT_OK == resultCode) {
+
+            Log.d("Print", "StockFragment come back");
+
+            if(REQUEST_SEARCH_STOCK == requestCode && isCollectView) {
+                stocks = Analyzer.getCollectStockList();
+                stockListAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -142,10 +154,14 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         }
     }
 
-    private Stock[] queryStockList(int start, int end) {
+    /**
+     * 查询当前View可见的所有股票的行情数据
+     */
+    private void queryStockToday() {
+
 
         List<Stock> temp = new ArrayList<>();
-        for(int i = start; i<end; ++i) {
+        for(int i = queryStart; i<queryStop; ++i) {
             Stock stock = stocks.get(i);
             long stamp = System.currentTimeMillis();
             if(StockDataAPIHelper.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {//5秒内不重复查询
@@ -155,22 +171,11 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             }
         }
 
-        return temp.toArray(new Stock[temp.size()]);
+        Stock[] stocks =temp.toArray(new Stock[temp.size()]);
+
+        new QueryStockToday(load, stockListAdapter).execute(stocks);
     }
 
-    public static final String ARG_IS_COLLECT_VIEW = "collect";
-
-    private int queryStart;
-    private int queryStop;
-    private List<Stock> stocks;// 自选股列表
-    private OnStockSelectedListener stockSelectedListener;
-    private StockListAdapter stockListAdapter;
-    private static  class ViewHolder {
-        TextView stockName;
-        TextView stockID;
-        TextView stockClose;
-        TextView stockIncrease;
-    }
     private class StockListAdapter extends BaseAdapter {
 
         @Override
@@ -244,31 +249,22 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         }
     }
 
-    private class UpdateStockInfo extends AsyncTask<Integer, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            loadView = (ImageView) act.findViewById(R.id.loading);
-            Animation anim = AnimationUtils.loadAnimation(act, R.anim.loading_data);
-            loadView.setVisibility(View.VISIBLE);
-            loadView.startAnimation(anim);
-        }
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            NetworkHelper.querySinaToday(queryStockList(params[0], params[1]));
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            loadView.setVisibility(View.GONE);
-            loadView.clearAnimation();
-            stockListAdapter.notifyDataSetChanged();
-        }
-
-        private ImageView loadView;
+    private static  class ViewHolder {
+        TextView stockName;
+        TextView stockID;
+        TextView stockClose;
+        TextView stockIncrease;
     }
+
+    private int queryStart;
+    private int queryStop;
+    private boolean isCollectView;
+    private List<Stock> stocks;// 自选股列表
+
+    private View load;
+    private StockListAdapter stockListAdapter;
+    private OnStockSelectedListener stockSelectedListener;
+
+    public static final String ARG_IS_COLLECT_VIEW = "collect";
+    public static final int REQUEST_SEARCH_STOCK = 0X3531;
 }

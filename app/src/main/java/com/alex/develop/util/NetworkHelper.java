@@ -1,6 +1,5 @@
 package com.alex.develop.util;
 
-import com.alex.develop.entity.Candlestick;
 import com.alex.develop.entity.Stock;
 
 import java.io.BufferedReader;
@@ -9,8 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by alex on 15-5-24.
@@ -93,6 +90,7 @@ public class NetworkHelper {
      * 获取历史行情数据
      * @param stock 股票
      * @param startDate 历史数据的开始时间(将读取从startDate到上个交易日的所有历史数据，如果startDate为空，则读取自股票上市到上个交易日的所有数据)
+     * @deprecated
      */
     public static float[] queryYahooHistory(Stock stock, String startDate) {
 
