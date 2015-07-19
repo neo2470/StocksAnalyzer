@@ -47,7 +47,7 @@
     <string name="start_tips_install">首次安装，下载数据 %1$d</string>
     <string name="start_tips_update">更新数据 %1$d</string>
 
-    <!-- candle_action_bar_layout.xml-->
+    <!-- stock_header_layout.xml-->
     <string name="candle_price">最新 %1$s</string>
     <string name="candle_open">今开 %1$s</string>
     <string name="candle_high">最高 %1$s</string>

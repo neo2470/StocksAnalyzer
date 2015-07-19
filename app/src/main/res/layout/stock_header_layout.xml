@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_vertical"
-    android:orientation="horizontal">
+    android:layout_gravity="center_vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,21 +42,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="今开 %f"
-                android:layout_marginLeft="@dimen/action_bar_header_space"/>
+                android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleHigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="最高 %f"
-                android:layout_marginLeft="@dimen/action_bar_header_space"/>
+                android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="成交量 %f"
-                android:layout_marginLeft="@dimen/action_bar_header_space"/>
+                android:layout_marginLeft="@dimen/stock_header_space"/>
 
         </TableRow>
 
@@ -74,22 +73,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="换手 %f"
-                android:layout_marginLeft="@dimen/action_bar_header_space"/>
+                android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleLow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="最低 %f"
-                android:layout_marginLeft="@dimen/action_bar_header_space"/>
+                android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleMoney"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="成交额 %f"
-                android:layout_marginLeft="@dimen/action_bar_header_space"/>
+                android:layout_marginLeft="@dimen/stock_header_space"/>
 
         </TableRow>
     </TableLayout>
-</LinearLayout>
+</merge>

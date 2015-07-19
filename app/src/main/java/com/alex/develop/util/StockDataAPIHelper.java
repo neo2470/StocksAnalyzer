@@ -108,11 +108,11 @@ public class StockDataAPIHelper {
     }
 
     public static String getSohuHistoryUrl(String stockCode, String start, String end) {
-        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.ASC.toString(), Enum.Period.Day.toString());
+        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.DESC.toString(), Enum.Period.Day.toString());
     }
 
     public static String getSohuHistoryUrl(String stockCode, String start, String end, String period) {
-        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.ASC.toString(), period);
+        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.DESC.toString(), period);
     }
 
     public static String getSohuHistoryUrl(String stockCode, String start, String end, boolean statistics, String order, String period) {
@@ -143,11 +143,11 @@ public class StockDataAPIHelper {
 
         // 排序方式
         builder.append("&order=");
-        builder.append(order.toString());
+        builder.append(order);
 
         // 查询周期
         builder.append("&period=");
-        builder.append(period.toString());
+        builder.append(period);
 
         return builder.toString();
     }

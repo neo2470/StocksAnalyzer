@@ -13,11 +13,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.alex.develop.entity.Candlestick;
+import com.alex.develop.entity.Stock;
 
 import java.util.List;
 
 /**
  * Created by alex on 15-6-14.
+ * 自定义View，主要用于绘制K线图
  */
 public class CandleView extends View {
 
@@ -62,42 +64,17 @@ public class CandleView extends View {
         super.onDraw(canvas);
 
         // 绘制K线
-        if(null != candles) {
-            float x = 0;
-            for (Candlestick candle : candles) {
-                candle.draw(x, canvas, pen);
-                x += (Candlestick.WIDTH + Candlestick.SPACE);
-            }
-        }
+
 
         // 绘制分割线
         canvas.drawLine(0, candleHeight, width, candleHeight, pen);
 
         // 绘制指标
-
         if (drawCoordinate) {
             canvas.drawLine(0, touch.y, width, touch.y, pen);
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
         }
     }
-
-    public void setCandles(List<Candlestick> candles) {
-        this.candles = candles;
-    }
-
-    public void notifyDisplayChanged(DisplayMetrics dm) {
-        width = dm.widthPixels;
-        height = dm.heightPixels;
-
-        if(width < height) {
-            height = height / 2;
-        }
-
-        candleHeight = (int) (height * 0.7f);
-        quotaHeight = height - candleHeight;
-        invalidate();
-    }
-
 
     private void initialize() {
         pen = new Paint();
@@ -118,5 +95,5 @@ public class CandleView extends View {
     private int candleHeight;// K线部分view的高度
     private int quotaHeight;// 指标部分view的高度
 
-    private List<Candlestick> candles;
+    private Stock stock;
 }

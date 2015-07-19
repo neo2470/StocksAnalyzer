@@ -43,6 +43,8 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 			fragList.add(stockFragment);
 		}
 
+		Analyzer.setLoadView(findViewById(R.id.loading));
+
 		ViewHolder viewHolder = new ViewHolder(getSupportFragmentManager());
 		viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);
 		viewPager.setAdapter(viewHolder);
@@ -78,10 +80,11 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 	}
 
 	@Override
-	public void onStockSelected(int index) {
+	public void onStockSelected(int index, boolean isCollectView) {
 		Intent intent = new Intent();
 		intent.setClass(this, CandleActivity.class);
 		intent.putExtra(CandleActivity.ARG_STOCK_INDEX, index);
+		intent.putExtra(CandleActivity.ARG_FROM_COLLECT, isCollectView);
 		startActivity(intent);
 	}
 

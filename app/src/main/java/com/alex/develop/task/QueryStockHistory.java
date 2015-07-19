@@ -1,22 +1,26 @@
 package com.alex.develop.task;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.BaseAdapter;
 
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.NetworkHelper;
+import com.alex.develop.util.StockDataAPIHelper;
 
 /**
- * Created by alex on 15-7-17.
- * 查询一支或多支股票当日行情
+ * Created by alex on 15-7-18.
+ * 查询某支股票历史行情数据
  */
+public class QueryStockHistory extends AsyncTask<String, Void, Void> {
 
-public class QueryStockToday extends AsyncTask<Stock, Void, Void> {
+    public QueryStockHistory(Stock stock) {
+        this.stock = stock;
+    }
 
     @Override
     protected void onPreExecute() {
@@ -28,8 +32,11 @@ public class QueryStockToday extends AsyncTask<Stock, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Stock... params) {
-        NetworkHelper.querySinaToday(params);
+    protected Void doInBackground(String... params) {
+        String url = StockDataAPIHelper.getSohuHistoryUrl(stock.getCode(), params[0], params[1], params[2]);
+        String data = NetworkHelper.getWebContent(url, StockDataAPIHelper.SOHU_CHARSET);
+        int result = stock.formSohu(data);
+        Log.d("Print", result+"");
         return null;
     }
 
@@ -40,4 +47,6 @@ public class QueryStockToday extends AsyncTask<Stock, Void, Void> {
         Analyzer.getLoadView().setVisibility(View.GONE);
         Analyzer.getLoadView().clearAnimation();
     }
+
+    private Stock stock;
 }

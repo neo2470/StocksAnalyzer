@@ -32,7 +32,7 @@ import java.util.List;
 public class StockFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener {
 
     public interface OnStockSelectedListener {
-        void onStockSelected(int index);
+        void onStockSelected(int index, boolean isCollectView);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         if (null != bundle) {
             isCollectView = bundle.getBoolean(ARG_IS_COLLECT_VIEW);
             if (isCollectView) {
-                stocks = Analyzer.getCollectStockList();
+                stocks = Analyzer.getCollectStockList(true);
             } else {
                 stocks = Analyzer.getStockList();
             }
@@ -76,7 +76,6 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         RadioButton increaseRadio = (RadioButton) view.findViewById(R.id.increaseRadio);
         increaseRadio.setOnCheckedChangeListener(this);
 
-        load = act.findViewById(R.id.loading);
         final ListView stockList = (ListView) view.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter();
         stockList.setAdapter(stockListAdapter);
@@ -85,7 +84,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                stockSelectedListener.onStockSelected(position);
+                stockSelectedListener.onStockSelected(position, isCollectView);
             }
         });
 
@@ -132,11 +131,8 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         super.onActivityResult(requestCode, resultCode, data);
 
         if(Activity.RESULT_OK == resultCode) {
-
-            Log.d("Print", "StockFragment come back");
-
             if(REQUEST_SEARCH_STOCK == requestCode && isCollectView) {
-                stocks = Analyzer.getCollectStockList();
+                stocks = Analyzer.getCollectStockList(true);
                 stockListAdapter.notifyDataSetChanged();
             }
         }
@@ -173,7 +169,17 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
         Stock[] stocks =temp.toArray(new Stock[temp.size()]);
 
-        new QueryStockToday(load, stockListAdapter).execute(stocks);
+        new QueryStockToday() {
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                if(null != stockListAdapter) {
+                    stockListAdapter.notifyDataSetChanged();
+                }
+            }
+        }.execute(stocks);
     }
 
     private class StockListAdapter extends BaseAdapter {
@@ -261,7 +267,6 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
     private boolean isCollectView;
     private List<Stock> stocks;// 自选股列表
 
-    private View load;
     private StockListAdapter stockListAdapter;
     private OnStockSelectedListener stockSelectedListener;
 

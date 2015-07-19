@@ -9,8 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Created by alex on 15-5-22.
@@ -46,7 +45,7 @@ public final class Stock extends BaseObject {
         this.name = name;
 
         if(null == candlesticks) {
-            candlesticks = new ArrayList();
+            candlesticks = new LinkedList<>();
 
             if(null == today) {
                 today = new Candlestick();
@@ -138,7 +137,7 @@ public final class Stock extends BaseObject {
         return today;
     }
 
-    public List<Candlestick> getCandlesticks() {
+    public LinkedList<Candlestick> getCandlesticks() {
         return candlesticks;
     }
 
@@ -209,14 +208,21 @@ public final class Stock extends BaseObject {
         stamp = System.currentTimeMillis();
     }
 
-    public boolean formSohu(String data) {
+    /**
+     * 根据sohu股票行情接口读取数据
+     * @param data sohu提供的json 数据
+     * @return 读取到的数据量, <0, 表示没有读到任何数据(无此股票)；>0,为一共读取到的行情数量
+     */
+    public int formSohu(String data) {
+
+        int flag = -1;
         try {
             JSONArray array = new JSONArray(data);
             JSONObject info = array.getJSONObject(0);
 
             String status = info.optString(StockDataAPIHelper.SOHU_JSON_STATUS);
             if(!status.equals(StockDataAPIHelper.SOHU_JSON_STATUS_OK)) {
-                return false;
+                return flag;
             }
 
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
@@ -224,15 +230,16 @@ public final class Stock extends BaseObject {
                 JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
                 for(int i=0; i<candle.length(); ++i) {
                     Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
-                    candlesticks.add(candlestick);
+                    candlesticks.add(0,candlestick);
                 }
-            }
 
+                flag = candle.length();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return true;
+        return flag;
     }
 
     private String code;  // 股票代码
@@ -250,5 +257,5 @@ public final class Stock extends BaseObject {
     private int search;// 股票被搜索的次数
 
     private Candlestick today;// 今日行情
-    private List<Candlestick> candlesticks;// 蜡烛线
+    private LinkedList<Candlestick> candlesticks;// 蜡烛线（链表）
 }
