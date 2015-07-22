@@ -1,5 +1,7 @@
 package com.alex.develop.util;
 
+import com.alex.develop.entity.Enum;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -96,6 +98,23 @@ public class DateHelper {
         }
 
         return String.format("%d%02d%02d", year, month + 1, day);
+    }
+
+    /**
+     * 计算{types}所指定的所有月份表示的日期区间
+     * @param types 所有月份
+     * @return
+     */
+    public static String[] getDateScope(Enum.EnumType... types) {
+
+        String[] data = new String[2];
+
+        // TODO
+
+        data[0] = "20150601";
+        data[1] = today();
+
+        return data;
     }
 
     private static int[] days = {

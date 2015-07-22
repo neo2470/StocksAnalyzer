@@ -86,11 +86,11 @@ public class StockDataAPIHelper {
      * @param data
      */
     public static void yahooParser(Stock stock, String[] data) {
-        List<Candlestick> candlesticks = stock.getCandlesticks();
-
-        if(null != candlesticks) {
-            candlesticks.add(new Candlestick(data));
-        }
+//        List<Candlestick> candlesticks = stock.getCandlesticks();
+//
+//        if(null != candlesticks) {
+//            candlesticks.add(new Candlestick(data));
+//        }
     }
 
     /**
@@ -108,14 +108,14 @@ public class StockDataAPIHelper {
     }
 
     public static String getSohuHistoryUrl(String stockCode, String start, String end) {
-        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.DESC.toString(), Enum.Period.Day.toString());
+        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.ASC, Enum.Period.Day);
     }
 
-    public static String getSohuHistoryUrl(String stockCode, String start, String end, String period) {
-        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.DESC.toString(), period);
+    public static String getSohuHistoryUrl(String stockCode, String start, String end, Enum.Period period) {
+        return getSohuHistoryUrl(stockCode, start, end, false, Enum.Order.ASC, period);
     }
 
-    public static String getSohuHistoryUrl(String stockCode, String start, String end, boolean statistics, String order, String period) {
+    public static String getSohuHistoryUrl(String stockCode, String start, String end, boolean statistics, Enum.Order order, Enum.Period period) {
         StringBuilder builder = new StringBuilder();
         builder.append(SOHU_HISTORY);
 

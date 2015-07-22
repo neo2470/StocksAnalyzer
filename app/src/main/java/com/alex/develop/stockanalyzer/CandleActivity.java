@@ -1,13 +1,15 @@
 package com.alex.develop.stockanalyzer;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.ui.CandleView;
 import com.alex.develop.ui.StockHeader;
-import com.alex.develop.util.DateHelper;
+
+import java.util.ArrayList;
 
 /**
  * Created by alex on 15-6-15.
@@ -38,12 +40,26 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         candleView = (CandleView) findViewById(R.id.candleView);
 
         // 请求历史数据
-        new QueryStockHistory(stock).execute(DateHelper.offset(-30), DateHelper.today(), Enum.Period.Day.toString());
+        new QueryStockHistory(stock).execute(Enum.Month.Jun, Enum.Month.Jul, Enum.Period.Day);
     }
 
     @Override
     public void onSelected(Candlestick candlestick) {
         stockHeader.updateHeaderInfo(candlestick);
+    }
+
+    private void foreach() {
+
+        ArrayList<ArrayList<Candlestick>> data = stock.getCandlesticks();
+
+        for (int i=data.size()-1; i>=0; --i) {
+            ArrayList<Candlestick> node = data.get(i);
+            Log.d("Debug ArrayList # " + i, node.get(0).getDate() + " ~ " + node.get(node.size() - 1).getDate());
+
+            for(Candlestick candle : node) {
+                Log.d("Debug Candlestick", candle.getDate() + ", " + candle.getCloseString() + ", " + candle.getIncreaseString());
+            }
+        }
     }
 
     public static final String ARG_STOCK_INDEX = "stockIndex";

@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -45,7 +46,7 @@ public final class Stock extends BaseObject {
         this.name = name;
 
         if(null == candlesticks) {
-            candlesticks = new LinkedList<>();
+            candlesticks = new ArrayList<>();
 
             if(null == today) {
                 today = new Candlestick();
@@ -137,7 +138,7 @@ public final class Stock extends BaseObject {
         return today;
     }
 
-    public LinkedList<Candlestick> getCandlesticks() {
+    public ArrayList<ArrayList<Candlestick>> getCandlesticks() {
         return candlesticks;
     }
 
@@ -228,10 +229,12 @@ public final class Stock extends BaseObject {
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
             if(code.endsWith(this.code)) {
                 JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
+                ArrayList<Candlestick> candles = new ArrayList<>();
                 for(int i=0; i<candle.length(); ++i) {
                     Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
-                    candlesticks.add(0,candlestick);
+                    candles.add(candlestick);
                 }
+                candlesticks.add(candles);
 
                 flag = candle.length();
             }
@@ -257,5 +260,6 @@ public final class Stock extends BaseObject {
     private int search;// 股票被搜索的次数
 
     private Candlestick today;// 今日行情
-    private LinkedList<Candlestick> candlesticks;// 蜡烛线（链表）
+
+    private ArrayList<ArrayList<Candlestick>> candlesticks;// 蜡烛线（链表）
 }
