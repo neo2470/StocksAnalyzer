@@ -23,6 +23,16 @@ public class DateHelper {
     }
 
     /**
+     *
+     * @return
+     */
+    public static Enum.Month month() {
+        int ordinal = Calendar.getInstance().get(Calendar.MONTH);
+        Enum.Month month = Enum.Month.build(ordinal);
+        return month;
+    }
+
+    /**
      * 计算距离今天dayCount天之前或之后那天的日期
      * @param dayCount <0,表示dayCount天之前; >0 表示dayCount天之后
      * @return eg:"21050519"
@@ -102,14 +112,23 @@ public class DateHelper {
 
     /**
      * 计算{types}所指定的所有月份表示的日期区间
-     * @param types 所有月份
-     * @return
+     * @param types 有二个参数，p1为{Enum.Month}类型，指明要查询的是从几月起之前的数据，具体查询多少，需要根据p2做出判断；p2为{Enum.Period}类型，指明需要的数据周期，是日，周，月
+     * @return 需要查询的日期区间
      */
     public static String[] getDateScope(Enum.EnumType... types) {
 
+        // 参数不合法的情况，程序将报错
+        if(2 != types.length) {
+            throw new IllegalArgumentException();
+        }
+
         String[] data = new String[2];
 
-        // TODO
+        Enum.Month month = (Enum.Month) types[0];
+
+
+        Enum.Period period = (Enum.Period) types[1];
+
 
         data[0] = "20150601";
         data[1] = today();

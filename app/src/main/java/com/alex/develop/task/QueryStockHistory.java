@@ -17,9 +17,8 @@ import com.alex.develop.util.StockDataAPIHelper;
 /**
  * Created by alex on 15-7-18.
  * 查询某支股票历史行情数据
- * @EnumType
- *
- * @Integer
+ * @param EnumType 有二个参数，p1为{Enum.Month}类型，指明要查询的是从几月起之前的数据，具体查询多少，需要根据p2做出判断；p2为{Enum.Period}类型，指明需要的数据周期，是日，周，月
+ * @param Integer 查询到的行情数据数量
  */
 public class QueryStockHistory extends AsyncTask<EnumType, Void, Integer> {
 
