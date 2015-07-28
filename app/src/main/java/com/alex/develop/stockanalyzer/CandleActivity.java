@@ -40,7 +40,7 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         candleView = (CandleView) findViewById(R.id.candleView);
 
         // 请求历史数据
-        new QueryStockHistory(stock).execute(Enum.Month.Jun, Enum.Month.Jul, Enum.Period.Day);
+        new QueryStockHistory(stock).execute(Enum.Month.Jul, Enum.Period.Day);
     }
 
     @Override

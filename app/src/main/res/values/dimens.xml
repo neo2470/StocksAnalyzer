@@ -9,4 +9,9 @@
 
     <dimen name="stock_header_space">5dp</dimen>
     <dimen name="stock_header_padding">5dp</dimen>
+    
+    <dimen name="ctrl_btn_width">30dp</dimen>
+    <dimen name="ctrl_btn_height">20dp</dimen>
+    <dimen name="ctrl_btn_text_size">10sp</dimen>
+
 </resources>
