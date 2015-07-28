@@ -2,6 +2,7 @@ package com.alex.develop.stockanalyzer;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
@@ -46,6 +47,20 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
     @Override
     public void onSelected(Candlestick candlestick) {
         stockHeader.updateHeaderInfo(candlestick);
+    }
+
+    public void onBottomBtnClicked(View view) {
+
+        switch (view.getId()) {
+            case R.id.periodBtn :
+                findViewById(R.id.periods).setVisibility(View.VISIBLE);
+                findViewById(R.id.indicators).setVisibility(View.GONE);
+                break;
+            case R.id.indicatorBtn :
+                findViewById(R.id.periods).setVisibility(View.GONE);
+                findViewById(R.id.indicators).setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     private void foreach() {
