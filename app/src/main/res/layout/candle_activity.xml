@@ -31,79 +31,73 @@
             android:id="@+id/periodBtn"
             android:layout_width="@dimen/ctrl_btn_width"
             android:layout_height="@dimen/ctrl_btn_height"
-            android:background="@drawable/ctrl_btn_bg"
+            android:background="@drawable/ctrl_btn_bg_1"
             android:onClick="onBottomBtnClicked"
-            android:text="周期"
-            android:textSize="@dimen/ctrl_btn_text_size" />
+            android:text="周期" />
 
-        <LinearLayout
+        <RadioGroup
             android:id="@+id/periods"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <Button
+            <RadioButton
+                style="@style/CtrlBtnStyle"
                 android:layout_width="@dimen/ctrl_btn_width"
                 android:layout_height="@dimen/ctrl_btn_height"
-                android:background="@drawable/ctrl_btn_bg"
-                android:text="日"
-                android:textSize="@dimen/ctrl_btn_text_size" />
+                android:text="日" />
 
-            <Button
+            <RadioButton
+                style="@style/CtrlBtnStyle"
                 android:layout_width="@dimen/ctrl_btn_width"
                 android:layout_height="@dimen/ctrl_btn_height"
-                android:background="@drawable/ctrl_btn_bg"
-                android:text="周"
-                android:textSize="@dimen/ctrl_btn_text_size" />
+                android:text="周" />
 
-            <Button
+            <RadioButton
+                style="@style/CtrlBtnStyle"
                 android:layout_width="@dimen/ctrl_btn_width"
                 android:layout_height="@dimen/ctrl_btn_height"
-                android:background="@drawable/ctrl_btn_bg"
-                android:text="月"
-                android:textSize="@dimen/ctrl_btn_text_size" />
+                android:text="月" />
 
-        </LinearLayout>
+        </RadioGroup>
 
-        <Button
-            android:id="@+id/indicatorBtn"
-            android:layout_width="@dimen/ctrl_btn_width"
-            android:layout_height="@dimen/ctrl_btn_height"
-            android:background="@drawable/ctrl_btn_bg"
-            android:onClick="onBottomBtnClicked"
-            android:text="指标"
-            android:textSize="@dimen/ctrl_btn_text_size" />
-
-        <LinearLayout
+        <RadioGroup
             android:id="@+id/indicators"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:baselineAligned="false"
+            android:orientation="horizontal"
             android:visibility="gone">
 
-            <Button
+            <RadioButton
+                style="@style/CtrlBtnStyle"
                 android:layout_width="@dimen/ctrl_btn_width"
                 android:layout_height="@dimen/ctrl_btn_height"
-                android:background="@drawable/ctrl_btn_bg"
-                android:text="VOL"
-                android:textSize="@dimen/ctrl_btn_text_size" />
+                android:text="VOL" />
 
-            <Button
+            <RadioButton
+                style="@style/CtrlBtnStyle"
                 android:layout_width="@dimen/ctrl_btn_width"
                 android:layout_height="@dimen/ctrl_btn_height"
-                android:background="@drawable/ctrl_btn_bg"
-                android:text="BOLL"
-                android:textSize="@dimen/ctrl_btn_text_size" />
+                android:text="BOLL" />
 
-            <Button
+            <RadioButton
+                style="@style/CtrlBtnStyle"
                 android:layout_width="@dimen/ctrl_btn_width"
                 android:layout_height="@dimen/ctrl_btn_height"
-                android:background="@drawable/ctrl_btn_bg"
-                android:text="OBV"
-                android:textSize="@dimen/ctrl_btn_text_size" />
-        </LinearLayout>
+                android:text="OBV" />
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/indicatorBtn"
+            android:layout_width="@dimen/ctrl_btn_width"
+            android:layout_height="@dimen/ctrl_btn_height"
+            android:background="@drawable/ctrl_btn_bg_1"
+            android:onClick="onBottomBtnClicked"
+            android:text="指标" />
     </LinearLayout>
 
     <ImageView
