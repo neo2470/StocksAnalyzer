@@ -39,6 +39,7 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         stockHeader.updateHeaderInfo(stock.getToday());
 
         candleView = (CandleView) findViewById(R.id.candleView);
+        candleView.setStock(stock);
 
         // 请求历史数据
         new QueryStockHistory(stock).execute(Enum.Month.Jul, Enum.Period.Day);
@@ -65,13 +66,13 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
 
     private void foreach() {
 
-        ArrayList<ArrayList<Candlestick>> data = stock.getCandlesticks();
+        CandleList data = stock.getCandleList();
 
         for (int i=data.size()-1; i>=0; --i) {
-            ArrayList<Candlestick> node = data.get(i);
+            Node node = data.get(i);
             Log.d("Debug ArrayList # " + i, node.get(0).getDate() + " ~ " + node.get(node.size() - 1).getDate());
 
-            for(Candlestick candle : node) {
+            for(Candlestick candle : node.getCandlesticks()) {
                 Log.d("Debug Candlestick", candle.getDate() + ", " + candle.getCloseString() + ", " + candle.getIncreaseString());
             }
         }

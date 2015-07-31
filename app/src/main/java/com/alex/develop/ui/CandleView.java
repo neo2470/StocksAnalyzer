@@ -65,12 +65,55 @@ public class CandleView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 绘制K线
+        drawLines(canvas);
+    }
 
-        // 绘制分割线
-        canvas.drawLine(0, candleHeight, width, candleHeight, pen);
+    public void setStock(Stock stock) {
+        this.stock = stock;
+    }
 
-        // 绘制指标
+    private void drawLines(Canvas canvas) {
+
+        // 绘制表格背景
+        pen.setColor(Color.WHITE);
+        pen.setTextSize(15);
+
+        float left = pen.measureText("100.00");
+        float right = pen.measureText("10.01%");
+
+        canvas.drawLine(left, 0, left, height, pen);
+        canvas.drawLine(width-right, 0, width-right, height, pen);
+
+        int xWidth = (int) ((width-left-right) / tdNum);
+        int yHeight = height / trNum;
+
+        float x, y;
+        boolean xEnd = false, yEnd = false;
+        for(int i=1,j=1;;++i,++j) {
+
+            x = left + xWidth*i;
+            y = yHeight*j;
+
+            // 竖线
+            if(i < tdNum) {
+                canvas.drawLine(x, 0, x, height, pen);
+            } else {
+                xEnd = true;
+            }
+
+            // 横线
+            if(j < trNum) {
+                canvas.drawText("100.00", 0, y+5, pen);
+                canvas.drawText("10.01%", width-right, y+5, pen);
+                canvas.drawLine(left, y, width-right, y, pen);
+            } else {
+                yEnd = true;
+            }
+
+            if(xEnd && yEnd) {
+                break;
+            }
+        }
 
         // 绘制十字线crosshairs
         if (crosshairs) {
@@ -83,6 +126,7 @@ public class CandleView extends View {
     private void initialize() {
         pen = new Paint();
         pen.setTextSize(30);
+        pen.setAntiAlias(true);
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
         pen.setStrokeWidth(1);
 
@@ -96,8 +140,9 @@ public class CandleView extends View {
 
     private int width;// view的宽度
     private int height;// view的高度
+    private int trNum = 10;// 背景表格行数
+    private int tdNum = 5;// 背景表格列数
     private int candleHeight;// K线部分view的高度
     private int quotaHeight;// 指标部分view的高度
-
     private Stock stock;
 }

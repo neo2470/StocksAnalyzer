@@ -45,8 +45,8 @@ public final class Stock extends BaseObject {
         this.code = code;
         this.name = name;
 
-        if(null == candlesticks) {
-            candlesticks = new ArrayList<>();
+        if(null == candleList) {
+            candleList = new CandleList();
 
             if(null == today) {
                 today = new Candlestick();
@@ -138,8 +138,8 @@ public final class Stock extends BaseObject {
         return today;
     }
 
-    public ArrayList<ArrayList<Candlestick>> getCandlesticks() {
-        return candlesticks;
+    public CandleList getCandleList() {
+        return candleList;
     }
 
     public long getCollectStamp() {
@@ -229,12 +229,12 @@ public final class Stock extends BaseObject {
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
             if(code.endsWith(this.code)) {
                 JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
-                ArrayList<Candlestick> candles = new ArrayList<>();
+                Node node = new Node();
                 for(int i=0; i<candle.length(); ++i) {
                     Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
-                    candles.add(candlestick);
+                    node.add(candlestick);
                 }
-                candlesticks.add(candles);
+                candleList.add(node);
 
                 flag = candle.length();
             }
@@ -261,5 +261,5 @@ public final class Stock extends BaseObject {
 
     private Candlestick today;// 今日行情
 
-    private ArrayList<ArrayList<Candlestick>> candlesticks;// 蜡烛线（链表）
+    private CandleList candleList;// 蜡烛线（链表）
 }
