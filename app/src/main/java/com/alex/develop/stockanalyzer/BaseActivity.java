@@ -11,6 +11,7 @@ import com.alex.develop.ui.ConfirmDialog.OnConfirmListener;
 import com.alex.develop.util.ApplicationHelper;
 import com.alex.develop.util.FileHelper;
 import com.alex.develop.util.SQLiteHelper;
+import com.alex.develop.util.UnitHelper;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -285,6 +286,7 @@ public class BaseActivity extends FragmentActivity {
 
 		FileHelper.init(this);
 		SQLiteHelper.init(this, getString(R.string.stock_db_name), null, getResources().getInteger(R.integer.stock_db_version));
+		UnitHelper.init(this);
 	}
 
 	protected ProgressDialog loadingDialog;// 加载数据Dialog，不可取消，加载完成后dismiss即可

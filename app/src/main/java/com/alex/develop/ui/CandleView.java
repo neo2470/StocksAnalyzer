@@ -7,6 +7,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PathEffect;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.view.View;
 
 import com.alex.develop.entity.Candlestick;
 import com.alex.develop.entity.Stock;
+import com.alex.develop.util.UnitHelper;
 
 import java.util.List;
 
@@ -76,7 +78,7 @@ public class CandleView extends View {
 
         // 绘制表格背景
         pen.setColor(Color.WHITE);
-        pen.setTextSize(15);
+        pen.setTextSize(UnitHelper.sp2px(15));
 
         float left = pen.measureText("100.00");
         float right = pen.measureText("10.01%");
@@ -135,7 +137,17 @@ public class CandleView extends View {
     }
 
     private Paint pen;// 画笔
+
+    /**
+     * 当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线
+     */
     private PointF touch;// 触点
+
+    /**
+     * 绘制K线部分图形和指标部分图形所在的区域
+     */
+    private Rect rect;
+
     private boolean crosshairs;// 是否绘十字准线
 
     private int width;// view的宽度
@@ -144,5 +156,7 @@ public class CandleView extends View {
     private int tdNum = 5;// 背景表格列数
     private int candleHeight;// K线部分view的高度
     private int quotaHeight;// 指标部分view的高度
+
+
     private Stock stock;
 }
