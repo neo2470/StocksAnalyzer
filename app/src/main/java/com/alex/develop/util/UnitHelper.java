@@ -10,7 +10,7 @@ import android.util.DisplayMetrics;
 public class UnitHelper {
 
     public static void init(Context context) {
-        UnitHelper.dm = context.getResources().getDisplayMetrics();
+        dm = context.getResources().getDisplayMetrics();
     }
 
     public static float dp2px(float dp) {

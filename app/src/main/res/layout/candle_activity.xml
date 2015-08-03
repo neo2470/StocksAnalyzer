@@ -11,7 +11,8 @@
         <com.alex.develop.ui.StockHeader
             android:id="@+id/stockHeader"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
         <com.alex.develop.ui.CandleView
             android:id="@+id/candleView"
@@ -25,7 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/ctrl_btn_normal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/periodBtn"
