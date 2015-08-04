@@ -10,8 +10,6 @@ import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.ui.CandleView;
 import com.alex.develop.ui.StockHeader;
 
-import java.util.ArrayList;
-
 /**
  * Created by alex on 15-6-15.
  * 绘制蜡烛图（K线图）
@@ -40,9 +38,6 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
 
         candleView = (CandleView) findViewById(R.id.candleView);
         candleView.setStock(stock);
-
-        // 请求历史数据
-        new QueryStockHistory(stock).execute(Enum.Month.Jul, Enum.Period.Day);
     }
 
     @Override

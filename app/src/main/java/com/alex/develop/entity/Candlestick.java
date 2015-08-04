@@ -3,6 +3,7 @@ package com.alex.develop.entity;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -14,13 +15,16 @@ import org.json.JSONArray;
 public class Candlestick extends BaseObject {
 
     public Candlestick() {
+        area = new RectF();
     }
 
     public Candlestick(String[] yahoo) {
+        this();
         fromYahoo(yahoo);
     }
 
     public Candlestick(JSONArray data) {
+        this();
         fromSohu(data);
     }
 
@@ -166,13 +170,30 @@ public class Candlestick extends BaseObject {
     }
 
     public void draw(float x, Canvas canvas, Paint pen) {
+
+        pen.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        area.left = x;
+        area.right = x + Config.itemWidth;
         if (0 <= increase) {
             pen.setColor(Color.parseColor("#1ABE5B"));
+            area.top = Config.val2px(close);
+            area.bottom = Config.val2px(open);
         } else {
             pen.setColor(Color.parseColor("#EE4952"));
+            area.top = Config.val2px(open);
+            area.bottom = Config.val2px(close);
         }
 
-        canvas.drawRect(x, 20, x + 10, 40, pen);
+        float x1 = x + Config.itemWidth / 2;
+        float y1 = Config.val2px(high);
+        float y2 = Config.val2px(low);
+
+        // 绘制K线影线
+        canvas.drawLine(x1, y1, x1, y2, pen);
+
+        // 绘制K线实体
+//        canvas.drawRect(area, pen);
     }
 
     public float getTurnover() {
@@ -202,4 +223,5 @@ public class Candlestick extends BaseObject {
     private float money;// 成交额
     private float turnover;// 换手率
     private String date;// 日期
+    private RectF area;
 }

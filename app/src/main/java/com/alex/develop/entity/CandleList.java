@@ -21,6 +21,7 @@ public class CandleList {
         // 记录最低价格和最高价格
         low = low > node.getLow() ? node.getLow() : low;
         high = high < node.getHigh() ? node.getHigh() : high;
+        volume = volume < node.getVolume() ? node.getVolume() : volume;
 
         node.trim2Size();
         nodes.add(node);
@@ -80,5 +81,7 @@ public class CandleList {
 
     private float low;
     private float high;
+    private long volume;
+
     private ArrayList<Node> nodes;
 }

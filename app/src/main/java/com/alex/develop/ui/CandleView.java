@@ -15,8 +15,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.alex.develop.entity.Candlestick;
-import com.alex.develop.entity.Stock;
+import com.alex.develop.entity.*;
+import com.alex.develop.entity.Enum;
+import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
 
 import java.util.List;
@@ -34,6 +35,11 @@ public class CandleView extends View {
     public CandleView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initialize();
+    }
+
+    public void setStock(Stock stock) {
+        this.stock = stock;
+        requestData();
     }
 
     @Override
@@ -55,6 +61,8 @@ public class CandleView extends View {
             qArea.top = divider;
             qArea.bottom = h;
         }
+
+        Config.updateConfig(width);
     }
 
     @Override
@@ -92,16 +100,14 @@ public class CandleView extends View {
         canvas.drawRect(kArea, pen);
         canvas.drawRect(qArea, pen);
 
+        drawCandlesticks(canvas);
+
         // 绘制十字线crosshairs
         if (crosshairs) {
             pen.setColor(Color.WHITE);
             canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
         }
-    }
-
-    public void setStock(Stock stock) {
-        this.stock = stock;
     }
 
     /**
@@ -151,8 +157,20 @@ public class CandleView extends View {
     /**
      * 绘制K线
      */
-    private void drawCandlesticks() {
+    private void drawCandlesticks(Canvas canvas) {
 
+        float x = kArea.left + Config.itemSpace;
+
+        CandleList data = stock.getCandleList();
+        Config.setRatio(kArea.height(), data.getHigh()-data.getLow());
+
+        for (int i=data.size()-1; i>=0; --i) {
+            Node node = data.get(i);
+            for(Candlestick candle : node.getCandlesticks()) {
+                candle.draw(x, canvas, pen);
+                x += Config.itemWidth + Config.itemSpace;
+            }
+        }
     }
 
 
@@ -160,6 +178,19 @@ public class CandleView extends View {
      * 绘制指标VOL
      */
     private void drawVOL() {}
+
+    private void requestData() {
+
+        new QueryStockHistory(stock) {
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+                invalidate();
+            }
+        }.execute(Enum.Month.Jul, Enum.Period.Day);
+
+    }
 
 
 
@@ -172,37 +203,25 @@ public class CandleView extends View {
 
         touch = new PointF();
         kArea = new RectF();
-        kArea.left = UnitHelper.dp2px(70);
+        kArea.left = 70;
         qArea = new RectF();
-        qArea.left = UnitHelper.dp2px(70);
+        qArea.left = 70;
 
         crosshairs = false;
     }
 
     private Paint pen;// 画笔
+    private PointF touch;// 触点，当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线
+    private RectF kArea;// 绘制K线部分图形区域
+    private RectF qArea;// 绘制指标部分区域
 
-    /**
-     * 当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线
-     */
-    private PointF touch;// 触点
+    private Stock stock;
 
-    /**
-     * 绘制K线部分图形区域
-     */
-    private RectF kArea;
-
-    /**
-     * 绘制指标部分区域
-     */
-    private RectF qArea;
 
     private boolean crosshairs;// 是否绘十字准线
 
     private int width;// View的宽度
     private int height;// View的高度
-
     private int trNum = 10;// 背景表格行数
     private int tdNum = 5;// 背景表格列数
-
-    private Stock stock;
 }

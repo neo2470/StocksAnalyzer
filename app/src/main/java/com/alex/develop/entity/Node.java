@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Created by alex on 15-7-31.
+ * 存储一次查询获取的K线数据集合
  */
 public class Node {
 
@@ -29,6 +30,8 @@ public class Node {
     public void add(Candlestick candle) {
         low = low > candle.getLow() ? candle.getLow() : low;
         high = high < candle.getHigh() ? candle.getHigh() : high;
+        volume = volume < candle.getVolume() ? candle.getVolume() : volume;
+
         candlesticks.add(candle);
     }
 
@@ -69,6 +72,10 @@ public class Node {
         return high;
     }
 
+    public long getVolume() {
+        return volume;
+    }
+
     /**
      * 存储本数据集合中的股票的最低价格
      */
@@ -78,6 +85,12 @@ public class Node {
      * 存储本数据集合中的股票的最高价格
      */
     private float high;
+
+    /**
+     * 存储本数据集合中的股票成交量的最大值
+     */
+    private long volume;
+
     private ArrayList<Candlestick> candlesticks;
 }
 
