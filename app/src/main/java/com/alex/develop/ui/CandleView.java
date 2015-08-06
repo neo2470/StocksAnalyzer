@@ -88,7 +88,7 @@ public class CandleView extends View {
                 Log.d("Debug-Select", intSub + ", " + floatSub);
 
                 int nIndex = ed.node;
-                int cIndex = intSub;
+                int cIndex = --intSub;
 
                 // TODO 这里存在BUG
                 CandleList data = stock.getCandleList();
@@ -106,6 +106,12 @@ public class CandleView extends View {
                             break;
                         }
                     }
+                }
+
+                if(cIndex < 0) {
+                    cIndex = 0;
+                } else if(cIndex > ed.candle) {
+                    cIndex = ed.candle;
                 }
 
                 Candlestick candle = data.get(nIndex).get(cIndex);
