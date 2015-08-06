@@ -80,17 +80,37 @@ public class CandleView extends View {
                 crosshairs = true;
                 touch.set(event.getX(), event.getY());
 
+                // 使得十字线自动吸附K线
+                String[] temp  = String.format("%.2f", event.getX() / (Config.itemWidth + Config.itemSpace)).split("\\.");
+                int intSub = Integer.valueOf(temp[0]);
+                float floatSub = Float.valueOf(temp[1]);
+
+                Log.d("Debug-Select", intSub + ", " + floatSub);
+
+                int nIndex = ed.node;
+                int cIndex = intSub;
+
+                // TODO 这里存在BUG
                 CandleList data = stock.getCandleList();
-                for (int i=ed.node; i>=st.node; --i) {
-                    Node node = data.get(i);
-                    for (int j = st.candle; j < ed.candle; ++j) {
-                        Candlestick candle = node.get(j);
-                        if(candle.contains(event.getX(), event.getY())) {
-                            touch.x = candle.getCenterXofArea();
-                            listener.onSelected(candle);
+                if(0 > ed.candle - cIndex) {
+                    while(true) {
+                        --nIndex;
+                        Node node = data.get(nIndex);
+
+                        if(null == node) {
+                            break;
+                        }
+
+                        cIndex += node.size();
+                        if(cIndex >= 0) {
+                            break;
                         }
                     }
                 }
+
+                Candlestick candle = data.get(nIndex).get(cIndex);
+                touch.x = candle.getCenterXofArea();
+                listener.onSelected(candle);
 
                 break;
             case MotionEvent.ACTION_UP:
@@ -178,9 +198,8 @@ public class CandleView extends View {
         float x = kArea.left + Config.itemSpace;
 
         CandleList data = stock.getCandleList();
-        Config.setRatio(kArea.height(), data.getHigh());
         Config.setAxisY(kArea.bottom);
-        float offsetY = kArea.height() - Config.val2px(data.getLow()) - UnitHelper.dp2px(10);
+        float offsetY = 0;
 
         if(0 < data.size()) {
             for (int i = ed.node; i >= st.node; --i) {
@@ -210,6 +229,7 @@ public class CandleView extends View {
                 super.onPostExecute(integer);
 
                 CandleList data = stock.getCandleList();
+                Config.setRatio(kArea.height(), data.getHigh(), data.getLow());
                 ed.node = data.size() - 1;
                 ed.candle = data.get(ed.node).size();
                 st.node = data.size() - 1;
@@ -228,10 +248,11 @@ public class CandleView extends View {
         pen.setTextSize(30);
         pen.setAntiAlias(true);
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
-        pen.setStrokeWidth(1);
+        pen.setStrokeWidth(UnitHelper.dp2px(1));
 
         touch = new PointF();
         kArea = new RectF();
+        kArea.top = 10;
         kArea.left = 70;
         qArea = new RectF();
         qArea.left = 70;
