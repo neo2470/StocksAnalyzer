@@ -6,6 +6,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.Log;
 
+import com.alex.develop.stockanalyzer.Analyzer;
+import com.alex.develop.stockanalyzer.R;
+
 import org.json.JSONArray;
 
 /**
@@ -128,6 +131,22 @@ public class Candlestick extends BaseObject {
         this.date = date;
     }
 
+    public float getTurnover() {
+        return turnover;
+    }
+
+    public String getTurnoverString() {
+        return turnover + "%";
+    }
+
+    public float getVary() {
+        return vary;
+    }
+
+    public float getCenterXofArea() {
+        return area.left + area.width() / 2;
+    }
+
     public void initialize() {
         increase = 100 * (close - lastClose) / lastClose;
     }
@@ -165,48 +184,60 @@ public class Candlestick extends BaseObject {
         exStr = exStr.substring(0, exStr.length() - 1);
         turnover = Float.valueOf(exStr);
 
-        Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
+//        Log.d("Print-fromSohu", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
 
     }
 
-    public void draw(float x, Canvas canvas, Paint pen) {
+    public void draw(float x, float offsetY, Canvas canvas, Paint pen) {
 
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
+        int colorRise = Analyzer.getContext().getResources().getColor(R.color.stock_rise);
+        int colorFall = Analyzer.getContext().getResources().getColor(R.color.stock_fall);
+
         area.left = x;
         area.right = x + Config.itemWidth;
-        if (0 <= increase) {
-            pen.setColor(Color.parseColor("#1ABE5B"));
+
+        if (open < close) {
+            pen.setColor(colorRise);
             area.top = Config.val2px(close);
             area.bottom = Config.val2px(open);
+        } else if(open == close) {
+            if(0.0f < increase) {
+                pen.setColor(colorRise);
+            } else if(0.0f == increase) {
+                // TODO 股价收十字星时候的颜色
+            } else {
+                pen.setColor(colorFall);
+            }
+
+            area.top = Config.val2px(close);
+            area.bottom = area.top + 1;
         } else {
-            pen.setColor(Color.parseColor("#EE4952"));
+            pen.setColor(colorFall);
             area.top = Config.val2px(open);
             area.bottom = Config.val2px(close);
         }
 
+        area.offset(0,offsetY);
+
+        Log.d("Debug-Candlestick-Draw", area.left + ", " + area.top + ", " + area.right + ", " + area.bottom + ", " + (area.bottom-area.top));
+
         float x1 = x + Config.itemWidth / 2;
-        float y1 = Config.val2px(high);
-        float y2 = Config.val2px(low);
+        float y1 = Config.val2px(high) + offsetY;
+        float y2 = Config.val2px(low) + offsetY;
 
         // 绘制K线影线
         canvas.drawLine(x1, y1, x1, y2, pen);
 
         // 绘制K线实体
-//        canvas.drawRect(area, pen);
+        canvas.drawRect(area, pen);
     }
 
-    public float getTurnover() {
-        return turnover;
+    public boolean contains(float x, float y) {
+        return area.left <= x && x <= area.right;
     }
 
-    public String getTurnoverString() {
-        return turnover + "%";
-    }
-
-    public float getVary() {
-        return vary;
-    }
 
     public static final float WIDTH = 10.0f;// K线宽度
     public static final float SPACE = 5.0f;// K线间距

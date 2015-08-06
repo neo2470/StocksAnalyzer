@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
+import com.alex.develop.fragment.StockFragment;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
 
@@ -42,6 +43,10 @@ public class CandleView extends View {
         requestData();
     }
 
+    public void setOnCandlestickSelectedListener(onCandlestickSelectedListener listener) {
+        this.listener = listener;
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -61,8 +66,6 @@ public class CandleView extends View {
             qArea.top = divider;
             qArea.bottom = h;
         }
-
-        Config.updateConfig(width);
     }
 
     @Override
@@ -76,6 +79,19 @@ public class CandleView extends View {
             case MotionEvent.ACTION_MOVE :
                 crosshairs = true;
                 touch.set(event.getX(), event.getY());
+
+                CandleList data = stock.getCandleList();
+                for (int i=ed.node; i>=st.node; --i) {
+                    Node node = data.get(i);
+                    for (int j = st.candle; j < ed.candle; ++j) {
+                        Candlestick candle = node.get(j);
+                        if(candle.contains(event.getX(), event.getY())) {
+                            touch.x = candle.getCenterXofArea();
+                            listener.onSelected(candle);
+                        }
+                    }
+                }
+
                 break;
             case MotionEvent.ACTION_UP:
                 crosshairs = false;
@@ -162,13 +178,19 @@ public class CandleView extends View {
         float x = kArea.left + Config.itemSpace;
 
         CandleList data = stock.getCandleList();
-        Config.setRatio(kArea.height(), data.getHigh()-data.getLow());
+        Config.setRatio(kArea.height(), data.getHigh());
+        Config.setAxisY(kArea.bottom);
+        float offsetY = kArea.height() - Config.val2px(data.getLow()) - UnitHelper.dp2px(10);
 
-        for (int i=data.size()-1; i>=0; --i) {
-            Node node = data.get(i);
-            for(Candlestick candle : node.getCandlesticks()) {
-                candle.draw(x, canvas, pen);
-                x += Config.itemWidth + Config.itemSpace;
+        if(0 < data.size()) {
+            for (int i = ed.node; i >= st.node; --i) {
+                Node node = data.get(i);
+                for (int j = st.candle; j < ed.candle; ++j) {
+                    Candlestick candle = node.get(j);
+                    candle.draw(x, offsetY, canvas, pen);
+                    x += Config.itemWidth + Config.itemSpace;
+                    Log.d("Print Candlestick", candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
+                }
             }
         }
     }
@@ -186,6 +208,13 @@ public class CandleView extends View {
             @Override
             protected void onPostExecute(Integer integer) {
                 super.onPostExecute(integer);
+
+                CandleList data = stock.getCandleList();
+                ed.node = data.size() - 1;
+                ed.candle = data.get(ed.node).size();
+                st.node = data.size() - 1;
+                st.candle = 0;
+
                 invalidate();
             }
         }.execute(Enum.Month.Jul, Enum.Period.Day);
@@ -207,6 +236,9 @@ public class CandleView extends View {
         qArea = new RectF();
         qArea.left = 70;
 
+        st = new Cursor();
+        ed = new Cursor();
+
         crosshairs = false;
     }
 
@@ -216,6 +248,10 @@ public class CandleView extends View {
     private RectF qArea;// 绘制指标部分区域
 
     private Stock stock;
+    private Cursor st;// 被绘制的K线的起始位置
+    private Cursor ed;// 被绘制的K线的结束位置
+
+    private onCandlestickSelectedListener listener;
 
 
     private boolean crosshairs;// 是否绘十字准线

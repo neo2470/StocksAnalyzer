@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 public class CandleList {
 
     public CandleList() {
+        low = 1000000.0f;
+        high = 0.0f;
         nodes = new ArrayList<>();
     }
 
@@ -45,7 +49,8 @@ public class CandleList {
             low = data[0];
             high = data[1];
         } else {
-            low = high = 0.0f;
+            low = 1000000.0f;
+            high = 0.0f;
             for (int i = start.node; i<=stop.node; ++i) {
                 Node node = get(i);
                 float[] data;
@@ -77,6 +82,11 @@ public class CandleList {
      */
     public float getHigh() {
         return high;
+    }
+
+    public float getDiffer() {
+        Log.d("Debug-CandleList", + low + ", " + high);
+        return high - low;
     }
 
     private float low;

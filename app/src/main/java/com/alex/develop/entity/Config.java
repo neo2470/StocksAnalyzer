@@ -7,17 +7,16 @@ import com.alex.develop.util.UnitHelper;
  */
 public class Config {
 
-    public static void updateConfig(float width) {
-//        itemWidth = width / (ITEM_AMOUNTS + (1 + ITEM_AMOUNTS) * ITEM_SPACE_WIDTH_RATIO);
-//        itemSpace = itemWidth * ITEM_SPACE_WIDTH_RATIO;
-    }
-
     public static void setRatio(float height, float value) {
         ratio = value / height;
     }
 
+    public static void setAxisY(float y) {
+        refery = y;
+    }
+
     public static float val2px(float value) {
-        return value / ratio;
+        return refery - value / ratio;
     }
 
     public static float px2val(float px) {
@@ -30,5 +29,6 @@ public class Config {
     public static final int ITEM_AMOUNTS = 30;
     public static final float ITEM_SPACE_WIDTH_RATIO = 0.2f;
 
+    private static float refery;
     private static float ratio;
 }

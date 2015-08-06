@@ -1,12 +1,9 @@
 package com.alex.develop.stockanalyzer;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.alex.develop.entity.*;
-import com.alex.develop.entity.Enum;
-import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.ui.CandleView;
 import com.alex.develop.ui.StockHeader;
 
@@ -37,6 +34,7 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         stockHeader.updateHeaderInfo(stock.getToday());
 
         candleView = (CandleView) findViewById(R.id.candleView);
+        candleView.setOnCandlestickSelectedListener(this);
         candleView.setStock(stock);
     }
 
@@ -56,20 +54,6 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
                 findViewById(R.id.periods).setVisibility(View.GONE);
                 findViewById(R.id.indicators).setVisibility(View.VISIBLE);
                 break;
-        }
-    }
-
-    private void foreach() {
-
-        CandleList data = stock.getCandleList();
-
-        for (int i=data.size()-1; i>=0; --i) {
-            Node node = data.get(i);
-            Log.d("Debug ArrayList # " + i, node.get(0).getDate() + " ~ " + node.get(node.size() - 1).getDate());
-
-            for(Candlestick candle : node.getCandlesticks()) {
-                Log.d("Debug Candlestick", candle.getDate() + ", " + candle.getCloseString() + ", " + candle.getIncreaseString());
-            }
         }
     }
 
