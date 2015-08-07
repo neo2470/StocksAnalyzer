@@ -11,6 +11,7 @@ public class Node {
     public Node() {
         low = 1000000.0f;
         high = 0.0f;
+        volume = 0;
         candlesticks = new ArrayList<>();
     }
 

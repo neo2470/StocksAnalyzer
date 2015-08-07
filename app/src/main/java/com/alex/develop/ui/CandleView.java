@@ -3,25 +3,18 @@ package com.alex.develop.ui;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.PathEffect;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
-import com.alex.develop.fragment.StockFragment;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
-
-import java.util.List;
 
 /**
  * Created by alex on 15-6-14.
@@ -59,12 +52,16 @@ public class CandleView extends View {
         if(null != kArea) {
             kArea.right = w;
             kArea.bottom = divider;
+            Config.init(kArea.width());
+            kCfg.setAxisY(kArea.bottom);
         }
+
 
         if(null != qArea) {
             qArea.right = w;
             qArea.top = divider;
             qArea.bottom = h;
+            qCfg.setAxisY(qArea.bottom);
         }
     }
 
@@ -73,59 +70,15 @@ public class CandleView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                crosshairs = true;
-                touch.set(event.getX(), event.getY());
+                selectCandlestick(event);
                 break;
             case MotionEvent.ACTION_MOVE :
-                crosshairs = true;
-                touch.set(event.getX(), event.getY());
-
-                // 使得十字线自动吸附K线
-                String[] temp  = String.format("%.2f", event.getX() / (Config.itemWidth + Config.itemSpace)).split("\\.");
-                int intSub = Integer.valueOf(temp[0]);
-                float floatSub = Float.valueOf(temp[1]);
-
-                Log.d("Debug-Select", intSub + ", " + floatSub);
-
-                int nIndex = ed.node;
-                int cIndex = --intSub;
-
-                // TODO 这里存在BUG
-                CandleList data = stock.getCandleList();
-                if(0 > ed.candle - cIndex) {
-                    while(true) {
-                        --nIndex;
-                        Node node = data.get(nIndex);
-
-                        if(null == node) {
-                            break;
-                        }
-
-                        cIndex += node.size();
-                        if(cIndex >= 0) {
-                            break;
-                        }
-                    }
-                }
-
-                if(cIndex < 0) {
-                    cIndex = 0;
-                } else if(cIndex > ed.candle) {
-                    cIndex = ed.candle;
-                }
-
-                Candlestick candle = data.get(nIndex).get(cIndex);
-                touch.x = candle.getCenterXofArea();
-                listener.onSelected(candle);
-
-                break;
-            case MotionEvent.ACTION_UP:
-                crosshairs = false;
+                selectCandlestick(event);
                 break;
         }
 
         // 只在绘制区域内显示十字线
-        if(!kArea.contains(event.getX(), event.getY())) {
+        if(kArea.left > event.getX()) {
             crosshairs = false;
         }
 
@@ -150,6 +103,59 @@ public class CandleView extends View {
             canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
         }
+    }
+
+    private void selectCandlestick(MotionEvent event) {
+        crosshairs = true;
+
+        float x = event.getX();
+        float y = event.getY();
+
+        touch.set(x, y);
+
+        // 使得十字线自动吸附K线
+        String[] temp  = String.format("%.2f", (x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
+        int intSub = Integer.valueOf(temp[0]);
+        float floatSub = Float.valueOf("0."+temp[1]);
+
+        if(floatSub > Config.ITEM_SPACE_WIDTH_RATIO/(1+Config.ITEM_SPACE_WIDTH_RATIO)) {
+            ++intSub;
+        }
+
+        Cursor csr = new Cursor();
+        CandleList data = stock.getCandleList();
+        if(intSub <= ed.candle+1) {
+            csr.node = ed.node;
+            csr.candle = --intSub;
+        } else {
+
+            // TODO 下面的代码有待测试验证
+            int nIndex = ed.node;
+            int cIndex = ed.candle - intSub;
+            while (true) {
+                --nIndex;
+                Node node = data.get(nIndex);
+                cIndex += node.size()-1;
+                if(0<=cIndex) {
+                    break;
+                }
+            }
+
+            csr.node = nIndex;
+            csr.candle = cIndex;
+        }
+
+//        Log.d("Debug-Select", intSub + ", " + floatSub);
+
+        if(csr.candle < 0) {
+            csr.candle = 0;
+        } else if(csr.candle > ed.candle) {
+            csr.candle = ed.candle;
+        }
+
+        Candlestick candle = data.get(csr.node).get(csr.candle);
+        touch.x = candle.getCenterXofArea();
+        listener.onSelected(candle);
     }
 
     /**
@@ -204,22 +210,22 @@ public class CandleView extends View {
         float x = kArea.left + Config.itemSpace;
 
         CandleList data = stock.getCandleList();
-        Config.setAxisY(kArea.bottom);
-        float offsetY = 0;
 
         if(0 < data.size()) {
             for (int i = ed.node; i >= st.node; --i) {
                 Node node = data.get(i);
-                for (int j = st.candle; j < ed.candle; ++j) {
+                for (int j = st.candle; j <= ed.candle; ++j) {
                     Candlestick candle = node.get(j);
-                    candle.draw(x, offsetY, canvas, pen);
+//                    pen.setColor(Color.RED);
+//                    canvas.drawText(j+"", x, 50, pen);
+                    candle.drawCandle(x, kCfg, canvas, pen);
+                    candle.drawVOL(x, qCfg, canvas, pen);
                     x += Config.itemWidth + Config.itemSpace;
-                    Log.d("Print Candlestick", candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
+                    Log.d("Print Candlestick # " + j, candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
                 }
             }
         }
     }
-
 
     /**
      * 绘制指标VOL
@@ -235,9 +241,10 @@ public class CandleView extends View {
                 super.onPostExecute(integer);
 
                 CandleList data = stock.getCandleList();
-                Config.setRatio(kArea.height(), data.getHigh(), data.getLow());
+                kCfg.setRatio(kArea.height(), data.getHigh(), data.getLow());
+                qCfg.setRatio(qArea.height(), data.getVolume(), 0);
                 ed.node = data.size() - 1;
-                ed.candle = data.get(ed.node).size();
+                ed.candle = data.get(ed.node).size() - 1;
                 st.node = data.size() - 1;
                 st.candle = 0;
 
@@ -260,8 +267,11 @@ public class CandleView extends View {
         kArea = new RectF();
         kArea.top = 10;
         kArea.left = 70;
+        kCfg = new Config();
+
         qArea = new RectF();
         qArea.left = 70;
+        qCfg = new Config();
 
         st = new Cursor();
         ed = new Cursor();
@@ -272,7 +282,9 @@ public class CandleView extends View {
     private Paint pen;// 画笔
     private PointF touch;// 触点，当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线
     private RectF kArea;// 绘制K线部分图形区域
+    private Config kCfg;// K线图的配置信息
     private RectF qArea;// 绘制指标部分区域
+    private Config qCfg;// 指标图的配置信息
 
     private Stock stock;
     private Cursor st;// 被绘制的K线的起始位置

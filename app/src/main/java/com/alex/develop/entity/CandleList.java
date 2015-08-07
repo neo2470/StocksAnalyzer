@@ -13,6 +13,7 @@ public class CandleList {
     public CandleList() {
         low = 1000000.0f;
         high = 0.0f;
+        volume = 0;
         nodes = new ArrayList<>();
     }
 
@@ -84,9 +85,8 @@ public class CandleList {
         return high;
     }
 
-    public float getDiffer() {
-        Log.d("Debug-CandleList", + low + ", " + high);
-        return high - low;
+    public long getVolume() {
+        return volume;
     }
 
     private float low;

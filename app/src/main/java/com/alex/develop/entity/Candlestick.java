@@ -3,6 +3,7 @@ package com.alex.develop.entity;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
@@ -18,7 +19,8 @@ import org.json.JSONArray;
 public class Candlestick extends BaseObject {
 
     public Candlestick() {
-        area = new RectF();
+        kArea = new RectF();
+        vArea = new RectF();
     }
 
     public Candlestick(String[] yahoo) {
@@ -144,7 +146,7 @@ public class Candlestick extends BaseObject {
     }
 
     public float getCenterXofArea() {
-        return area.left + area.width() / 2;
+        return kArea.left + kArea.width() / 2;
     }
 
     public void initialize() {
@@ -188,20 +190,20 @@ public class Candlestick extends BaseObject {
 
     }
 
-    public void draw(float x, float offsetY, Canvas canvas, Paint pen) {
+    public void drawCandle(float x, Config kCfg, Canvas canvas, Paint pen) {
 
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
         int colorRise = Analyzer.getContext().getResources().getColor(R.color.stock_rise);
         int colorFall = Analyzer.getContext().getResources().getColor(R.color.stock_fall);
 
-        area.left = x;
-        area.right = x + Config.itemWidth;
+        kArea.left = x;
+        kArea.right = x + Config.itemWidth;
 
         if (open < close) {
             pen.setColor(colorRise);
-            area.top = Config.val2px(close);
-            area.bottom = Config.val2px(open);
+            kArea.top = kCfg.val2px(close);
+            kArea.bottom = kCfg.val2px(open);
         } else if(open == close) {
             if(0.0f < increase) {
                 pen.setColor(colorRise);
@@ -211,33 +213,56 @@ public class Candlestick extends BaseObject {
                 pen.setColor(colorFall);
             }
 
-            area.top = Config.val2px(close);
-            area.bottom = area.top + 1;
+            kArea.top = kCfg.val2px(close);
+            kArea.bottom = kArea.top + 1;
         } else {
             pen.setColor(colorFall);
-            area.top = Config.val2px(open);
-            area.bottom = Config.val2px(close);
+            kArea.top = kCfg.val2px(open);
+            kArea.bottom = kCfg.val2px(close);
         }
 
-        area.offset(0,offsetY);
-
-        Log.d("Debug-Candlestick-Draw", area.left + ", " + area.top + ", " + area.right + ", " + area.bottom + ", " + (area.bottom-area.top));
+        Log.d("Debug-Candlestick-Draw", kArea.left + ", " + kArea.top + ", " + kArea.right + ", " + kArea.bottom + ", " + (kArea.bottom-kArea.top));
 
         float x1 = x + Config.itemWidth / 2;
-        float y1 = Config.val2px(high) + offsetY;
-        float y2 = Config.val2px(low) + offsetY;
+        float y1 = kCfg.val2px(high);
+        float y2 = kCfg.val2px(low);
 
         // 绘制K线影线
         canvas.drawLine(x1, y1, x1, y2, pen);
 
         // 绘制K线实体
-        canvas.drawRect(area, pen);
+        canvas.drawRect(kArea, pen);
     }
 
-    public boolean contains(float x, float y) {
-        return area.left <= x && x <= area.right;
-    }
+    public void drawVOL(float x, Config qCfg, Canvas canvas, Paint pen) {
+        pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
+        int colorRise = Analyzer.getContext().getResources().getColor(R.color.stock_rise);
+        int colorFall = Analyzer.getContext().getResources().getColor(R.color.stock_fall);
+
+        if (open < close) {
+            pen.setColor(colorRise);
+        } else if(open == close) {
+            if (0.0f < increase) {
+                pen.setColor(colorRise);
+            } else if (0.0f == increase) {
+                // TODO 股价收十字星时候的颜色
+            } else {
+                pen.setColor(colorFall);
+            }
+        } else {
+            pen.setColor(colorFall);
+        }
+
+        vArea.left = x;
+        vArea.right = x + Config.itemWidth;
+        vArea.bottom = qCfg.val2px(0);
+        vArea.top = qCfg.val2px(volume);
+
+        canvas.drawRect(vArea, pen);
+
+
+    }
 
     public static final float WIDTH = 10.0f;// K线宽度
     public static final float SPACE = 5.0f;// K线间距
@@ -254,5 +279,6 @@ public class Candlestick extends BaseObject {
     private float money;// 成交额
     private float turnover;// 换手率
     private String date;// 日期
-    private RectF area;
+    private RectF kArea;// K线的实体部分
+    private RectF vArea;// VOL的实体部分
 }
