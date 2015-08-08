@@ -53,7 +53,7 @@ public class CandleView extends View {
             kArea.right = w;
             kArea.bottom = divider;
             Config.init(kArea.width());
-            kCfg.setAxisY(kArea.bottom);
+            kCfg.setReferYpx(kArea.bottom);
         }
 
 
@@ -61,7 +61,7 @@ public class CandleView extends View {
             qArea.right = w;
             qArea.top = divider;
             qArea.bottom = h;
-            qCfg.setAxisY(qArea.bottom);
+            qCfg.setReferYpx(qArea.bottom);
         }
     }
 
@@ -241,8 +241,12 @@ public class CandleView extends View {
                 super.onPostExecute(integer);
 
                 CandleList data = stock.getCandleList();
-                kCfg.setRatio(kArea.height(), data.getHigh(), data.getLow());
-                qCfg.setRatio(qArea.height(), data.getVolume(), 0);
+                kCfg.setRatio(kArea.height(), data.getHigh()-data.getLow());
+                kCfg.setReferValue(data.getLow());
+
+                qCfg.setRatio(qArea.height(), data.getVolume());
+                qCfg.setReferValue(0);
+
                 ed.node = data.size() - 1;
                 ed.candle = data.get(ed.node).size() - 1;
                 st.node = data.size() - 1;
