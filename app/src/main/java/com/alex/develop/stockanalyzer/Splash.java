@@ -331,8 +331,8 @@ public class Splash extends BaseActivity {
 
 					ContentValues values = new ContentValues();
 					values.put(Stock.Table.Column.CODE, data[0]);
-					values.put(Stock.Table.Column.CODE_CN, "");
-					values.put(Stock.Table.Column.NAME, data[1]);
+					values.put(Stock.Table.Column.CODE_CN, data[1]);
+					values.put(Stock.Table.Column.NAME, data[2]);
 					values.put(Stock.Table.Column.COLLECT, 0);
 					values.put(Stock.Table.Column.SEARCH, 0);
 					db.insert(Stock.Table.NAME, null, values);

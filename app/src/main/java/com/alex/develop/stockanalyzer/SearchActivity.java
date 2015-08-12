@@ -2,6 +2,8 @@ package com.alex.develop.stockanalyzer;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.inputmethodservice.Keyboard;
+import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,6 +49,12 @@ public class SearchActivity extends BaseActivity {
         stockSearch.setThreshold(1);
         stockSearch.setAdapter(adapter);
         setResult(Activity.RESULT_OK);
+
+        // 自定义键盘
+        Keyboard keyboard = new Keyboard(this, R.xml.symbols);
+        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
+        keyboardView.setKeyboard(keyboard);
+        keyboardView.setPreviewEnabled(false);
     }
 
     private class SearchAdapter extends BaseAdapter implements Filterable {
