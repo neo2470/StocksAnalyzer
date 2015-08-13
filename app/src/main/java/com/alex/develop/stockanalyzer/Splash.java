@@ -334,10 +334,13 @@ public class Splash extends BaseActivity {
 					values.put(Stock.Table.Column.CODE_CN, data[1]);
 					values.put(Stock.Table.Column.NAME, data[2]);
 					values.put(Stock.Table.Column.COLLECT, 0);
+					values.put(Stock.Table.Column.COLLECT_STAMP, 0);
 					values.put(Stock.Table.Column.SEARCH, 0);
 					db.insert(Stock.Table.NAME, null, values);
 
-					stocks.add(new Stock(data[0], data[1]));
+					Stock stock = new Stock(data[0], data[2]);
+					stock.setCodeCN(data[1]);
+					stocks.add(stock);
 					++count;
 
 					publishProgress(count*100/total);

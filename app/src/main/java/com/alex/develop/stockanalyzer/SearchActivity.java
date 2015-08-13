@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
@@ -51,10 +52,12 @@ public class SearchActivity extends BaseActivity {
         setResult(Activity.RESULT_OK);
 
         // 自定义键盘
-        Keyboard keyboard = new Keyboard(this, R.xml.symbols);
+        Keyboard keyboard = new Keyboard(this, R.xml.qwerty);
         KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
         keyboardView.setKeyboard(keyboard);
         keyboardView.setPreviewEnabled(false);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
     private class SearchAdapter extends BaseAdapter implements Filterable {
