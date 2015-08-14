@@ -14,4 +14,9 @@
     <string name="stock_db_name">stock_data_2015.db</string>
 
     <string name="stock_default">--</string>
+
+    <string name="key_600">600</string>
+    <string name="key_000">000</string>
+    <string name="key_300">300</string>
+    <string name="key_002">002</string>
 </resources>

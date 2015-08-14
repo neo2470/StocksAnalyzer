@@ -23,8 +23,9 @@
 
         <Key
             android:codes="9902"
-            android:keyLabel="DEL"
-            android:keyEdgeFlags="right"/>
+            android:isRepeatable="true"
+            android:keyEdgeFlags="right"
+            android:keyLabel="000" />
     </Row>
 
     <Row>
@@ -47,8 +48,8 @@
 
         <Key
             android:codes="49"
-            android:keyLabel="0"
-            android:keyEdgeFlags="right"/>
+            android:keyEdgeFlags="right"
+            android:keyLabel="0" />
     </Row>
 
     <Row>
@@ -71,25 +72,25 @@
 
         <Key
             android:codes="9905"
-            android:keyLabel="000"
-            android:keyEdgeFlags="right"/>
+            android:keyEdgeFlags="right"
+            android:keyLabel="DEL" />
     </Row>
 
     <Row>
         <Key
             android:codes="9906"
-            android:keyLabel="ABC"
-            android:keyEdgeFlags="left"/>
+            android:keyEdgeFlags="left"
+            android:keyLabel="ABC" />
 
         <Key
             android:codes="9907"
             android:keyLabel="OK"
-            android:keyWidth="60%p"/>
+            android:keyWidth="60%p" />
 
         <Key
             android:codes="9908"
-            android:keyLabel="HID"
-            android:keyEdgeFlags="right" />
+            android:keyEdgeFlags="right"
+            android:keyLabel="HID" />
     </Row>
 
 </Keyboard>

@@ -41,7 +41,7 @@
         <activity
             android:name=".SearchActivity"
             android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateVisible"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
