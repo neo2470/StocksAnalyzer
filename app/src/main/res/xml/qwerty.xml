@@ -89,9 +89,9 @@
 
     <Row>
         <Key
-            android:codes="9909"
+            android:codes="9904"
             android:keyEdgeFlags="left"
-            android:keyLabel="XXX"
+            android:keyLabel="@string/key_split"
             android:keyWidth="15%p" />
 
         <Key
@@ -135,14 +135,13 @@
         <Key
             android:codes="9910"
             android:keyEdgeFlags="left"
-            android:keyLabel="123"
+            android:keyLabel="@string/key_123"
             android:keyWidth="20%p" />
 
         <Key
             android:codes="9907"
-            android:keyLabel="OK"
-            android:keyWidth="60%p"
-            android:keyBackground="@android:color/holo_red_dark"/>
+            android:keyLabel="@string/key_ok"
+            android:keyWidth="60%p"/>
 
         <Key
             android:codes="9908"

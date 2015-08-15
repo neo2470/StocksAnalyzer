@@ -7,7 +7,7 @@
         <Key
             android:codes="9901"
             android:keyEdgeFlags="left"
-            android:keyLabel="600" />
+            android:keyLabel="@string/key_600" />
 
         <Key
             android:codes="49"
@@ -25,14 +25,14 @@
             android:codes="9902"
             android:isRepeatable="true"
             android:keyEdgeFlags="right"
-            android:keyLabel="000" />
+            android:keyLabel="@string/key_002" />
     </Row>
 
     <Row>
         <Key
             android:codes="9903"
             android:keyEdgeFlags="left"
-            android:keyLabel="300" />
+            android:keyLabel="@string/key_300" />
 
         <Key
             android:codes="52"
@@ -47,7 +47,7 @@
             android:keyLabel="6" />
 
         <Key
-            android:codes="49"
+            android:codes="48"
             android:keyEdgeFlags="right"
             android:keyLabel="0" />
     </Row>
@@ -56,23 +56,24 @@
         <Key
             android:codes="9904"
             android:keyEdgeFlags="left"
-            android:keyLabel="002" />
+            android:keyLabel="@string/key_split" />
 
         <Key
-            android:codes="52"
+            android:codes="55"
             android:keyLabel="7" />
 
         <Key
-            android:codes="53"
+            android:codes="56"
             android:keyLabel="8" />
 
         <Key
-            android:codes="54"
+            android:codes="57"
             android:keyLabel="9" />
 
         <Key
             android:codes="9905"
             android:keyEdgeFlags="right"
+            android:isRepeatable="true"
             android:keyLabel="DEL" />
     </Row>
 
@@ -80,11 +81,11 @@
         <Key
             android:codes="9906"
             android:keyEdgeFlags="left"
-            android:keyLabel="ABC" />
+            android:keyLabel="@string/key_abc" />
 
         <Key
             android:codes="9907"
-            android:keyLabel="OK"
+            android:keyLabel="@string/key_ok"
             android:keyWidth="60%p" />
 
         <Key

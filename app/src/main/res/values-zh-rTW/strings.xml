@@ -63,5 +63,7 @@
     <string name="collect_stock_failure">%1$s 加入自選股失敗</string>
     <string name="remove_stock_success">%1$s 已成功移出自選股</string>
     <string name="remove_stock_failure">%1$s 移出自選股失敗</string>
+
+    <string name="key_ok">確定</string>
     
 </resources>

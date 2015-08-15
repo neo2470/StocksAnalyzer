@@ -16,7 +16,10 @@
     <string name="stock_default">--</string>
 
     <string name="key_600">600</string>
-    <string name="key_000">000</string>
     <string name="key_300">300</string>
     <string name="key_002">002</string>
+    <string name="key_123">123</string>
+    <string name="key_abc">ABC</string>
+    <string name="key_split">-</string>
+
 </resources>

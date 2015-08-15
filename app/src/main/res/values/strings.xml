@@ -64,4 +64,6 @@
     <string name="remove_stock_success">%1$s is removed success</string>
     <string name="remove_stock_failure">%1$s is removed failure</string>
 
+    <string name="key_ok">OK</string>
+
 </resources>

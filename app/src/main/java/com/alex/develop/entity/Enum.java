@@ -117,4 +117,12 @@ public final class Enum extends BaseObject {
             return month;
         }
     }
+
+    /**
+     * 查询股票的方式
+     */
+    public enum InputType {
+        Numeric,// 数字代码
+        Alphabet// 字母代码
+    }
 }
