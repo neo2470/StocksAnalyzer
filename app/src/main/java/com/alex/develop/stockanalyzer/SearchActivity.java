@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
@@ -41,6 +42,13 @@ public class SearchActivity extends BaseActivity {
         AutoCompleteTextView stockSearch = (AutoCompleteTextView) findViewById(R.id.stockSearch);
         stockSearch.setThreshold(1);
         stockSearch.setAdapter(new SearchAdapter(Analyzer.getStockList()));
+        stockSearch.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mKeyboard.show();
+                return true;
+            }
+        });
         setResult(Activity.RESULT_OK);
 
         // 自定义键盘
@@ -90,7 +98,8 @@ public class SearchActivity extends BaseActivity {
 
                 holder = new ViewHolder();
                 holder.stockCollectBtn = (ToggleButton) convertView.findViewById(R.id.stockCollectBtn);
-                holder.stockCode = (TextView) convertView.findViewById(R.id.stockCode);
+                holder.stockCode1 = (TextView) convertView.findViewById(R.id.stockCode1);
+                holder.stockCode2 = (TextView) convertView.findViewById(R.id.stockCode2);
                 holder.stockName = (TextView) convertView.findViewById(R.id.stockName);
 
                 convertView.setTag(holder);
@@ -112,8 +121,16 @@ public class SearchActivity extends BaseActivity {
                 }
             });
 
-            holder.stockCode.setText(stock.getCode());
+            if(InputType.Numeric == mKeyboard.getInputType()) {
+                holder.stockCode1.setText(stock.getCode());
+                holder.stockCode2.setText(stock.getCodeCN());
+            } else {
+                holder.stockCode1.setText(stock.getCodeCN());
+                holder.stockCode2.setText(stock.getCode());
+            }
+
             holder.stockName.setText(stock.getName());
+
             return convertView;
         }
 
@@ -136,7 +153,7 @@ public class SearchActivity extends BaseActivity {
                         results.count = list.size();
                     }
                 } else {
-                    String prefixStr = prefix.toString().toUpperCase();
+                    String prefixStr = prefix.toString().trim().toUpperCase();
                     final List<Stock> values = originalStocks;
                     final List<Stock> newValues = new ArrayList<>();
 
@@ -164,7 +181,24 @@ public class SearchActivity extends BaseActivity {
                 }
             }
 
-            private boolean access(Stock stock, String data) {
+            /**
+             * 判断某只股票是否符合查询条件
+             *
+             * 支持的查询方式：
+             * 1、[X]：包含{X}
+             * 2、[X-]：以{X}开头
+             * 3、[X-Y]：以{X}开头，以{Y}结尾
+             * 4、[X-Y-]：以{X}开头，中间包含{Y}，但不以{Y}结尾
+             * 5、[X-Y-Z]：以{X}开头，中间包含{Y}，以{Z}结尾
+             * 6、[-X]：以{X}结尾
+             * 7、[-X-]：中间包含{X}，但不以{X}开头，也不以{X}结尾
+             * 8、[-X-Y]：中间包含{X}，以{Y}结尾，但不以{X}开头
+             *
+             * @param stock 股票
+             * @param prefix 查询字符串
+             * @return 符合条件返回true，否则返回false
+             */
+            private boolean access(Stock stock, String prefix) {
                 String code;
 
                 InputType inputType = mKeyboard.getInputType();
@@ -174,27 +208,48 @@ public class SearchActivity extends BaseActivity {
                     code = stock.getCode();
                 }
 
-                String[] split = data.split(KEY_SPLIT);
+                String[] split = prefix.split(KEY_SPLIT);
+
                 if(1 == split.length) {
-                    return code.startsWith(data) || code.contains(data) || code.endsWith(data);
+                    if(prefix.endsWith(KEY_SPLIT)) {// [X-]
+                        return code.startsWith(split[0]);
+                    } else {// [X]
+                        return code.contains(prefix);
+                    }
                 }
 
                 if(2 == split.length) {
+                    if(prefix.startsWith(KEY_SPLIT)) {
+                        if(prefix.endsWith(KEY_SPLIT)) {// [-X-]
+                            return !code.startsWith(split[1]) && code.contains(split[1]) && !code.endsWith(split[1]);
+                        } else {// [-X]
+                            return code.endsWith(split[1]);
+                        }
 
-                    if(split[1].isEmpty()) {
-                        return code.startsWith(split[0]) || code.contains(split[0]) || code.endsWith(split[0]);
                     } else {
-                        return code.startsWith(split[0]) && code.endsWith(split[1]);
+                        if(prefix.endsWith(KEY_SPLIT)) {// [X-X-]
+                            int start = split[0].length();
+                            String subCode = code.substring(start);
+                            return code.startsWith(split[0]) && subCode.contains(split[1]) && !code.endsWith(split[1]);
+                        } else {// [X-X]
+                            return code.startsWith(split[0]) && code.endsWith(split[1]);
+                        }
                     }
                 }
 
                 if(3 == split.length) {
-                    if(split[2].isEmpty()) {
-                        return code.startsWith(split[0]) && code.endsWith(split[1]);
-                    } else {
-                        return code.startsWith(split[0]) && code.contains(split[1]) && code.endsWith(split[2]);
+                    if(prefix.startsWith(KEY_SPLIT)) {// [-X-X]
+                        int end = code.length() - split[2].length();
+                        String subCode = code.substring(0, end);
+                        return !code.startsWith(split[1]) && subCode.contains(split[1]) && code.endsWith(split[2]);
+                    } else {// [X-X-X]
+                        int start = split[0].length();
+                        int end = code.length() - split[2].length();
+                        String subCode = code.substring(start, end);
+                        return code.startsWith(split[0]) && subCode.contains(split[1]) && code.endsWith(split[2]);
                     }
                 }
+
                 return false;
             }
         }
@@ -208,7 +263,8 @@ public class SearchActivity extends BaseActivity {
 
     private static class ViewHolder {
         ToggleButton stockCollectBtn;
-        TextView stockCode;
+        TextView stockCode1;
+        TextView stockCode2;
         TextView stockName;
     }
 

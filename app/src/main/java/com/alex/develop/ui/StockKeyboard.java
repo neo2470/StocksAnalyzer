@@ -6,7 +6,6 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.text.Editable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -47,6 +46,14 @@ public class StockKeyboard extends KeyboardView {
         return inputType;
     }
 
+    public void show() {
+        setVisibility(VISIBLE);
+    }
+
+    public void hide() {
+        setVisibility(GONE);
+    }
+
     private OnKeyboardActionListener onKeyboardActionListener = new OnKeyboardActionListener() {
 
         @Override
@@ -82,7 +89,16 @@ public class StockKeyboard extends KeyboardView {
             } else if(KEY_300 == primaryCode) {
                 data = getResources().getString(R.string.key_300);
             } else if(KEY_SPLIT == primaryCode) {
-                data = getResources().getString(R.string.key_split);
+                String keyLabel = getResources().getString(R.string.key_split);
+                if(0 < start) {
+                    if (editable.charAt(start - 1) == keyLabel.charAt(0)) {
+                        insert = false;
+                    } else {
+                        data = keyLabel;
+                    }
+                } else {
+                    data = keyLabel;
+                }
             } else if(KEY_DEL == primaryCode) {
                 if(null != editable && 0 < start) {
                     editable.delete(start-1, start);
@@ -96,6 +112,7 @@ public class StockKeyboard extends KeyboardView {
 
             } else if(KEY_HID == primaryCode) {
                 insert = false;
+                hide();
             } else if(KEY_XXX == primaryCode) {
                 insert = false;
 

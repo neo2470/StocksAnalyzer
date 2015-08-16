@@ -207,7 +207,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
                 convertView = inflater.inflate(R.layout.stock_details, null);
                 ViewHolder holder = new ViewHolder();
                 holder.stockName = (TextView) convertView.findViewById(R.id.stockName);
-                holder.stockID = (TextView) convertView.findViewById(R.id.stockId);
+                holder.stockCode = (TextView) convertView.findViewById(R.id.stockCode);
                 holder.stockClose = (TextView) convertView.findViewById(R.id.stockClose);
                 holder.stockIncrease = (TextView) convertView.findViewById(R.id.stockIncrease);
                 convertView.setTag(holder);
@@ -241,7 +241,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             holder.stockName.setText(stock.getName());
 
             // 股票代码
-            holder.stockID.setText(stock.getCode());
+            holder.stockCode.setText(stock.getCode());
 
             // 股票价格（收盘价）
             holder.stockClose.setText(price);
@@ -257,7 +257,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
     private static  class ViewHolder {
         TextView stockName;
-        TextView stockID;
+        TextView stockCode;
         TextView stockClose;
         TextView stockIncrease;
     }

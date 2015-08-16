@@ -22,11 +22,11 @@
             android:textSize="@dimen/stock_name" />
 
         <TextView
-            android:id="@+id/stockId"
+            android:id="@+id/stockCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/stock_id"
-            android:textSize="@dimen/stock_id" />
+            android:textSize="@dimen/stock_code" />
 
     </LinearLayout>
 
