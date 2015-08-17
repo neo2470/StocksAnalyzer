@@ -177,6 +177,18 @@ public final class Stock extends BaseObject {
         this.search = search;
     }
 
+    public void search() {
+
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public void fromSina(String[] data) {
         today.setOpen(Float.valueOf(data[1]));// 开盘价
         today.setLastClose(Float.valueOf(data[2])); // 昨日收盘价
@@ -258,6 +270,7 @@ public final class Stock extends BaseObject {
     private long collectStamp;// 被收藏的时间戳
     private int collect;// 股票是否被收藏
     private int search;// 股票被搜索的次数
+    private int index;// 在{Analyzer.stockList}中的索引
 
     private Candlestick today;// 今日行情
 

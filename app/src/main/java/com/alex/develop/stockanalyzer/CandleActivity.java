@@ -1,5 +1,7 @@
 package com.alex.develop.stockanalyzer;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,6 +15,14 @@ import com.alex.develop.ui.StockHeader;
  */
 public class CandleActivity extends BaseActivity implements CandleView.onCandlestickSelectedListener {
 
+    public static void start(Context context, int index, int from) {
+        Intent intent = new Intent();
+        intent.setClass(context, CandleActivity.class);
+        intent.putExtra(CandleActivity.INDEX, index);
+        intent.putExtra(CandleActivity.FROM, from);
+        context.startActivity(intent);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,10 +30,10 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         Analyzer.setLoadView(findViewById(R.id.loading));
 
         Bundle bundle = getIntent().getExtras();
-        int index = bundle.getInt(ARG_STOCK_INDEX);
-        boolean isCollect = bundle.getBoolean(ARG_FROM_COLLECT);
+        int index = bundle.getInt(INDEX);
+        int from = bundle.getInt(FROM);
 
-        if(isCollect) {
+        if(COLLECT_LIST == from) {
             stock = Analyzer.getCollectStockList(false).get(index);
         } else {
             stock = Analyzer.getStockList().get(index);
@@ -57,8 +67,11 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         }
     }
 
-    public static final String ARG_STOCK_INDEX = "stockIndex";
-    public static final String ARG_FROM_COLLECT = "fromCollect";
+    public static final String INDEX = "stockIndex";
+    public static final String FROM = "from";
+    public static final int STOCK_LIST = 0;
+    public static final int COLLECT_LIST = 1;
+    public static final int OTHER_LIST = 2;
 
     private Stock stock;
     private StockHeader stockHeader;

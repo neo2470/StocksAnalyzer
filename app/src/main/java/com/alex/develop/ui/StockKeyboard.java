@@ -1,12 +1,10 @@
 package com.alex.develop.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.text.Editable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.EditText;
 
 import com.alex.develop.entity.Enum.InputType;
@@ -22,28 +20,33 @@ public class StockKeyboard extends KeyboardView {
         super(context, attrs);
     }
 
+    public interface OnInputTypeChangeListener{
+        void onChanged(InputType inputType);
+    }
+
     @Override
     public void setKeyboard(Keyboard keyboard) {
         super.setKeyboard(keyboard);
 
         if(symbols == keyboard) {
-            inputType = InputType.Numeric;
+            mListener.onChanged(InputType.Numeric);
         }
 
         if(qwerty == keyboard) {
-            inputType = InputType.Alphabet;
+            mListener.onChanged(InputType.Alphabet);
         }
     }
 
-    public void setKeyboardLayout(int symbols, int qwerty) {
+    public void setKeyboardLayout(int symbols, int qwerty, EditText editText) {
         this.symbols = new Keyboard(getContext(), symbols);
         this.qwerty = new Keyboard(getContext(), qwerty);
+        this.editText = editText;
         setKeyboard(this.symbols);
         setOnKeyboardActionListener(onKeyboardActionListener);
     }
 
-    public InputType getInputType() {
-        return inputType;
+    public void setOnInputTypeChangeListener(OnInputTypeChangeListener listener) {
+        mListener = listener;
     }
 
     public void show() {
@@ -70,12 +73,12 @@ public class StockKeyboard extends KeyboardView {
         public void onKey(int primaryCode, int[] keyCodes) {
 
             // Get the EditText and its Editable
-            View focus = ((Activity) getContext()).getWindow().getCurrentFocus();
-            if(null == focus || EditText.class == focus.getClass()) {
-                return;
-            }
+//            View focus = ((Activity) getContext()).getWindow().getCurrentFocus();
+//            if(null == focus || EditText.class == focus.getClass()) {
+//                return;
+//            }
 
-            EditText editText = (EditText) focus;
+//            EditText editText = (EditText) focus;
             Editable editable = editText.getText();
             int start = editText.getSelectionStart();
 
@@ -165,7 +168,8 @@ public class StockKeyboard extends KeyboardView {
         private final static int KEY_123 = 9910;
     };
 
+    private EditText editText;
     private Keyboard symbols;// 数字键盘
     private Keyboard qwerty;// 字母键盘
-    private InputType inputType;// 输入方式
+    private OnInputTypeChangeListener mListener;// 输入方式
 }

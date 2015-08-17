@@ -86,9 +86,12 @@ public class Splash extends BaseActivity {
 
 				// 从SQLite中读取数据
 				if(!firstLaunch) {
+
+					int count = 0;
 					List<Stock> stocks = new ArrayList<>();
 					SQLiteDatabase db = SQLiteHelper.getInstance().getReadableDatabase();
 					Cursor cursor = db.query(Stock.Table.NAME, null, null, null, null, null, null);
+
 					if(null != cursor && cursor.moveToFirst()) {
 						do {
 							String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.CODE));
@@ -103,8 +106,10 @@ public class Splash extends BaseActivity {
 							stock.setCollect(collect);
 							stock.setCollectStamp(collectStamp);
 							stock.setSearch(search);
-
+							stock.setIndex(count);
 							stocks.add(stock);
+
+							++count;
 						} while (cursor.moveToNext());
 					}
 
@@ -340,6 +345,7 @@ public class Splash extends BaseActivity {
 
 					Stock stock = new Stock(data[0], data[2]);
 					stock.setCodeCN(data[1]);
+					stock.setIndex(count);
 					stocks.add(stock);
 					++count;
 

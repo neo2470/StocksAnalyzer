@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
+import com.alex.develop.stockanalyzer.CandleActivity;
 import com.alex.develop.task.QueryStockToday;
 import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
@@ -32,7 +33,7 @@ import java.util.List;
 public class StockFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener {
 
     public interface OnStockSelectedListener {
-        void onStockSelected(int index, boolean isCollectView);
+        void onStockSelected(int index, int from);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                stockSelectedListener.onStockSelected(position, isCollectView);
+                stockSelectedListener.onStockSelected(position, isCollectView ? CandleActivity.COLLECT_LIST : CandleActivity.STOCK_LIST);
             }
         });
 
@@ -186,7 +187,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
         @Override
         public int getCount() {
-            return stocks.size();
+            return null == stocks ? 0 : stocks.size();
         }
 
         @Override
