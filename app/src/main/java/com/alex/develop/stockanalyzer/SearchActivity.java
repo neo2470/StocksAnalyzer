@@ -24,7 +24,7 @@ import com.alex.develop.ui.StockKeyboard;
 
 /**
  * Created by alex on 15-6-15.
- * Search Stocks by AutoCompleteTextView
+ * Search Stocks by EditText
  */
 public class SearchActivity extends BaseActivity implements OnStocksFindListener {
 
@@ -58,7 +58,7 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mKeyboard.show();
-                return true;
+                return false;
             }
         });
 
@@ -68,6 +68,7 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
         resultList = (ListView) findViewById(R.id.resultList);
         resultList.setAdapter(adapter);
         resultList.setTextFilterEnabled(true);
+
         resultList.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

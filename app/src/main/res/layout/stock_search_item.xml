@@ -12,7 +12,8 @@
         android:layout_height="50dp"
         android:background="@drawable/btn_collect_style"
         android:textOff=""
-        android:textOn="" />
+        android:textOn=""
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/stockCode1"

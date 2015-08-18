@@ -155,7 +155,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTyp
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            Log.d("Select", constraint + ", " + results.count);
             stocks = (List<Stock>) results.values;
 
             if (0 < results.count) {

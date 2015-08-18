@@ -35,6 +35,10 @@ public class StockKeyboard extends KeyboardView {
         if(qwerty == keyboard) {
             mListener.onChanged(InputType.Alphabet);
         }
+
+        if(null != editText) {
+            editText.setText("");
+        }
     }
 
     public void setKeyboardLayout(int symbols, int qwerty, EditText editText) {
