@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/stock_fragment_padding_left"
-        android:paddingRight="@dimen/stock_fragment_padding_right">
+        android:paddingRight="@dimen/stock_fragment_padding_right"
+        android:visibility="gone">
 
         <RadioButton
             android:id="@+id/codeRadio"

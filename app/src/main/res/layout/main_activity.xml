@@ -35,6 +35,26 @@
             android:onClick="onNavClicked"
             android:text="自选" />
 
+        <RadioButton
+            android:id="@+id/tradeStock"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:onClick="onNavClicked"
+            android:text="交易" />
+
+        <RadioButton
+            android:id="@+id/findStock"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:onClick="onNavClicked"
+            android:text="选股" />
+
     </RadioGroup>
 
 
