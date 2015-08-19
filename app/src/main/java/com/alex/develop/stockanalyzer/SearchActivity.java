@@ -8,6 +8,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -19,14 +21,15 @@ import android.widget.TextView;
 
 import com.alex.develop.adapter.SearchAdapter;
 import com.alex.develop.adapter.SearchAdapter.OnStocksFindListener;
-import com.alex.develop.entity.Stock;
+import com.alex.develop.entity.*;
+import com.alex.develop.entity.Enum;
 import com.alex.develop.ui.StockKeyboard;
 
 /**
  * Created by alex on 15-6-15.
  * Search Stocks by EditText
  */
-public class SearchActivity extends BaseActivity implements OnStocksFindListener {
+public class SearchActivity extends BaseActivity implements OnStocksFindListener, StockKeyboard.OnInputTypeChangeListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,16 +61,26 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 mKeyboard.show();
-                return false;
+                return true;
             }
         });
 
-        final SearchAdapter adapter = new SearchAdapter(Analyzer.getSearchStockList());
+        adapter = new SearchAdapter(Analyzer.getSearchStockList());
         adapter.setOnStocksFindListener(this);
 
         resultList = (ListView) findViewById(R.id.resultList);
         resultList.setAdapter(adapter);
         resultList.setTextFilterEnabled(true);
+        resultList.setOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                mKeyboard.hide();
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            }
+        });
 
         resultList.setOnItemClickListener(new OnItemClickListener() {
             @Override
@@ -75,17 +88,15 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
                 Stock stock = (Stock) adapter.getItem(position);
                 stock.search();
                 CandleActivity.start(SearchActivity.this, stock.getIndex(), CandleActivity.OTHER_LIST);
-                Log.d("Select", "Click, " + position);
             }
         });
         setResult(Activity.RESULT_OK);
 
-        // 自定义键盘
-        mKeyboard = (StockKeyboard) findViewById(R.id.keyboardView);
-        mKeyboard.setOnInputTypeChangeListener(adapter);
-        mKeyboard.setKeyboardLayout(R.xml.symbols, R.xml.qwerty, stockSearch);
-
         findNothing = (TextView) findViewById(R.id.findNothing);
+
+        mKeyboard = (StockKeyboard) findViewById(R.id.keyboardView);
+        mKeyboard.setOnInputTypeChangeListener(this);
+        mKeyboard.setKeyboardLayout(R.xml.symbols, R.xml.qwerty, stockSearch);
     }
 
     @Override
@@ -97,6 +108,12 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
                 findNothing.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    @Override
+    public void onChanged(Enum.InputType inputType) {
+        adapter.setInputType(inputType);
+        findNothing.setVisibility(View.GONE);
     }
 
     private void doAfterTextChanged(CharSequence s) {
@@ -114,5 +131,6 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
     private ListView resultList;
     private EditText stockSearch;
     private TextView findNothing;
+    private SearchAdapter adapter;
     private StockKeyboard mKeyboard;
 }

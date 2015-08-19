@@ -1,21 +1,19 @@
 package com.alex.develop.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum.InputType;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
-import com.alex.develop.ui.StockKeyboard.OnInputTypeChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,7 @@ import java.util.List;
  * Created by alex on 15-8-17.
  * 使用Android Filter配合ListView来搜索股票信息
  */
-public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTypeChangeListener {
+public class SearchAdapter extends BaseAdapter implements Filterable {
 
     public SearchAdapter(List<Stock> stocks) {
         this.stocks = stocks;
@@ -46,11 +44,6 @@ public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTyp
         }
 
         return filter;
-    }
-
-    @Override
-    public void onChanged(InputType inputType) {
-        this.inputType = inputType;
     }
 
     @Override
@@ -78,7 +71,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTyp
             convertView = LayoutInflater.from(Analyzer.getContext()).inflate(R.layout.stock_search_item, null);
 
             holder = new ViewHolder();
-            holder.stockCollectBtn = (ToggleButton) convertView.findViewById(R.id.stockCollectBtn);
+            holder.stockCollect = (CheckBox) convertView.findViewById(R.id.stockCollect);
             holder.stockCode1 = (TextView) convertView.findViewById(R.id.stockCode1);
             holder.stockCode2 = (TextView) convertView.findViewById(R.id.stockCode2);
             holder.stockName = (TextView) convertView.findViewById(R.id.stockName);
@@ -88,14 +81,14 @@ public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTyp
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.stockCollectBtn.setOnCheckedChangeListener(null);
+        holder.stockCollect.setOnCheckedChangeListener(null);
         if (stock.isCollected()) {
-            holder.stockCollectBtn.setChecked(true);
+            holder.stockCollect.setChecked(true);
         } else {
-            holder.stockCollectBtn.setChecked(false);
+            holder.stockCollect.setChecked(false);
         }
 
-        holder.stockCollectBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        holder.stockCollect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 stock.collect(isChecked ? 1 : 0);
@@ -113,6 +106,10 @@ public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTyp
         holder.stockName.setText(stock.getName());
 
         return convertView;
+    }
+
+    public void setInputType(InputType inputType) {
+        this.inputType = inputType;
     }
 
     private class StockFilter extends Filter {
@@ -243,7 +240,7 @@ public class SearchAdapter extends BaseAdapter implements Filterable, OnInputTyp
     }
 
     private static class ViewHolder {
-        ToggleButton stockCollectBtn;
+        CheckBox stockCollect;
         TextView stockCode1;
         TextView stockCode2;
         TextView stockName;

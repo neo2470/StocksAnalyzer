@@ -3,19 +3,17 @@ package com.alex.develop.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.TextView;
 
+import com.alex.develop.adapter.StockListAdapter;
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.CandleActivity;
@@ -78,7 +76,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         increaseRadio.setOnCheckedChangeListener(this);
 
         final ListView stockList = (ListView) view.findViewById(R.id.stockList);
-        stockListAdapter = new StockListAdapter();
+        stockListAdapter = new StockListAdapter(stocks);
         stockList.setAdapter(stockListAdapter);
 
         stockList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -183,85 +181,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         }.execute(stocks);
     }
 
-    private class StockListAdapter extends BaseAdapter {
 
-        @Override
-        public int getCount() {
-            return null == stocks ? 0 : stocks.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            if(null == convertView) {
-                LayoutInflater inflater = LayoutInflater.from(act);
-                convertView = inflater.inflate(R.layout.stock_details, null);
-                ViewHolder holder = new ViewHolder();
-                holder.stockName = (TextView) convertView.findViewById(R.id.stockName);
-                holder.stockCode = (TextView) convertView.findViewById(R.id.stockCode);
-                holder.stockClose = (TextView) convertView.findViewById(R.id.stockClose);
-                holder.stockIncrease = (TextView) convertView.findViewById(R.id.stockIncrease);
-                convertView.setTag(holder);
-            }
-
-            Stock stock = stocks.get(position);
-            ViewHolder holder = (ViewHolder) convertView.getTag();
-
-            int textColor = act.getResources().getColor(R.color.stock_rise);
-            float increase = stock.getToday().getIncrease();
-            String price = stock.getToday().getCloseString();
-            String increaseString = stock.getToday().getIncreaseString();
-
-            if(0 > increase) {
-                textColor = act.getResources().getColor(R.color.stock_fall);
-            }
-            if(stock.isSuspended()) {
-                textColor = act.getResources().getColor(R.color.stock_suspended);
-                price = stock.getToday().getLastCloseString();
-                increaseString = act.getString(R.string.trade_suspended);
-            }
-
-            // 如果没有查询到股票数据则显示默认的字符
-            if ("".equals(stock.getTime())) {
-                price = act.getString(R.string.stock_default);
-                increaseString = price;
-                textColor = act.getResources().getColor(R.color.stock_suspended);
-            }
-
-            // 股票名称
-            holder.stockName.setText(stock.getName());
-
-            // 股票代码
-            holder.stockCode.setText(stock.getCode());
-
-            // 股票价格（收盘价）
-            holder.stockClose.setText(price);
-            holder.stockClose.setTextColor(textColor);
-
-            // 股票涨幅
-            holder.stockIncrease.setText(increaseString);
-            holder.stockIncrease.setTextColor(textColor);
-
-            return convertView;
-        }
-    }
-
-    private static  class ViewHolder {
-        TextView stockName;
-        TextView stockCode;
-        TextView stockClose;
-        TextView stockIncrease;
-    }
 
     private int queryStart;
     private int queryStop;

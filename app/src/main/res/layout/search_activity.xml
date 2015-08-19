@@ -31,8 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/stockSearch"
-        android:drawSelectorOnTop="true"
-        android:descendantFocusability="blocksDescendants"/>
+        android:drawSelectorOnTop="true"/>
 
     <com.alex.develop.ui.StockKeyboard
         android:id="@+id/keyboardView"

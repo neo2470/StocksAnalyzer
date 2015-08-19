@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
@@ -11,9 +9,14 @@ import java.util.ArrayList;
 public class CandleList {
 
     public CandleList() {
+
+        st = new Cursor();
+        ed = new Cursor();
+
         low = 1000000.0f;
         high = 0.0f;
         volume = 0;
+
         nodes = new ArrayList<>();
     }
 
@@ -30,6 +33,12 @@ public class CandleList {
 
         node.trim2Size();
         nodes.add(node);
+
+        // 设置结束游标的初始位置
+        if(1 == node.size()) {
+            ed.node = 0;
+            ed.candle = node.size()-1;
+        }
     }
 
     public Node get(int index) {
@@ -37,14 +46,32 @@ public class CandleList {
     }
 
     /**
+     * 将游标{st}和{ed}同时向左或向右移动{day}个数据单位
+     * @param day
+     */
+    public void move(int day) {
+
+    }
+
+    /**
+     * 将游标{cursor}移动{day}个单位
+     * @param cursor 将要被移动的游标
+     * @param day day > 0，向右移动；day < 0，向左移动
+     */
+    public void move(Cursor cursor,int day) {
+
+    }
+
+    /**
      * 设置数据的可见区域，start中的索引数值肯定<=stop中的索引数值
+     *
      * @param start 可见区域起始游标
-     * @param stop 可见区域结束游标
+     * @param stop  可见区域结束游标
      */
     public void setScope(Cursor start, Cursor stop) {
 
         // 同一个Node数据块内
-        if(start.node == stop.node) {
+        if (start.node == stop.node) {
             Node node = get(start.node);
             float[] data = node.getLowAndHigh(start.candle, stop.candle);
             low = data[0];
@@ -52,15 +79,15 @@ public class CandleList {
         } else {
             low = 1000000.0f;
             high = 0.0f;
-            for (int i = start.node; i<=stop.node; ++i) {
+            for (int i = start.node; i <= stop.node; ++i) {
                 Node node = get(i);
                 float[] data;
-                if(i == start.node) {
-                    data = node.getLowAndHigh(start.candle, node.size()-1);
-                } else if(i == stop.node) {
+                if (i == start.node) {
+                    data = node.getLowAndHigh(start.candle, node.size() - 1);
+                } else if (i == stop.node) {
                     data = node.getLowAndHigh(0, stop.candle);
                 } else {
-                    data = node.getLowAndHigh(0, node.size()-1);
+                    data = node.getLowAndHigh(0, node.size() - 1);
                 }
 
                 low = low > data[0] ? data[0] : low;
@@ -71,6 +98,7 @@ public class CandleList {
 
     /**
      * 记录可见区域数据中股票价格的最低价格
+     *
      * @return 在setScope()之前返回整个数据集合中的最低价格
      */
     public float getLow() {
@@ -79,6 +107,7 @@ public class CandleList {
 
     /**
      * 记录可见区域数据中股票价格的最高价格
+     *
      * @return 在setScope()之前返回整个数据集合中的最高价格
      */
     public float getHigh() {
@@ -88,6 +117,17 @@ public class CandleList {
     public long getVolume() {
         return volume;
     }
+
+    public Cursor getStart() {
+        return st;
+    }
+
+    public Cursor getEnd() {
+        return ed;
+    }
+
+    private Cursor st;
+    private Cursor ed;
 
     private float low;
     private float high;

@@ -130,7 +130,7 @@ public class DateHelper {
         Enum.Period period = (Enum.Period) types[1];
 
 
-        data[0] = "20150627";
+        data[0] = "20150709";
         data[1] = today();
 
         return data;
