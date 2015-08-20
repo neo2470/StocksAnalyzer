@@ -1,6 +1,7 @@
 package com.alex.develop.stockanalyzer;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 
+import com.alex.develop.fragment.PositionFragment;
+import com.alex.develop.fragment.SelectFragment;
 import com.alex.develop.fragment.StockFragment;
 import com.alex.develop.ui.NonSlidableViewPager;
 
@@ -19,104 +22,145 @@ import java.util.List;
 
 /**
  * App入口
+ *
  * @author Created by alex 2014/10/23
  */
 public class MainActivity extends BaseActivity implements StockFragment.OnStockSelectedListener {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main_activity);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_activity);
 
-		if(null == fragList) {
+        if (null == fragList) {
 
-			fragList = new ArrayList<>();
+            fragList = new ArrayList<>();
 
-			// 市场行情
-			fragList.add(new StockFragment());
+            // 行情
+            fragList.add(new StockFragment());
 
-			// 自选股
-			StockFragment stockFragment = new StockFragment();
-			Bundle bundle = new Bundle();
-			bundle.putBoolean(StockFragment.ARG_IS_COLLECT_VIEW, true);
-			stockFragment.setArguments(bundle);
-			fragList.add(stockFragment);
-		}
+            // 自选
+            StockFragment stockFragment = new StockFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(StockFragment.ARG_IS_COLLECT_VIEW, true);
+            stockFragment.setArguments(bundle);
+            fragList.add(stockFragment);
 
-		Analyzer.setLoadView(findViewById(R.id.loading));
+            // 持仓
+            fragList.add(new PositionFragment());
 
-		ViewHolder viewHolder = new ViewHolder(getSupportFragmentManager());
-		viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);
-		viewPager.setAdapter(viewHolder);
-		viewPager.setOffscreenPageLimit(3);
-	}
+            // 选股
+            fragList.add(new SelectFragment());
+        }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_activity_actions, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
+        Analyzer.setLoadView(findViewById(R.id.loading));
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.action_search :
-				Intent intent = new Intent();
-				intent.setClass(this, SearchActivity.class);
-				startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
+        ViewHolder viewHolder = new ViewHolder(getSupportFragmentManager());
+        viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);
+        viewPager.setAdapter(viewHolder);
+        viewPager.setOffscreenPageLimit(3);
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_activity_actions, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-		// 自选股数据刷新
-		fragList.get(1).onActivityResult(requestCode, resultCode, data);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                Intent intent = new Intent();
+                intent.setClass(this, SearchActivity.class);
+                startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-	@Override
-	public void onStockSelected(int index, int from) {
-		CandleActivity.start(this, index, from);
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-	public void onNavClicked(View view) {
-		boolean isChecked = ((RadioButton) view).isChecked();
-		switch (view.getId()) {
-			case R.id.marketStock :
-				if(isChecked) {
-					viewPager.setCurrentItem(0);
-				}
-				break;
-			case R.id.collectStock :
-				if(isChecked) {
-					viewPager.setCurrentItem(1);
-				}
-				break;
-		}
-	}
+        // 自选股数据刷新
+        fragList.get(1).onActivityResult(requestCode, resultCode, data);
+    }
 
-	private class ViewHolder extends FragmentPagerAdapter {
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
 
-		public ViewHolder(FragmentManager fm) {
-			super(fm);
-		}
+        if(hasFocus) {
+            hideNavigationBar();
+        }
+    }
 
-		@Override
-		public Fragment getItem(int position) {
-			return fragList.get(position);
-		}
+    @Override
+    public void onStockSelected(int index, int from) {
+        CandleActivity.start(this, index, from);
+    }
 
-		@Override
-		public int getCount() {
-			return fragList.size();
-		}
-	}
+    public void onNavClicked(View view) {
+        boolean isChecked = ((RadioButton) view).isChecked();
+        switch (view.getId()) {
+            case R.id.marketStock:
+                if (isChecked) {
+                    viewPager.setCurrentItem(0);
+                }
+                break;
+            case R.id.collectStock:
+                if (isChecked) {
+                    viewPager.setCurrentItem(1);
+                }
+                break;
+            case R.id.positionStock:
+                if (isChecked) {
+                    viewPager.setCurrentItem(2);
+                }
+                break;
+            case R.id.selectStock:
+                if (isChecked) {
+                    viewPager.setCurrentItem(3);
+                }
+                break;
+        }
+    }
 
-	private NonSlidableViewPager viewPager;
-	private List<Fragment> fragList;
+    private void hideNavigationBar() {
+        int uiFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav bar
+
+        if(Build.VERSION.SDK_INT >= 19) {
+            uiFlags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        } else {
+            uiFlags |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+        }
+
+        getWindow().getDecorView().setSystemUiVisibility(uiFlags);
+    }
+
+    private class ViewHolder extends FragmentPagerAdapter {
+
+        public ViewHolder(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragList.size();
+        }
+    }
+
+    private NonSlidableViewPager viewPager;
+    private List<Fragment> fragList;
 }

@@ -36,17 +36,17 @@
             android:text="自选" />
 
         <RadioButton
-            android:id="@+id/tradeStock"
+            android:id="@+id/positionStock"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:button="@null"
             android:gravity="center"
             android:onClick="onNavClicked"
-            android:text="交易" />
+            android:text="持仓" />
 
         <RadioButton
-            android:id="@+id/findStock"
+            android:id="@+id/selectStock"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

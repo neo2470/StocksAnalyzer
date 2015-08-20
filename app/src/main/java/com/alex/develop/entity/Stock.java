@@ -241,7 +241,7 @@ public final class Stock extends BaseObject {
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
             if(code.endsWith(this.code)) {
                 JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
-                Node node = new Node();
+                Node node = new Node(candle.length());
                 for(int i=0; i<candle.length(); ++i) {
                     Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
                     node.add(candlestick);

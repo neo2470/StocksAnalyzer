@@ -31,13 +31,12 @@ public class CandleList {
         high = high < node.getHigh() ? node.getHigh() : high;
         volume = volume < node.getVolume() ? node.getVolume() : volume;
 
-        node.trim2Size();
         nodes.add(node);
 
         // 设置结束游标的初始位置
-        if(1 == node.size()) {
+        if (1 == node.size()) {
             ed.node = 0;
-            ed.candle = node.size()-1;
+            ed.candle = node.size() - 1;
         }
     }
 
@@ -47,6 +46,7 @@ public class CandleList {
 
     /**
      * 将游标{st}和{ed}同时向左或向右移动{day}个数据单位
+     *
      * @param day
      */
     public void move(int day) {
@@ -55,10 +55,22 @@ public class CandleList {
 
     /**
      * 将游标{cursor}移动{day}个单位
+     *
      * @param cursor 将要被移动的游标
-     * @param day day > 0，向右移动；day < 0，向左移动
+     * @param day    day > 0，向右移动；day < 0，向左移动
      */
-    public void move(Cursor cursor,int day) {
+    public void move(Cursor cursor, int day) {
+
+        // 不需要移动
+        if(0 == day) {
+            return;
+        }
+
+        if(day > 0) {// 向右移动(股票数据越来越新)
+
+        } else {// 向左移动(股票数据越来越旧)
+
+        }
 
     }
 
