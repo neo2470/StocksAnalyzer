@@ -37,6 +37,9 @@ public class CandleList {
         if (1 == node.size()) {
             ed.node = 0;
             ed.candle = node.size() - 1;
+
+            st.node = ed.node;
+            st.candle = ed.candle;
         }
     }
 
@@ -61,6 +64,8 @@ public class CandleList {
      */
     public void move(Cursor cursor, int day) {
 
+        // TODO 该方法的代码尚未被测试
+
         // 不需要移动
         if(0 == day) {
             return;
@@ -68,7 +73,65 @@ public class CandleList {
 
         if(day > 0) {// 向右移动(股票数据越来越新)
 
+            int nIndex = cursor.node;
+            int cIndex = cursor.candle + day;
+
+            // 同一个Node内
+            if(nodes.get(nIndex).size() > cIndex) {
+                cursor.candle = cIndex;
+            } else {
+
+                while (true) {
+
+                    --nIndex;
+
+                    // 如果超出左侧界限，则将{cursor}设置为最左侧的元素
+                    if(0 > nIndex) {
+                        cursor.node = 0;
+                        cursor.candle = nodes.get(0).size() - 1;
+                        break;
+                    }
+
+                    Node node = nodes.get(nIndex);
+                    cIndex -= node.size();
+
+                    if (node.size() > cIndex) {
+                        cursor.node = nIndex;
+                        cursor.candle = cIndex;
+                        break;
+                    }
+                }
+            }
+
         } else {// 向左移动(股票数据越来越旧)
+
+            int nIndex = cursor.node;
+            int cIndex = cursor.candle - day;
+
+            // 同一个Node内
+            if(0 < cIndex) {
+                cursor.candle = cIndex;
+            } else {
+                while (true) {
+                    ++nIndex;
+
+                    // 如果超出右侧界限，则将{cursor}设置为最右侧的元素
+                    if(nodes.size() <= nIndex) {
+                        cursor.node = nodes.size() - 1;
+                        cursor.candle = 0;
+                        break;
+                    }
+
+                    Node node = nodes.get(nIndex);
+                    cIndex += node.size();
+
+                    if(0 > cIndex) {
+                        cursor.node = nIndex;
+                        cursor.candle = cIndex;
+                        break;
+                    }
+                }
+            }
 
         }
 

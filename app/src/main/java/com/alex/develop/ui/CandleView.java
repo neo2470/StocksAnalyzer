@@ -252,6 +252,10 @@ public class CandleView extends View {
                 st.node = data.size() - 1;
                 st.candle = 0;
 
+//                ed = data.getEnd();
+//                data.move(data.getStart(), -Config.ITEM_AMOUNTS);
+//                st =data.getStart();
+
                 invalidate();
             }
         }.execute(Enum.Month.Jul, Enum.Period.Day);
