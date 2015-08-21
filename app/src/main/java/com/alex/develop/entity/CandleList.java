@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -34,7 +36,7 @@ public class CandleList {
         nodes.add(node);
 
         // 设置结束游标的初始位置
-        if (1 == node.size()) {
+        if (1 == nodes.size()) {
             ed.node = 0;
             ed.candle = node.size() - 1;
 
@@ -64,8 +66,9 @@ public class CandleList {
      */
     public void move(Cursor cursor, int day) {
 
-        // TODO 该方法的代码尚未被测试
+        // TODO 已经测试，该方法存在问题，待修改
 
+//        Log.d("Print-Before", cursor.node + ", " + cursor.candle);
         // 不需要移动
         if(0 == day) {
             return;
@@ -134,6 +137,8 @@ public class CandleList {
             }
 
         }
+
+//        Log.d("Print-After", cursor.node + ", " + cursor.candle);
 
     }
 

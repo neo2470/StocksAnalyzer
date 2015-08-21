@@ -247,14 +247,17 @@ public class CandleView extends View {
                 qCfg.setRatio(qArea.height(), data.getVolume());
                 qCfg.setReferValue(0);
 
-                ed.node = data.size() - 1;
-                ed.candle = data.get(ed.node).size() - 1;
-                st.node = data.size() - 1;
-                st.candle = 0;
+//                ed.node = data.size() - 1;
+//                ed.candle = data.get(ed.node).size() - 1;
+//                st.node = data.size() - 1;
+//                st.candle = 0;
 
-//                ed = data.getEnd();
-//                data.move(data.getStart(), -Config.ITEM_AMOUNTS);
-//                st =data.getStart();
+                ed = data.getEnd();
+                Log.d("Print-ed", ed.node + ", " + ed.candle);
+
+                data.move(data.getStart(), -Config.ITEM_AMOUNTS);
+                st =data.getStart();
+                Log.d("Print-st", st.node + ", " + st.candle);
 
                 invalidate();
             }
