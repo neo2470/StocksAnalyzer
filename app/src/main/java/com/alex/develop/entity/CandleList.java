@@ -67,6 +67,7 @@ public class CandleList {
     public void move(Cursor cursor, int day) {
 
         // TODO 已经测试，该方法存在问题，待修改
+        Log.d("Print-Day", day+"");
 
 //        Log.d("Print-Before", cursor.node + ", " + cursor.candle);
         // 不需要移动
@@ -77,7 +78,7 @@ public class CandleList {
         if(day > 0) {// 向右移动(股票数据越来越新)
 
             int nIndex = cursor.node;
-            int cIndex = cursor.candle + day;
+            int cIndex = cursor.candle + day - 1;
 
             // 同一个Node内
             if(nodes.get(nIndex).size() > cIndex) {
@@ -108,11 +109,14 @@ public class CandleList {
 
         } else {// 向左移动(股票数据越来越旧)
 
+            // 负数取绝对值
+            day = -day;
+
             int nIndex = cursor.node;
-            int cIndex = cursor.candle - day;
+            int cIndex = cursor.candle - day + 1;
 
             // 同一个Node内
-            if(0 < cIndex) {
+            if(0 <= cIndex) {
                 cursor.candle = cIndex;
             } else {
                 while (true) {

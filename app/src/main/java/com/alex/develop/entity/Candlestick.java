@@ -90,7 +90,7 @@ public class Candlestick extends BaseObject {
     }
 
     public String getVolumeString() {
-        return volume+"";
+        return String.format("%.2f", volume / Constant.VOLUME_MILLION) + Analyzer.getContext().getString(R.string.candle_volume_unit_million);
     }
 
     public void setVolume(long volume) {
@@ -118,7 +118,7 @@ public class Candlestick extends BaseObject {
     }
 
     public String getMoneyString() {
-        return money+"";
+        return String.format("%.2f", money / Constant.MONEY_HUNDRED_MILLION) + Analyzer.getContext().getString(R.string.candle_money_unit_hundred_million);
     }
 
     public void setMoney(float money) {
