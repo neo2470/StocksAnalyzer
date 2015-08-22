@@ -214,7 +214,12 @@ public class CandleView extends View {
         if(0 < data.size()) {
             for (int i = ed.node; i >= st.node; --i) {
                 Node node = data.get(i);
-                for (int j = st.candle; j <= ed.candle; ++j) {
+
+                // 计算特殊情况下遍历的开始和结束的位置
+                int start = i == st.node ? st.candle : 0;
+                int stop = i == ed.node ? ed.candle : node.size() - 1;
+
+                for (int j = start; j <= stop; ++j) {
                     Candlestick candle = node.get(j);
 //                    pen.setColor(Color.RED);
 //                    canvas.drawText(j+"", x, 50, pen);
@@ -253,7 +258,7 @@ public class CandleView extends View {
 //                st.candle = 0;
 
                 ed = data.getEnd();
-                Log.d("Print-ed", ed.node + ", " + ed.candle);
+                Log.d("Print-ed", ed.node + ", " + ed.candle + ", " + data.get(ed.node).size());
 
                 data.move(data.getStart(), -Config.ITEM_AMOUNTS);
                 st =data.getStart();
