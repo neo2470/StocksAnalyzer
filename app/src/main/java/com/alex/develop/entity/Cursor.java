@@ -6,6 +6,15 @@ package com.alex.develop.entity;
  */
 public class Cursor {
 
+    public Cursor() {}
+
+    public Cursor copy() {
+        Cursor result = new Cursor();
+        result.node = node;
+        result.candle = candle;
+        return  result;
+    }
+
     /**
      * CandleList中用于定位Node的索引
      */

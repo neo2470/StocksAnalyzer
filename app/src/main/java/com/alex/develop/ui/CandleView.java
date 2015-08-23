@@ -122,36 +122,39 @@ public class CandleView extends View {
             ++intSub;
         }
 
-        Cursor csr = new Cursor();
+        Cursor csr = ed.copy();
         CandleList data = stock.getCandleList();
-        if(intSub <= ed.candle+1) {
-            csr.node = ed.node;
-            csr.candle = --intSub;
-        } else {
+        data.move(csr, -intSub);
 
-            // TODO 下面的代码有待测试验证
-            int nIndex = ed.node;
-            int cIndex = ed.candle - intSub;
-            while (true) {
-                --nIndex;
-                Node node = data.get(nIndex);
-                cIndex += node.size()-1;
-                if(0<=cIndex) {
-                    break;
-                }
-            }
-
-            csr.node = nIndex;
-            csr.candle = cIndex;
-        }
-
-//        Log.d("Debug-Select", intSub + ", " + floatSub);
-
-        if(csr.candle < 0) {
-            csr.candle = 0;
-        } else if(csr.candle > ed.candle) {
-            csr.candle = ed.candle;
-        }
+//        CandleList data = stock.getCandleList();
+//        if(intSub <= ed.candle+1) {
+//            csr.node = ed.node;
+//            csr.candle = --intSub;
+//        } else {
+//
+//            // TODO 下面的代码有待测试验证
+//            int nIndex = ed.node;
+//            int cIndex = ed.candle - intSub;
+//            while (true) {
+//                --nIndex;
+//                Node node = data.get(nIndex);
+//                cIndex += node.size()-1;
+//                if(0<=cIndex) {
+//                    break;
+//                }
+//            }
+//
+//            csr.node = nIndex;
+//            csr.candle = cIndex;
+//        }
+//
+////        Log.d("Debug-Select", intSub + ", " + floatSub);
+//
+//        if(csr.candle < 0) {
+//            csr.candle = 0;
+//        } else if(csr.candle > ed.candle) {
+//            csr.candle = ed.candle;
+//        }
 
         Candlestick candle = data.get(csr.node).get(csr.candle);
         touch.x = candle.getCenterXofArea();
@@ -281,12 +284,9 @@ public class CandleView extends View {
 
         touch = new PointF();
         kArea = new RectF();
-        kArea.top = 10;
-        kArea.left = 70;
         kCfg = new Config();
 
         qArea = new RectF();
-        qArea.left = 70;
         qCfg = new Config();
 
         st = new Cursor();

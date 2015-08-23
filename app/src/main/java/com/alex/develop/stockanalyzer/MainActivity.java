@@ -90,15 +90,6 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-
-        if(hasFocus) {
-            hideNavigationBar();
-        }
-    }
-
-    @Override
     public void onStockSelected(int index, int from) {
         CandleActivity.start(this, index, from);
     }
@@ -127,18 +118,6 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
                 }
                 break;
         }
-    }
-
-    private void hideNavigationBar() {
-        int uiFlags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav bar
-
-        if(Build.VERSION.SDK_INT >= 19) {
-            uiFlags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        } else {
-            uiFlags |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
-        }
-
-        getWindow().getDecorView().setSystemUiVisibility(uiFlags);
     }
 
     private class ViewHolder extends FragmentPagerAdapter {

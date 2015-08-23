@@ -23,6 +23,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
@@ -30,6 +31,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -87,10 +89,28 @@ public class BaseActivity extends FragmentActivity {
 		super.onDestroy();
 		ApplicationHelper.remove(this);
 	}
-	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		hideNavigationBar();
+	}
+
 	@SuppressLint("CommitTransaction")
 	protected FragmentTransaction getTransaction() {
 		return getSupportFragmentManager().beginTransaction();
+	}
+
+	protected void hideNavigationBar() {
+		int uiFlags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION; // hide nav bar
+
+		if(Build.VERSION.SDK_INT >= 19) {
+			uiFlags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+		} else {
+			uiFlags |= View.SYSTEM_UI_FLAG_LOW_PROFILE;
+		}
+
+		getWindow().getDecorView().setSystemUiVisibility(uiFlags);
 	}
 
 	/**
