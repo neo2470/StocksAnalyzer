@@ -58,6 +58,10 @@ public class Config {
         return referY - (value - referV) / ratio;
     }
 
+    public float px2val(float px) {
+        return referV + px * ratio;
+    }
+
     public static float itemWidth;// K线的宽度
     public static float itemSpace;// K线的间隔
 

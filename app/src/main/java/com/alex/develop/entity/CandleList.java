@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
@@ -11,9 +9,6 @@ import java.util.ArrayList;
 public class CandleList {
 
     public CandleList() {
-
-        st = new Cursor();
-        ed = new Cursor();
 
         low = 1000000.0f;
         high = 0.0f;
@@ -34,116 +29,14 @@ public class CandleList {
         volume = volume < node.getVolume() ? node.getVolume() : volume;
 
         nodes.add(node);
-
-        // 设置结束游标的初始位置
-        if (1 == nodes.size()) {
-            ed.node = 0;
-            ed.candle = node.size() - 1;
-
-            st.node = ed.node;
-            st.candle = ed.candle;
-        }
     }
 
     public Node get(int index) {
         return nodes.get(index);
     }
 
-    /**
-     * 将游标{st}和{ed}同时向左或向右移动{day}个数据单位
-     *
-     * @param day
-     */
-    public void move(int day) {
-
-    }
-
-    /**
-     * 将游标{cursor}移动{day}个单位
-     *
-     * @param cursor 将要被移动的游标
-     * @param day    day > 0，向右移动；day < 0，向左移动
-     */
-    public void move(Cursor cursor, int day) {
-
-        // TODO 已经测试，该方法存在问题，待修改
-        Log.d("Print-Day", day+"");
-
-//        Log.d("Print-Before", cursor.node + ", " + cursor.candle);
-        // 不需要移动
-        if(0 == day) {
-            return;
-        }
-
-        if(day > 0) {// 向右移动(股票数据越来越新)
-
-            int nIndex = cursor.node;
-            int cIndex = cursor.candle + day - 1;
-
-            // 同一个Node内
-            if(nodes.get(nIndex).size() > cIndex) {
-                cursor.candle = cIndex;
-            } else {
-
-                while (true) {
-
-                    --nIndex;
-
-                    // 如果超出左侧界限，则将{cursor}设置为最左侧的元素
-                    if(0 > nIndex) {
-                        cursor.node = 0;
-                        cursor.candle = nodes.get(0).size() - 1;
-                        break;
-                    }
-
-                    Node node = nodes.get(nIndex);
-                    cIndex -= node.size();
-
-                    if (node.size() > cIndex) {
-                        cursor.node = nIndex;
-                        cursor.candle = cIndex;
-                        break;
-                    }
-                }
-            }
-
-        } else {// 向左移动(股票数据越来越旧)
-
-            // 负数取绝对值
-            day = -day;
-
-            int nIndex = cursor.node;
-            int cIndex = cursor.candle - day + 1;
-
-            // 同一个Node内
-            if(0 <= cIndex) {
-                cursor.candle = cIndex;
-            } else {
-                while (true) {
-                    ++nIndex;
-
-                    // 如果超出右侧界限，则将{cursor}设置为最右侧的元素
-                    if(nodes.size() <= nIndex) {
-                        cursor.node = nodes.size() - 1;
-                        cursor.candle = 0;
-                        break;
-                    }
-
-                    Node node = nodes.get(nIndex);
-                    cIndex += node.size();
-
-                    if(0 > cIndex) {
-                        cursor.node = nIndex;
-                        cursor.candle = cIndex;
-                        break;
-                    }
-                }
-            }
-
-        }
-
-//        Log.d("Print-After", cursor.node + ", " + cursor.candle);
-
+    public ArrayList<Node> getNodes() {
+        return nodes;
     }
 
     /**
@@ -201,17 +94,6 @@ public class CandleList {
     public long getVolume() {
         return volume;
     }
-
-    public Cursor getStart() {
-        return st;
-    }
-
-    public Cursor getEnd() {
-        return ed;
-    }
-
-    private Cursor st;
-    private Cursor ed;
 
     private float low;
     private float high;

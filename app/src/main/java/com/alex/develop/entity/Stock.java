@@ -1,8 +1,10 @@
 package com.alex.develop.entity;
 
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.alex.develop.task.CollectStockTask;
+import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.StockDataAPIHelper;
 
 import org.json.JSONArray;
@@ -68,6 +70,9 @@ public final class Stock extends BaseObject {
         if(null == buyVolume) {
             buyVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
+
+        st = new Cursor(candleList);
+        ed = new Cursor(candleList);
     }
 
     public String getCodeCN() {
@@ -189,6 +194,40 @@ public final class Stock extends BaseObject {
         this.index = index;
     }
 
+    public Cursor getStart() {
+        return st;
+    }
+
+    public Cursor getEnd() {
+        return ed;
+    }
+
+    /**
+     * 将游标{st}和{ed}同时向左或向右移动{day}个数据单位
+     *
+     * @param day
+     */
+    public void moveCursor(int day) {
+        ed.move(day);
+        st.move(day);
+        candleList.setScope(st, ed);
+    }
+
+    public void resetCursor() {
+        ed.node = 0;
+        ed.candle = candleList.getNodes().get(0).size() - 1;
+
+        st.node = ed.node;
+        st.candle = ed.candle;
+
+        // 程序第一次下载的数据量 保证至少要{>=Config.ITEM_AMOUNTS}
+        st.move(-Config.ITEM_AMOUNTS);
+    }
+
+    public void requestData() {
+        new QueryStockHistory(this).execute(Enum.Month.Jul, Enum.Period.Day);
+    }
+
     public void fromSina(String[] data) {
         today.setOpen(Float.valueOf(data[1]));// 开盘价
         today.setLastClose(Float.valueOf(data[2])); // 昨日收盘价
@@ -271,6 +310,9 @@ public final class Stock extends BaseObject {
     private int collect;// 股票是否被收藏
     private int search;// 股票被搜索的次数
     private int index;// 在{Analyzer.stockList}中的索引
+
+    private Cursor st;// 被绘制的K线的起始位置
+    private Cursor ed;// 被绘制的K线的结束位置
 
     private Candlestick today;// 今日行情
 

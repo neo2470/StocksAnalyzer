@@ -31,9 +31,18 @@ public class CandleView extends View {
         initialize();
     }
 
-    public void setStock(Stock stock) {
+    public void setStock(final Stock stock) {
         this.stock = stock;
-        requestData();
+
+        new QueryStockHistory(this.stock) {
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+                stock.resetCursor();
+                updateParameters();
+            }
+        }.execute(Enum.Month.Jul, Enum.Period.Day);
     }
 
     public void setOnCandlestickSelectedListener(onCandlestickSelectedListener listener) {
@@ -102,7 +111,31 @@ public class CandleView extends View {
             pen.setColor(Color.WHITE);
             canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
+
+
+            // TODO 此处的代码尚未完成
+            float value = 0.00f;
+            if(kArea.top < touch.y && touch.y < kArea.bottom) {
+                value = kCfg.px2val(touch.y);
+            }
+
+            if(qArea.top < touch.y && touch.y < qArea.bottom) {
+                value = qCfg.px2val(touch.y);
+            }
+
+            canvas.drawText(String.format("%.2f", value), 0, touch.y, pen);
         }
+    }
+
+    public void updateParameters() {
+        CandleList data = stock.getCandleList();
+        kCfg.setRatio(kArea.height(), data.getHigh()-data.getLow());
+        kCfg.setReferValue(data.getLow());
+
+        qCfg.setRatio(qArea.height(), data.getVolume());
+        qCfg.setReferValue(0);
+
+        invalidate();
     }
 
     private void selectCandlestick(MotionEvent event) {
@@ -122,9 +155,9 @@ public class CandleView extends View {
             ++intSub;
         }
 
-        Cursor csr = ed.copy();
-        CandleList data = stock.getCandleList();
-        data.move(csr, -intSub);
+//        Cursor csr = ed.copy();
+//        CandleList data = stock.getCandleList();
+//        data.move(csr, -intSub);
 
 //        CandleList data = stock.getCandleList();
 //        if(intSub <= ed.candle+1) {
@@ -156,10 +189,12 @@ public class CandleView extends View {
 //            csr.candle = ed.candle;
 //        }
 
-        Candlestick candle = data.get(csr.node).get(csr.candle);
-        touch.x = candle.getCenterXofArea();
-        listener.onSelected(candle);
+//        Candlestick candle = data.get(csr.node).get(csr.candle);
+//        touch.x = candle.getCenterXofArea();
+//        listener.onSelected(candle);
     }
+
+
 
     /**
      * 绘制K线图形的表格背景
@@ -213,6 +248,8 @@ public class CandleView extends View {
         float x = kArea.left + Config.itemSpace;
 
         CandleList data = stock.getCandleList();
+        Cursor ed = stock.getEnd();
+        Cursor st = stock.getStart();
 
         if(0 < data.size()) {
             for (int i = ed.node; i >= st.node; --i) {
@@ -235,46 +272,6 @@ public class CandleView extends View {
         }
     }
 
-    /**
-     * 绘制指标VOL
-     */
-    private void drawVOL() {}
-
-    private void requestData() {
-
-        new QueryStockHistory(stock) {
-
-            @Override
-            protected void onPostExecute(Integer integer) {
-                super.onPostExecute(integer);
-
-                CandleList data = stock.getCandleList();
-                kCfg.setRatio(kArea.height(), data.getHigh()-data.getLow());
-                kCfg.setReferValue(data.getLow());
-
-                qCfg.setRatio(qArea.height(), data.getVolume());
-                qCfg.setReferValue(0);
-
-//                ed.node = data.size() - 1;
-//                ed.candle = data.get(ed.node).size() - 1;
-//                st.node = data.size() - 1;
-//                st.candle = 0;
-
-                ed = data.getEnd();
-                Log.d("Print-ed", ed.node + ", " + ed.candle + ", " + data.get(ed.node).size());
-
-                data.move(data.getStart(), -Config.ITEM_AMOUNTS);
-                st =data.getStart();
-                Log.d("Print-st", st.node + ", " + st.candle);
-
-                invalidate();
-            }
-        }.execute(Enum.Month.Jul, Enum.Period.Day);
-
-    }
-
-
-
     private void initialize() {
         pen = new Paint();
         pen.setTextSize(30);
@@ -289,9 +286,6 @@ public class CandleView extends View {
         qArea = new RectF();
         qCfg = new Config();
 
-        st = new Cursor();
-        ed = new Cursor();
-
         crosshairs = false;
     }
 
@@ -303,11 +297,8 @@ public class CandleView extends View {
     private Config qCfg;// 指标图的配置信息
 
     private Stock stock;
-    private Cursor st;// 被绘制的K线的起始位置
-    private Cursor ed;// 被绘制的K线的结束位置
 
     private onCandlestickSelectedListener listener;
-
 
     private boolean crosshairs;// 是否绘十字准线
 

@@ -93,7 +93,7 @@ public class BaseActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		hideNavigationBar();
+//		hideNavigationBar();
 	}
 
 	@SuppressLint("CommitTransaction")
