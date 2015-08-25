@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
 /**
  * Created by alex on 15-7-31.
  * 存储一次查询获取的K线数据集合
@@ -7,7 +9,7 @@ package com.alex.develop.entity;
 public class Node {
 
     public Node(int size) {
-        low = 1000000.0f;
+        low = Float.MAX_VALUE;
         high = 0.0f;
         volume = 0;
         index = -1;
@@ -33,24 +35,26 @@ public class Node {
     /**
      * 计算指定区域的最低价格和最高价格
      *
-     * @param start 起始位置
-     * @param stop  结束位置
+     * @param st 起始位置
+     * @param ed  结束位置
      * @return 0，最低价格;1，最高价格
      */
-    public float[] getLowAndHigh(int start, int stop) {
-        float[] data = new float[2];
+    public float[] getLowAndHigh(int st, int ed) {
+        float[] data = {Float.MAX_VALUE, 0.0f};
 
         // 指定区域为整个数据块的时候，无须计算
-        if (0 == start && size() == stop + 1) {
+        if (0 == st && size() == ed + 1) {
             data[0] = low;
             data[1] = high;
             return data;
         }
 
-        for (int i = start; i <= stop; ++i) {
+        volume = 0;
+        for (int i = st; i <= ed; ++i) {
             Candlestick candle = get(i);
             data[0] = data[0] > candle.getLow() ? candle.getLow() : data[0];
             data[1] = data[1] < candle.getHigh() ? candle.getHigh() : data[1];
+            volume = volume < candle.getVolume() ? candle.getVolume() : volume;
         }
 
         return data;

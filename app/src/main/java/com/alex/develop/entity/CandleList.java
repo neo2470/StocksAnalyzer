@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -42,33 +44,37 @@ public class CandleList {
     /**
      * 设置数据的可见区域，start中的索引数值肯定<=stop中的索引数值
      *
-     * @param start 可见区域起始游标
-     * @param stop  可见区域结束游标
+     * @param st 可见区域起始游标
+     * @param ed  可见区域结束游标
      */
-    public void setScope(Cursor start, Cursor stop) {
+    public void setScope(Cursor st, Cursor ed) {
 
         // 同一个Node数据块内
-        if (start.node == stop.node) {
-            Node node = get(start.node);
-            float[] data = node.getLowAndHigh(start.candle, stop.candle);
+        if (st.node == ed.node) {
+            Node node = get(st.node);
+            float[] data = node.getLowAndHigh(st.candle, ed.candle);
             low = data[0];
             high = data[1];
+            volume = node.getVolume();
+            Log.d("Test", low + ", " + high + ", " + volume);
+
         } else {
-            low = 1000000.0f;
+            low = Float.MAX_VALUE;
             high = 0.0f;
-            for (int i = start.node; i <= stop.node; ++i) {
+            for (int i = st.node; i >= ed.node; --i) {
                 Node node = get(i);
                 float[] data;
-                if (i == start.node) {
-                    data = node.getLowAndHigh(start.candle, node.size() - 1);
-                } else if (i == stop.node) {
-                    data = node.getLowAndHigh(0, stop.candle);
+                if (i == st.node) {
+                    data = node.getLowAndHigh(st.candle, node.size() - 1);
+                } else if (i == ed.node) {
+                    data = node.getLowAndHigh(0, ed.candle);
                 } else {
                     data = node.getLowAndHigh(0, node.size() - 1);
                 }
 
                 low = low > data[0] ? data[0] : low;
                 high = high < data[1] ? data[1] : high;
+                volume = volume < node.getVolume() ? node.getVolume() : volume;
             }
         }
     }

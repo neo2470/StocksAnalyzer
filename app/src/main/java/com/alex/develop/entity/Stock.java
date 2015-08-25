@@ -223,6 +223,8 @@ public final class Stock extends BaseObject {
 
         // 程序第一次下载的数据量 保证至少要{>=Config.ITEM_AMOUNTS}
         st.move(-Config.ITEM_AMOUNTS);
+
+        candleList.setScope(st, ed);
     }
 
     public void requestData() {

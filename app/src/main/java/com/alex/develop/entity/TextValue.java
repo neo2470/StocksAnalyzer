@@ -49,6 +49,10 @@ public class TextValue {
         measureText();
     }
 
+    public float getRight() {
+        return  rect.right;
+    }
+
     public void draw(float x, float y, Canvas canvas) {
 
         if(null != text) {
@@ -61,11 +65,13 @@ public class TextValue {
             rect.offsetTo(x, y - dy);
 
             pen.setColor(rectColor);
+            pen.setAlpha(alpha);
             pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
             canvas.drawRect(rect, pen);
 
             pen.setColor(textColor);
+            pen.setAlpha(alpha);
             pen.setStyle(Paint.Style.FILL);
 
             canvas.drawText(text, x + dX, y - (dy + pen.getFontMetrics().top), pen);
@@ -91,6 +97,7 @@ public class TextValue {
 
     private int rectColor;
     private int textColor;
+    private final int alpha = 200;
 
     private float padding;
 }

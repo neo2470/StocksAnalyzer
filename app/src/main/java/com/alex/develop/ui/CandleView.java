@@ -113,13 +113,12 @@ public class CandleView extends View {
             canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
 
-
+            // 绘制横坐标
             float value = 0.00f;
             if(kArea.top < touch.y && touch.y < kArea.bottom) {
                 value = kCfg.px2val(touch.y);
             }
 
-            // 绘制横坐标
             if(qArea.top < touch.y && touch.y < qArea.bottom) {
                 value = qCfg.px2val(touch.y);
             }
@@ -137,6 +136,8 @@ public class CandleView extends View {
 
         qCfg.setRatio(qArea.height(), data.getVolume());
         qCfg.setReferValue(0);
+
+        Log.d("Debug", data.getLow() + ", " + data.getHigh() + ", " + data.getVolume());
 
         invalidate();
     }
@@ -223,7 +224,7 @@ public class CandleView extends View {
         Cursor st = stock.getStart();
 
         if(0 < data.size()) {
-            for (int i = ed.node; i >= st.node; --i) {
+            for (int i = st.node; i >= ed.node; --i) {
                 Node node = data.get(i);
 
                 // 计算特殊情况下遍历的开始和结束的位置
