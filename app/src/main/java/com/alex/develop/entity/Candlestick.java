@@ -90,7 +90,14 @@ public class Candlestick extends BaseObject {
     }
 
     public String getVolumeString() {
-        return String.format("%.2f", volume / Constant.VOLUME_MILLION) + Analyzer.getContext().getString(R.string.candle_volume_unit_million);
+
+        float value = volume / Constant.SOHU_VOLUME_FACTOR;
+
+        if(Enum.API.Sina == from) {
+            value = volume / Constant.SINA_VOLUME_FACTOR;
+        }
+
+        return String.format("%.2f", value) + Analyzer.getContext().getString(R.string.candle_volume_unit_million);
     }
 
     public void setVolume(long volume) {
@@ -118,7 +125,13 @@ public class Candlestick extends BaseObject {
     }
 
     public String getMoneyString() {
-        return String.format("%.2f", money / Constant.MONEY_HUNDRED_MILLION) + Analyzer.getContext().getString(R.string.candle_money_unit_hundred_million);
+
+        float value = money / Constant.SOHU_VOLUME_FACTOR;
+        if(Enum.API.Sina == from) {
+            value = money / Constant.SINA_MONEY_FACTOR;
+        }
+
+        return String.format("%.2f", value) + Analyzer.getContext().getString(R.string.candle_money_unit_hundred_million);
     }
 
     public void setMoney(float money) {
@@ -149,6 +162,10 @@ public class Candlestick extends BaseObject {
         return kArea.left + kArea.width() / 2;
     }
 
+    public void setApiFrom(Enum.API from) {
+        this.from = from;
+    }
+
     public void initialize() {
         increase = 100 * (close - lastClose) / lastClose;
     }
@@ -161,6 +178,8 @@ public class Candlestick extends BaseObject {
         close = Float.valueOf(data[4]);// 收盘价
         volume = Long.valueOf(data[5]);// 成交量
         adjClose = Float.valueOf(data[6]);// Adj Close
+
+        from = Enum.API.Yahoo;
 
         Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume);
     }
@@ -186,7 +205,9 @@ public class Candlestick extends BaseObject {
         exStr = exStr.substring(0, exStr.length() - 1);
         turnover = Float.valueOf(exStr);
 
-//        Log.d("Print-fromSohu", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
+        from = Enum.API.Sohu;
+
+        Log.d("Print-fromSohu", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
 
     }
 
@@ -281,4 +302,6 @@ public class Candlestick extends BaseObject {
     private String date;// 日期
     private RectF kArea;// K线的实体部分
     private RectF vArea;// VOL的实体部分
+
+    private Enum.API from;// 数据来源与哪个API
 }

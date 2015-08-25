@@ -59,7 +59,7 @@ public class Config {
     }
 
     public float px2val(float px) {
-        return referV + px * ratio;
+        return referV + (referY - px) * ratio;
     }
 
     public static float itemWidth;// K线的宽度

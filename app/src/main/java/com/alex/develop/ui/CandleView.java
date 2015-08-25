@@ -106,24 +106,27 @@ public class CandleView extends View {
 
         drawCandlesticks(canvas);
 
-        // 绘制十字线crosshairs
         if (crosshairs) {
+
+            // 绘制十字线
             pen.setColor(Color.WHITE);
             canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
 
 
-            // TODO 此处的代码尚未完成
             float value = 0.00f;
             if(kArea.top < touch.y && touch.y < kArea.bottom) {
                 value = kCfg.px2val(touch.y);
             }
 
+            // 绘制横坐标
             if(qArea.top < touch.y && touch.y < qArea.bottom) {
                 value = qCfg.px2val(touch.y);
             }
 
-            canvas.drawText(String.format("%.2f", value), 0, touch.y, pen);
+            textValue.setTextSize(UnitHelper.sp2px(15));
+            textValue.setText(String.format("%.2f", value));
+            textValue.draw(0, touch.y, canvas);
         }
     }
 
@@ -149,52 +152,20 @@ public class CandleView extends View {
         // 使得十字线自动吸附K线
         String[] temp  = String.format("%.2f", (x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
         int intSub = Integer.valueOf(temp[0]);
-        float floatSub = Float.valueOf("0."+temp[1]);
+        float floatSub = Float.valueOf("0." + temp[1]);
 
         if(floatSub > Config.ITEM_SPACE_WIDTH_RATIO/(1+Config.ITEM_SPACE_WIDTH_RATIO)) {
             ++intSub;
         }
 
-//        Cursor csr = ed.copy();
-//        CandleList data = stock.getCandleList();
-//        data.move(csr, -intSub);
+        Cursor csr = stock.getStart().copy();
+        csr.move(intSub);
 
-//        CandleList data = stock.getCandleList();
-//        if(intSub <= ed.candle+1) {
-//            csr.node = ed.node;
-//            csr.candle = --intSub;
-//        } else {
-//
-//            // TODO 下面的代码有待测试验证
-//            int nIndex = ed.node;
-//            int cIndex = ed.candle - intSub;
-//            while (true) {
-//                --nIndex;
-//                Node node = data.get(nIndex);
-//                cIndex += node.size()-1;
-//                if(0<=cIndex) {
-//                    break;
-//                }
-//            }
-//
-//            csr.node = nIndex;
-//            csr.candle = cIndex;
-//        }
-//
-////        Log.d("Debug-Select", intSub + ", " + floatSub);
-//
-//        if(csr.candle < 0) {
-//            csr.candle = 0;
-//        } else if(csr.candle > ed.candle) {
-//            csr.candle = ed.candle;
-//        }
-
-//        Candlestick candle = data.get(csr.node).get(csr.candle);
-//        touch.x = candle.getCenterXofArea();
-//        listener.onSelected(candle);
+        CandleList data = stock.getCandleList();
+        Candlestick candle = data.get(csr.node).get(csr.candle);
+        touch.x = candle.getCenterXofArea();
+        listener.onSelected(candle);
     }
-
-
 
     /**
      * 绘制K线图形的表格背景
@@ -286,6 +257,8 @@ public class CandleView extends View {
         qArea = new RectF();
         qCfg = new Config();
 
+        textValue = new TextValue();
+
         crosshairs = false;
     }
 
@@ -295,6 +268,7 @@ public class CandleView extends View {
     private Config kCfg;// K线图的配置信息
     private RectF qArea;// 绘制指标部分区域
     private Config qCfg;// 指标图的配置信息
+    private TextValue textValue;
 
     private Stock stock;
 

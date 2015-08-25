@@ -17,11 +17,22 @@ public final class Constant {
 
     /**
      * 将成交量的单位由？股转为？万手
+     *
+     * SINA 的API获得的成交量的单位为 [股]
+     * SOHU 的API获得的成交量的单位为 [手]
+     * 1[手] = 100[股]
      */
-    public static final float VOLUME_MILLION  = 1000000.0F;
+    public static final float SINA_VOLUME_FACTOR  = 1000000.0F;
+
+    public static final float SOHU_VOLUME_FACTOR = 10000.0F;
 
     /**
      * 将成交额的单位由？元股转为？亿元
+     *
+     * SINA 的API获得的成交额的单位为 [元]
+     * SOHU 的API获得的成交额的单位为 [万元]
      */
-    public static final float MONEY_HUNDRED_MILLION = 100000000.0F;
+    public static final float SINA_MONEY_FACTOR = 100000000.0F;
+
+    public static final float SOHU_MONEY_FACTOR = 10000.0F;
 }

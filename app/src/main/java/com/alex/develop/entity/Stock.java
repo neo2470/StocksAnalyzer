@@ -52,6 +52,7 @@ public final class Stock extends BaseObject {
 
             if(null == today) {
                 today = new Candlestick();
+                today.setApiFrom(Enum.API.Sina);
             }
         }
 

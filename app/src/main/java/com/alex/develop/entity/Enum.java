@@ -125,4 +125,13 @@ public final class Enum extends BaseObject {
         Numeric,// 数字代码
         Alphabet// 字母代码
     }
+
+    /**
+     * 软件使用数据API的来源
+     */
+    public enum API {
+        Sina,
+        Sohu,
+        Yahoo
+    }
 }
