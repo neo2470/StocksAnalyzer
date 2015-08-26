@@ -31,8 +31,8 @@
         <activity
             android:name=".CandleActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.FullScreen"
-            android:screenOrientation="landscape">
+            android:theme="@style/AppTheme.NoTitle"
+            android:screenOrientation="sensorLandscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

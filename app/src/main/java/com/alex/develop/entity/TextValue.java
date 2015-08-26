@@ -49,32 +49,26 @@ public class TextValue {
         measureText();
     }
 
-    public float getRight() {
-        return  rect.right;
+    public RectF getBound() {
+        return rect;
     }
 
     public void draw(float x, float y, Canvas canvas) {
 
         if(null != text) {
 
-            x += pen.getStrokeWidth();
-
-            float dX = padding;
-            float dy = rect.height() / 2;
-
-            rect.offsetTo(x, y - dy);
-
             pen.setColor(rectColor);
             pen.setAlpha(alpha);
             pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
+            rect.offsetTo(x, y);
             canvas.drawRect(rect, pen);
 
             pen.setColor(textColor);
             pen.setAlpha(alpha);
             pen.setStyle(Paint.Style.FILL);
 
-            canvas.drawText(text, x + dX, y - (dy + pen.getFontMetrics().top), pen);
+            canvas.drawText(text, x + padding, y - pen.getFontMetrics().top, pen);
         }
     }
 

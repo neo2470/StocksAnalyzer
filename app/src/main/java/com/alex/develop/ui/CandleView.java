@@ -32,7 +32,9 @@ public class CandleView extends View {
     }
 
     public void setStock(final Stock stock) {
+
         this.stock = stock;
+        csr = new Cursor(this.stock.getCandleList());
 
         new QueryStockHistory(this.stock) {
 
@@ -123,21 +125,40 @@ public class CandleView extends View {
                 value = qCfg.px2val(touch.y);
             }
 
-            textValue.setTextSize(UnitHelper.sp2px(15));
             textValue.setText(String.format("%.2f", value));
-            textValue.draw(0, touch.y, canvas);
+
+            float x1 = 0;
+            float y1 = touch.y - textValue.getBound().height() / 2;
+
+            // 考虑[上下]边界情况
+            y1 = 0 > y1 ? 0 : y1;
+            if(kArea.bottom < y1 + textValue.getBound().height()) {
+                y1 = kArea.bottom - textValue.getBound().height();
+            }
+            textValue.draw(x1, y1, canvas);
+
+            Candlestick candle = stock.getCandleList().get(csr.node).get(csr.candle);
+            dateValue.setText(candle.getDate());
+
+            float x2 = touch.x - dateValue.getBound().width() / 2;
+            float y2 = kArea.bottom - dateValue.getBound().height();
+
+            // 考虑[左右]边界情况
+            x2 = 0 > x2 ? 0 : x2;
+            if(kArea.right < x2 + dateValue.getBound().width()) {
+                x2 = kArea.right - dateValue.getBound().width();
+            }
+            dateValue.draw(x2, y2, canvas);
         }
     }
 
     public void updateParameters() {
         CandleList data = stock.getCandleList();
-        kCfg.setRatio(kArea.height(), data.getHigh()-data.getLow());
+        kCfg.setRatio(kArea.height(), data.getHigh() - data.getLow());
         kCfg.setReferValue(data.getLow());
 
         qCfg.setRatio(qArea.height(), data.getVolume());
         qCfg.setReferValue(0);
-
-        Log.d("Debug", data.getLow() + ", " + data.getHigh() + ", " + data.getVolume());
 
         invalidate();
     }
@@ -159,7 +180,7 @@ public class CandleView extends View {
             ++intSub;
         }
 
-        Cursor csr = stock.getStart().copy();
+        stock.getStart().copy(csr);
         csr.move(intSub);
 
         CandleList data = stock.getCandleList();
@@ -258,7 +279,12 @@ public class CandleView extends View {
         qArea = new RectF();
         qCfg = new Config();
 
+        final float textSize = UnitHelper.sp2px(15);
+
         textValue = new TextValue();
+        textValue.setTextSize(textSize);
+        dateValue = new TextValue();
+        dateValue.setTextSize(textSize);
 
         crosshairs = false;
     }
@@ -269,9 +295,12 @@ public class CandleView extends View {
     private Config kCfg;// K线图的配置信息
     private RectF qArea;// 绘制指标部分区域
     private Config qCfg;// 指标图的配置信息
+
     private TextValue textValue;
+    private TextValue dateValue;
 
     private Stock stock;
+    private Cursor csr;
 
     private onCandlestickSelectedListener listener;
 

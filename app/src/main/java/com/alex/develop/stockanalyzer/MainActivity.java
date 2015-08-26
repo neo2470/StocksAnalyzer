@@ -1,11 +1,13 @@
 package com.alex.develop.stockanalyzer;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +33,13 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        setBackTwice2Exit(true);
+
+        ActionBar actionBar = getActionBar();
+        if(null != actionBar) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (null == fragList) {
 
@@ -75,6 +84,9 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
                 Intent intent = new Intent();
                 intent.setClass(this, SearchActivity.class);
                 startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
+                return true;
+            case android.R.id.home:
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

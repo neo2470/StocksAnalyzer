@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
@@ -14,11 +12,9 @@ public class Cursor {
         this.candleList = candleList;
     }
 
-    public Cursor copy() {
-        Cursor result = new Cursor(candleList);
-        result.node = node;
-        result.candle = candle;
-        return  result;
+    public void copy(Cursor csr) {
+        csr.node = node;
+        csr.candle = candle;
     }
 
     /**
@@ -30,9 +26,6 @@ public class Cursor {
 
         ArrayList<Node> nodes = candleList.getNodes();
 
-        // TODO 已经测试，该方法存在问题，待修改
-
-//        Log.d("Print-Before", cursor.node + ", " + cursor.candle);
         // 不需要移动
         if(0 == day) {
             return;
@@ -104,22 +97,11 @@ public class Cursor {
             }
 
         }
-
-//        Log.d("Print-After", node + ", " + candle);
-
     }
 
+    public int node;// CandleList中用于定位Node的索引
 
-
-    /**
-     * CandleList中用于定位Node的索引
-     */
-    public int node;
-
-    /**
-     * Node中用于定位Candlestick的索引
-     */
-    public int candle;
+    public int candle;// Node中用于定位Candlestick的索引
 
     private CandleList candleList;
 }

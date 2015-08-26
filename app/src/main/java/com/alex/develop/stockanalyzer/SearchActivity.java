@@ -2,10 +2,12 @@ package com.alex.develop.stockanalyzer;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
@@ -23,6 +25,7 @@ import com.alex.develop.adapter.SearchAdapter;
 import com.alex.develop.adapter.SearchAdapter.OnStocksFindListener;
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
+import com.alex.develop.fragment.StockFragment;
 import com.alex.develop.ui.StockKeyboard;
 
 /**
@@ -40,6 +43,7 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
         if (null != actionBar) {
             actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
             actionBar.setCustomView(R.layout.search_action_bar_titile);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         stockSearch = (EditText) findViewById(R.id.stockSearch);
@@ -78,8 +82,7 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            }
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
         });
 
         resultList.setOnItemClickListener(new OnItemClickListener() {
@@ -107,6 +110,17 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
             if(!stockSearch.getText().toString().isEmpty()) {
                 findNothing.setVisibility(View.VISIBLE);
             }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

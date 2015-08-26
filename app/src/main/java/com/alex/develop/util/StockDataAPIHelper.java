@@ -160,6 +160,7 @@ public class StockDataAPIHelper {
     public final static String SINA_CHARSET = "gb2312";// 字符编码
     public final static String SINA_PARSE_SPLIT = ",";// 数据分割字符
     public final static String SINA_SUSPEND_VOLUME = "0";// 停牌时的成交量
+    public final static String SINA_DATE_DIVIDER = "-";
 
     // 雅虎API
     public final static String YAHOO_SH_SUFFIX = ".ss";// 上海股票后缀
@@ -175,6 +176,7 @@ public class StockDataAPIHelper {
     public final static String SOHU_JSON_HQ = "hq";
     public final static String SOHU_JSON_CODE = "code";
     public final static String SOHU_JSON_STATUS_OK = "0";
+    public final static String SOHU_DATE_DIVIDER = "-";
 
 
     /**
