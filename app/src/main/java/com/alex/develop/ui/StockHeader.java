@@ -14,6 +14,7 @@ import com.alex.develop.stockanalyzer.R;
  * Created by alex on 15-7-19.
  * 股票对应某日的行情数据
  */
+@Deprecated
 public class StockHeader extends LinearLayout {
 
     public StockHeader(Context context, AttributeSet attrs) {
