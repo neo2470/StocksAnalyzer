@@ -282,12 +282,7 @@ public class Candlestick extends BaseObject {
         vArea.top = qCfg.val2px(volume);
 
         canvas.drawRect(vArea, pen);
-
-
     }
-
-    public static final float WIDTH = 10.0f;// K线宽度
-    public static final float SPACE = 5.0f;// K线间距
 
     private float open;// 开盘价
     private float close;// 收盘价
