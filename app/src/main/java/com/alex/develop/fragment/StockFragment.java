@@ -3,7 +3,10 @@ package com.alex.develop.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.alex.develop.adapter.StockListAdapter;
 import com.alex.develop.entity.Stock;
@@ -78,6 +82,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         final ListView stockList = (ListView) view.findViewById(R.id.stockList);
         stockListAdapter = new StockListAdapter(stocks);
         stockList.setAdapter(stockListAdapter);
+        stockList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
         stockList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -85,6 +90,58 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 stockSelectedListener.onStockSelected(position, isCollectView ? CandleActivity.COLLECT_LIST : CandleActivity.STOCK_LIST);
             }
+        });
+
+        stockList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if(checked) {
+                    ++count;
+                } else {
+                    --count;
+                }
+
+                String title = "加入自选";
+                if(isCollectView) {
+                    title = "移出自选";
+                }
+                mode.setTitle(title);
+                mode.setSubtitle("已选：" + count);
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//                MenuInflater inflater = mode.getMenuInflater();
+//                inflater.inflate(R.menu.stock_fragment_contextual_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.collectStock:
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                String info = "所选股票已加入自选股";
+                if(isCollectView) {
+                    info = "所选股票已移出自选股";
+                }
+                Toast.makeText(act, info, Toast.LENGTH_SHORT).show();
+            }
+
+            private int count;
         });
 
         stockList.setOnScrollListener(new AbsListView.OnScrollListener() {

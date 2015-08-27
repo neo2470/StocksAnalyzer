@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.Debug;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -34,7 +35,14 @@ public class CandleView extends View {
     public void setStock(final Stock stock) {
 
         this.stock = stock;
-        csr = new Cursor(this.stock.getCandleList());
+        csr.setCandleList(this.stock.getCandleList());
+
+        // 重置游标成功，则说明已经下载过数据，无需重复下载
+        // TODO 此处的逻辑貌似有问题，发现了一个BUG
+        if(stock.resetCursor()) {
+            updateParameters();
+            return ;
+        }
 
         new QueryStockHistory(this.stock) {
 
@@ -160,6 +168,8 @@ public class CandleView extends View {
         qCfg.setRatio(qArea.height(), data.getVolume());
         qCfg.setReferValue(0);
 
+        Log.d("Print-updateParameters", data.getHigh() + ", " + data.getLow() + ", " + data.getVolume());
+
         invalidate();
     }
 
@@ -259,7 +269,7 @@ public class CandleView extends View {
                     candle.drawCandle(x, kCfg, canvas, pen);
                     candle.drawVOL(x, qCfg, canvas, pen);
                     x += Config.itemWidth + Config.itemSpace;
-                    Log.d("Print Candlestick # " + j, candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
+//                    Log.d("Print Candlestick # " + j, candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
                 }
             }
         }
@@ -285,6 +295,8 @@ public class CandleView extends View {
         textValue.setTextSize(textSize);
         dateValue = new TextValue();
         dateValue.setTextSize(textSize);
+
+        csr = new Cursor();
 
         crosshairs = false;
     }

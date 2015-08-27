@@ -8,7 +8,13 @@ import java.util.ArrayList;
  */
 public class Cursor {
 
+    public Cursor() {}
+
     public Cursor(CandleList candleList) {
+        this.candleList = candleList;
+    }
+
+    public void setCandleList(CandleList candleList) {
         this.candleList = candleList;
     }
 

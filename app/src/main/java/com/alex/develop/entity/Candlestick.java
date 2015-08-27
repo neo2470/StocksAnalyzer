@@ -182,7 +182,7 @@ public class Candlestick extends BaseObject {
 
         from = Enum.API.Yahoo;
 
-        Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume);
+//        Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume);
     }
 
     public void fromSohu(JSONArray data) {
@@ -208,7 +208,7 @@ public class Candlestick extends BaseObject {
 
         from = Enum.API.Sohu;
 
-        Log.d("Print-fromSohu", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
+//        Log.d("Print-fromSohu", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
 
     }
 
@@ -243,7 +243,7 @@ public class Candlestick extends BaseObject {
             kArea.bottom = kCfg.val2px(close);
         }
 
-        Log.d("Debug-Candlestick-Draw", kArea.left + ", " + kArea.top + ", " + kArea.right + ", " + kArea.bottom + ", " + (kArea.bottom-kArea.top));
+//        Log.d("Debug-Candlestick-Draw", kArea.left + ", " + kArea.top + ", " + kArea.right + ", " + kArea.bottom + ", " + (kArea.bottom-kArea.top));
 
         float x1 = x + Config.itemWidth / 2;
         float y1 = kCfg.val2px(high);

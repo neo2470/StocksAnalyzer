@@ -214,7 +214,19 @@ public final class Stock extends BaseObject {
         candleList.setScope(st, ed);
     }
 
-    public void resetCursor() {
+    /**
+     * 重置数据可视区域的游标
+     * @return boolean，如果{candleList}中所含的数据量
+     * 少于要显示的数据量{Config.ITEM_AMOUNTS}返回false，
+     * 否则返回true
+     */
+    public boolean resetCursor() {
+
+        // TODO 此方法貌似有些问题
+        if(candleList.getCount() < Config.ITEM_AMOUNTS) {
+            return false;
+        }
+
         ed.node = 0;
         ed.candle = candleList.getNodes().get(0).size() - 1;
 
@@ -223,8 +235,11 @@ public final class Stock extends BaseObject {
 
         // 程序第一次下载的数据量 保证至少要{>=Config.ITEM_AMOUNTS}
         st.move(-Config.ITEM_AMOUNTS);
+        Log.d("Print-resetCursor", st.node + ", " + st.candle + ", " + ed.node + ", " + ed.candle);
 
         candleList.setScope(st, ed);
+
+        return true;
     }
 
     public void requestData() {

@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.alex.develop.entity.*;
 import com.alex.develop.ui.CandleView;
 
+import java.util.List;
+
 /**
  * Created by alex on 15-6-15.
  * 绘制蜡烛图（K线图）
@@ -36,7 +38,11 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         index = bundle.getInt(INDEX);
         from = bundle.getInt(FROM);
 
-        updateStock();
+        if(COLLECT_LIST == from) {
+            stock = Analyzer.getCollectStockList(false).get(index);
+        } else {
+            stock = Analyzer.getStockList().get(index);
+        }
 
         ActionBar actionBar = getActionBar();
         if(null != actionBar) {
@@ -60,22 +66,61 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
             holder.candleLow = (TextView) view.findViewById(R.id.candleLow);
             holder.candleMoney = (TextView) view.findViewById(R.id.candleMoney);
 
-            TextView stockName = (TextView) view.findViewById(R.id.stockName);
-            stockName.setText(stock.getName());
-            TextView stockCode = (TextView) view.findViewById(R.id.stockCode);
-            stockCode.setText(stock.getCode());
-            Button prev = (Button) view.findViewById(R.id.prev);
+            holder.stockName = (TextView) view.findViewById(R.id.stockName);
+            holder.stockCode = (TextView) view.findViewById(R.id.stockCode);
+
+            final Button prev = (Button) view.findViewById(R.id.prev);
+            final Button next = (Button) view.findViewById(R.id.next);
             prev.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CandleActivity.this, "PREV", Toast.LENGTH_SHORT).show();
+
+                    --index;
+
+                    List<Stock> data;
+                    if(COLLECT_LIST == from) {
+                        data = Analyzer.getCollectStockList(false);
+                    } else {
+                        data = Analyzer.getStockList();
+                    }
+
+                    stock = data.get(index);
+                    candleView.setStock(stock);
+
+                    if(0 == index) {
+                        v.setEnabled(false);
+                    } else {
+                        if (data.size() == index + 2) {
+                            next.setEnabled(true);
+                        }
+                    }
+
+                    updateHeaderInfo(stock.getToday());
                 }
             });
-            Button next = (Button) view.findViewById(R.id.next);
             next.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CandleActivity.this, "NEXT", Toast.LENGTH_SHORT).show();
+
+                    ++index;
+
+                    List<Stock> data;
+                    if(COLLECT_LIST == from) {
+                        data = Analyzer.getCollectStockList(false);
+                    } else {
+                        data = Analyzer.getStockList();
+                    }
+
+                    stock = data.get(index);
+                    candleView.setStock(stock);
+
+                    if(1 == index) {
+                        prev.setEnabled(true);
+                    } else if(data.size() == index + 1) {
+                        v.setEnabled(false);
+                    }
+
+                    updateHeaderInfo(stock.getToday());
                 }
             });
 
@@ -109,6 +154,9 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
 
             return;
         }
+
+        holder.stockName.setText(stock.getName());
+        holder.stockCode.setText(stock.getCode());
 
         // 最新
         String price = String.format(getString(R.string.candle_price), candlestick.getCloseString());
@@ -152,6 +200,9 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
     }
 
     private class ViewHolder {
+
+        TextView stockName;
+        TextView stockCode;
 
         TextView candlePrice;
         TextView candleOpen;

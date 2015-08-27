@@ -31,6 +31,7 @@ public class CandleList {
         volume = volume < node.getVolume() ? node.getVolume() : volume;
 
         nodes.add(node);
+        count += node.size();
     }
 
     public Node get(int index) {
@@ -39,6 +40,10 @@ public class CandleList {
 
     public ArrayList<Node> getNodes() {
         return nodes;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     /**
@@ -105,5 +110,6 @@ public class CandleList {
     private float high;
     private long volume;
 
+    private int count;// 统计存储的K线数据量
     private ArrayList<Node> nodes;
 }
