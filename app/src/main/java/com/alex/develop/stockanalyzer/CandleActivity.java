@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.ui.CandleView;
@@ -31,14 +33,10 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         Analyzer.setLoadView(findViewById(R.id.loading));
 
         Bundle bundle = getIntent().getExtras();
-        int index = bundle.getInt(INDEX);
-        int from = bundle.getInt(FROM);
+        index = bundle.getInt(INDEX);
+        from = bundle.getInt(FROM);
 
-        if(COLLECT_LIST == from) {
-            stock = Analyzer.getCollectStockList(false).get(index);
-        } else {
-            stock = Analyzer.getStockList().get(index);
-        }
+        updateStock();
 
         ActionBar actionBar = getActionBar();
         if(null != actionBar) {
@@ -66,6 +64,20 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
             stockName.setText(stock.getName());
             TextView stockCode = (TextView) view.findViewById(R.id.stockCode);
             stockCode.setText(stock.getCode());
+            Button prev = (Button) view.findViewById(R.id.prev);
+            prev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(CandleActivity.this, "PREV", Toast.LENGTH_SHORT).show();
+                }
+            });
+            Button next = (Button) view.findViewById(R.id.next);
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(CandleActivity.this, "NEXT", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             updateHeaderInfo(stock.getToday());
         }
@@ -131,6 +143,14 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         holder.candleMoney.setText(money);
     }
 
+    private void updateStock() {
+        if(COLLECT_LIST == from) {
+            stock = Analyzer.getCollectStockList(false).get(index);
+        } else {
+            stock = Analyzer.getStockList().get(index);
+        }
+    }
+
     private class ViewHolder {
 
         TextView candlePrice;
@@ -150,6 +170,8 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
     public static final int COLLECT_LIST = 1;
     public static final int OTHER_LIST = 2;
 
+    private int index;
+    private int from;
     private Stock stock;
     private ViewHolder holder;
     private CandleView candleView;

@@ -85,9 +85,6 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
                 intent.setClass(this, SearchActivity.class);
                 startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
                 return true;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

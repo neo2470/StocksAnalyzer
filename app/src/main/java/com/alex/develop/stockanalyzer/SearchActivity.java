@@ -114,17 +114,6 @@ public class SearchActivity extends BaseActivity implements OnStocksFindListener
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onChanged(Enum.InputType inputType) {
         adapter.setInputType(inputType);
         findNothing.setVisibility(View.GONE);
