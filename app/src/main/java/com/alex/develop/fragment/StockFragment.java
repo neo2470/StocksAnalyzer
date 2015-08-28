@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alex.develop.adapter.StockListAdapter;
@@ -95,24 +96,30 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         stockList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if(checked) {
+                if (checked) {
                     ++count;
                 } else {
                     --count;
                 }
 
-                String title = "加入自选";
-                if(isCollectView) {
-                    title = "移出自选";
+                String text = "加入自选";
+                if (isCollectView) {
+                    text = "移出自选";
                 }
-                mode.setTitle(title);
-                mode.setSubtitle("已选：" + count);
+
+                title.setText(text);
+                number.setText(count+"");
             }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                MenuInflater inflater = mode.getMenuInflater();
-//                inflater.inflate(R.menu.stock_fragment_contextual_menu, menu);
+                View view = View.inflate(act, R.layout.stock_fragment_contextual_custom_title, null);
+
+                title = (TextView) view.findViewById(R.id.title);
+                number = (TextView) view.findViewById(R.id.subTitle);
+
+                mode.setCustomView(view);
+
                 return true;
             }
 
@@ -135,12 +142,14 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 String info = "所选股票已加入自选股";
-                if(isCollectView) {
+                if (isCollectView) {
                     info = "所选股票已移出自选股";
                 }
                 Toast.makeText(act, info, Toast.LENGTH_SHORT).show();
             }
 
+            private TextView title;
+            private TextView number;
             private int count;
         });
 
