@@ -29,15 +29,15 @@ public class StockHeader extends LinearLayout {
             holder = new ViewHolder();
         }
 
-        holder.candlePrice = (TextView) findViewById(R.id.candlePrice);
+        holder.candleClose = (TextView) findViewById(R.id.candleClose);
         holder.candleOpen = (TextView) findViewById(R.id.candleOpen);
         holder.candleHigh = (TextView) findViewById(R.id.candleHigh);
         holder.candleVolume = (TextView) findViewById(R.id.candleVolume);
 
-        holder.candleIncrease = (TextView) findViewById(R.id.candleIncrease);
-        holder.candleTurnover = (TextView) findViewById(R.id.candleTurnover);
+        holder.candleChange = (TextView) findViewById(R.id.candleChange);
+        holder.candleExchange = (TextView) findViewById(R.id.candleExchange);
         holder.candleLow = (TextView) findViewById(R.id.candleLow);
-        holder.candleMoney = (TextView) findViewById(R.id.candleMoney);
+        holder.candleAmount = (TextView) findViewById(R.id.candleAmount);
     }
 
     public void setStock(String name, String code) {
@@ -52,22 +52,22 @@ public class StockHeader extends LinearLayout {
         if(null == candlestick) {
             String data = getContext().getString(R.string.stock_default);
 
-            holder.candlePrice.setText(String.format(getContext().getString(R.string.candle_price), data));
+            holder.candleClose.setText(String.format(getContext().getString(R.string.candle_close), data));
             holder.candleOpen.setText(String.format(getContext().getString(R.string.candle_open), data));
             holder.candleHigh.setText(String.format(getContext().getString(R.string.candle_high), data));
             holder.candleVolume.setText(String.format(getContext().getString(R.string.candle_volume), data));
 
-            holder.candleIncrease.setText(String.format(getContext().getString(R.string.candle_increase), data));
-            holder.candleTurnover.setText(String.format(getContext().getString(R.string.candle_turnover), data));
+            holder.candleChange.setText(String.format(getContext().getString(R.string.candle_change), data));
+            holder.candleExchange.setText(String.format(getContext().getString(R.string.candle_exchange), data));
             holder.candleLow.setText(String.format(getContext().getString(R.string.candle_low), data));
-            holder.candleMoney.setText(String.format(getContext().getString(R.string.candle_money), data));
+            holder.candleAmount.setText(String.format(getContext().getString(R.string.candle_amount), data));
 
             return;
         }
 
         // 最新
-        String price = String.format(getContext().getString(R.string.candle_price), candlestick.getCloseString());
-        holder.candlePrice.setText(price);
+        String close = String.format(getContext().getString(R.string.candle_close), candlestick.getCloseString());
+        holder.candleClose.setText(close);
 
         // 今开
         String open = String.format(getContext().getString(R.string.candle_open), candlestick.getOpenString());
@@ -82,34 +82,32 @@ public class StockHeader extends LinearLayout {
         holder.candleVolume.setText(volume);
 
         // 涨幅
-        String increase = String.format(getContext().getString(R.string.candle_increase), candlestick.getIncreaseString());
-        holder.candleIncrease.setText(increase);
+        String change = String.format(getContext().getString(R.string.candle_change), candlestick.getChangeString());
+        holder.candleChange.setText(change);
 
         // 换手
-        String turnover = String.format(getContext().getString(R.string.candle_turnover), candlestick.getTurnoverString());
-        holder.candleTurnover.setText(turnover);
+        String exchange = String.format(getContext().getString(R.string.candle_exchange), candlestick.getExchangeString());
+        holder.candleExchange.setText(exchange);
 
         // 最低
         String low = String.format(getContext().getString(R.string.candle_low), candlestick.getLowString());
         holder.candleLow.setText(low);
 
         // 成交额
-        String money = String.format(getContext().getString(R.string.candle_money), candlestick.getMoneyString());
-        holder.candleMoney.setText(money);
+        String amount = String.format(getContext().getString(R.string.candle_amount), candlestick.getAmountString());
+        holder.candleAmount.setText(amount);
 
     }
 
     private class ViewHolder {
-
-        TextView candlePrice;
+        TextView candleClose;
         TextView candleOpen;
         TextView candleHigh;
         TextView candleVolume;
-
-        TextView candleIncrease;
-        TextView candleTurnover;
+        TextView candleChange;
+        TextView candleExchange;
         TextView candleLow;
-        TextView candleMoney;
+        TextView candleAmount;
     }
 
     private ViewHolder holder;

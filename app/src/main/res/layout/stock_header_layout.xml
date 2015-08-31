@@ -47,30 +47,30 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/candlePrice"
+                android:id="@+id/candleClose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最新 %f" />
+                android:text="@string/candle_close" />
 
             <TextView
                 android:id="@+id/candleOpen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="今开 %f"
+                android:text="@string/candle_open"
                 android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleHigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最高 %f"
+                android:text="@string/candle_high"
                 android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="成交量 %f"
+                android:text="@string/candle_volume"
                 android:layout_marginLeft="@dimen/stock_header_space"/>
 
         </TableRow>
@@ -78,30 +78,30 @@
         <TableRow>
 
             <TextView
-                android:id="@+id/candleIncrease"
+                android:id="@+id/candleChange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="涨幅 %f" />
+                android:text="@string/candle_change" />
 
             <TextView
-                android:id="@+id/candleTurnover"
+                android:id="@+id/candleExchange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="换手 %f"
+                android:text="@string/candle_exchange"
                 android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
                 android:id="@+id/candleLow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="最低 %f"
+                android:text="@string/candle_low"
                 android:layout_marginLeft="@dimen/stock_header_space"/>
 
             <TextView
-                android:id="@+id/candleMoney"
+                android:id="@+id/candleAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="成交额 %f"
+                android:text="@string/candle_amount"
                 android:layout_marginLeft="@dimen/stock_header_space"/>
 
         </TableRow>

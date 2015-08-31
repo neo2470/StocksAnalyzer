@@ -113,30 +113,30 @@ public class Candlestick extends BaseObject {
         return String.format("%.2f", close);
     }
 
-    public float getIncrease() {
-        return increase;
+    public float getChange() {
+        return change;
     }
 
-    public String getIncreaseString() {
-        return String.format("%.2f", increase) + "%";
+    public String getChangeString() {
+        return String.format("%.2f", change) + "%";
     }
 
-    public float getMoney() {
-        return money;
+    public float getAmount() {
+        return amount;
     }
 
-    public String getMoneyString() {
+    public String getAmountString() {
 
-        float value = money / Constant.SOHU_VOLUME_FACTOR;
+        float value = amount / Constant.SOHU_VOLUME_FACTOR;
         if(Enum.API.Sina == from) {
-            value = money / Constant.SINA_MONEY_FACTOR;
+            value = amount / Constant.SINA_MONEY_FACTOR;
         }
 
-        return String.format("%.2f", value) + Analyzer.getContext().getString(R.string.candle_money_unit_hundred_million);
+        return String.format("%.2f", value) + Analyzer.getContext().getString(R.string.candle_amount_unit_hundred_million);
     }
 
-    public void setMoney(float money) {
-        this.money = money;
+    public void setAmount(float amount) {
+        this.amount = amount;
     }
 
     public String getDate() {
@@ -147,12 +147,12 @@ public class Candlestick extends BaseObject {
         this.date = date;
     }
 
-    public float getTurnover() {
-        return turnover;
+    public float getExchange() {
+        return exchange;
     }
 
-    public String getTurnoverString() {
-        return turnover + "%";
+    public String getExchangeString() {
+        return exchange + "%";
     }
 
     public float getVary() {
@@ -168,7 +168,7 @@ public class Candlestick extends BaseObject {
     }
 
     public void initialize() {
-        increase = 100 * (close - lastClose) / lastClose;
+        change = 100 * (close - lastClose) / lastClose;
     }
 
     public void fromYahoo(String[] data) {
@@ -194,17 +194,17 @@ public class Candlestick extends BaseObject {
         // 涨幅(%)
         String inStr = data.optString(4);
         inStr = inStr.substring(0, inStr.length() - 1);
-        increase = Float.valueOf(inStr);
+        change = Float.valueOf(inStr);
 
         low = (float) data.optDouble(5);// 最低价
         high = (float) data.optDouble(6);// 最高价
         volume = data.optInt(7);// 成交量(手)
-        money = (float) data.optDouble(8);// 成交额(万元)
+        amount = (float) data.optDouble(8);// 成交额(万元)
 
         // 换手率(%)
         String exStr = data.optString(9);
         exStr = exStr.substring(0, exStr.length() - 1);
-        turnover = Float.valueOf(exStr);
+        exchange = Float.valueOf(exStr);
 
         from = Enum.API.Sohu;
 
@@ -227,9 +227,9 @@ public class Candlestick extends BaseObject {
             kArea.top = kCfg.val2px(close);
             kArea.bottom = kCfg.val2px(open);
         } else if(open == close) {
-            if(0.0f < increase) {
+            if(0.0f < change) {
                 pen.setColor(colorRise);
-            } else if(0.0f == increase) {
+            } else if(0.0f == change) {
                 // TODO 股价收十字星时候的颜色
             } else {
                 pen.setColor(colorFall);
@@ -265,9 +265,9 @@ public class Candlestick extends BaseObject {
         if (open < close) {
             pen.setColor(colorRise);
         } else if(open == close) {
-            if (0.0f < increase) {
+            if (0.0f < change) {
                 pen.setColor(colorRise);
-            } else if (0.0f == increase) {
+            } else if (0.0f == change) {
                 // TODO 股价收十字星时候的颜色
             } else {
                 pen.setColor(colorFall);
@@ -291,10 +291,10 @@ public class Candlestick extends BaseObject {
     private float lastClose;// 昨日收盘价
     private float high;// 最高价
     private float low;// 最低价
-    private float increase;// 当日涨幅
+    private float change;// 当日涨幅
     private long volume;// 成交量
-    private float money;// 成交额
-    private float turnover;// 换手率
+    private float amount;// 成交额
+    private float exchange;// 换手率
     private String date;// 日期
     private RectF kArea;// K线的实体部分
     private RectF vArea;// VOL的实体部分

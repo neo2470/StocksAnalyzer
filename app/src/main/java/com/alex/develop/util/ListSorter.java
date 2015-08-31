@@ -25,7 +25,7 @@ public class ListSorter {
                 if("price".equals(orderBy)) {// 按最新价格排序
                     result = Float.compare(lt.getToday().getClose(), rt.getToday().getClose());
                 } else if("increase".equals(orderBy)) {
-                    result = Float.compare(lt.getToday().getIncrease(), rt.getToday().getIncrease());
+                    result = Float.compare(lt.getToday().getChange(), rt.getToday().getChange());
                 } else if(Stock.Table.Column.COLLECT.equals(orderBy)) {// 按照是否收藏排序
                     result = lt.getCollect() - rt.getCollect();
                 } else if(Stock.Table.Column.SEARCH.equals(orderBy)) {// 按照被搜索的次数排序

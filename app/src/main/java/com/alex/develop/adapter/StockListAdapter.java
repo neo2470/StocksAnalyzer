@@ -55,9 +55,9 @@ public class StockListAdapter extends BaseAdapter {
         ViewHolder holder = (ViewHolder) convertView.getTag();
 
         int textColor = Analyzer.getContext().getResources().getColor(R.color.stock_rise);
-        float increase = stock.getToday().getIncrease();
+        float increase = stock.getToday().getChange();
         String price = stock.getToday().getCloseString();
-        String increaseString = stock.getToday().getIncreaseString();
+        String increaseString = stock.getToday().getChangeString();
 
         if(0 > increase) {
             textColor = Analyzer.getContext().getResources().getColor(R.color.stock_fall);
