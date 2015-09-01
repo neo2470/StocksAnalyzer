@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,12 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alex.develop.adapter.StockListAdapter;
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.CandleActivity;
+import com.alex.develop.task.CollectStockTask;
 import com.alex.develop.task.QueryStockToday;
 import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
@@ -35,8 +34,11 @@ import java.util.List;
  */
 public class StockFragment extends BaseFragment implements CompoundButton.OnCheckedChangeListener {
 
-    public interface OnStockSelectedListener {
-        void onStockSelected(int index, int from);
+    public interface OnStockHandleListener {
+
+        void onSelected(int index, int from);
+
+        void onCollected();
     }
 
     @Override
@@ -50,7 +52,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         super.onAttach(activity);
 
         try {
-            stockSelectedListener = (OnStockSelectedListener) activity;
+            mStockHandleListener = (OnStockHandleListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + "must implement the OnStockSelectedListener");
         }
@@ -89,35 +91,28 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                stockSelectedListener.onStockSelected(position, isCollectView ? CandleActivity.COLLECT_LIST : CandleActivity.STOCK_LIST);
+                mStockHandleListener.onSelected(position, isCollectView ? CandleActivity.COLLECT_LIST : CandleActivity.STOCK_LIST);
             }
         });
 
         stockList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                if (checked) {
-                    ++count;
-                } else {
-                    --count;
-                }
+                stockListAdapter.selectView(position, checked);
 
-                String text = "加入自选";
+                String count = 0 == stockListAdapter.getSelectedCount() ? "" : " ["+stockListAdapter.getSelectedCount()+"]";
+                String text = String.format(act.getString(R.string.contextual_add_collect), count);
                 if (isCollectView) {
-                    text = "移出自选";
+                    text = String.format(act.getString(R.string.contextual_remove_collect), count);
                 }
-
                 title.setText(text);
-                number.setText(count+"");
             }
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                View view = View.inflate(act, R.layout.stock_fragment_contextual_custom_title, null);
 
+                View view = View.inflate(act, R.layout.action_bar_titile, null);
                 title = (TextView) view.findViewById(R.id.title);
-                number = (TextView) view.findViewById(R.id.subTitle);
-
                 mode.setCustomView(view);
 
                 return true;
@@ -130,27 +125,27 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.collectStock:
-                        mode.finish();
-                        return true;
-                    default:
-                        return false;
-                }
+                return false;
             }
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                String info = "所选股票已加入自选股";
-                if (isCollectView) {
-                    info = "所选股票已移出自选股";
+                if (0 < stockListAdapter.getSelectedCount()) {
+
+                    int collect = isCollectView ? 0 : 1;
+
+                    new CollectStockTask(collect) {
+                        @Override
+                        protected void onPostExecute(Boolean aBoolean) {
+                            stockListAdapter.removeSelection();
+                            super.onPostExecute(aBoolean);
+                            mStockHandleListener.onCollected();
+                        }
+                    }.execute(stockListAdapter.getSelectedStocks());
                 }
-                Toast.makeText(act, info, Toast.LENGTH_SHORT).show();
             }
 
             private TextView title;
-            private TextView number;
-            private int count;
         });
 
         stockList.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -197,8 +192,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
 
         if(Activity.RESULT_OK == resultCode) {
             if(REQUEST_SEARCH_STOCK == requestCode && isCollectView) {
-                stocks = Analyzer.getCollectStockList(true);
-                stockListAdapter.notifyDataSetChanged();
+                updateCollectStockList();
             }
         }
     }
@@ -212,6 +206,13 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
                 break;
             case R.id.increaseRadio :
                 break;
+        }
+    }
+
+    public void updateCollectStockList() {
+        if(isCollectView) {
+            stocks = Analyzer.getCollectStockList(true);
+            stockListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -255,7 +256,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
     private List<Stock> stocks;// 自选股列表
 
     private StockListAdapter stockListAdapter;
-    private OnStockSelectedListener stockSelectedListener;
+    private OnStockHandleListener mStockHandleListener;
 
     public static final String ARG_IS_COLLECT_VIEW = "collect";
     public static final int REQUEST_SEARCH_STOCK = 0X3531;

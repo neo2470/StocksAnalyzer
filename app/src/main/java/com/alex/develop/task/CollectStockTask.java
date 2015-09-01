@@ -3,6 +3,7 @@ package com.alex.develop.task;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.alex.develop.entity.Stock;
@@ -12,9 +13,9 @@ import com.alex.develop.util.SQLiteHelper;
 
 /**
  * Created by alex on 15-7-15.
- * 收藏或者取消收藏Stock，使用异步任务的方式更改SQLite
+ * 收藏或者取消收藏Stock，支持批量操作
  */
-public class CollectStockTask extends AsyncTask<Stock, Void, String> {
+public class CollectStockTask extends AsyncTask<Stock, Void, Boolean> {
 
     /**
      * 构造方法
@@ -25,38 +26,64 @@ public class CollectStockTask extends AsyncTask<Stock, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Stock... params) {
+    protected Boolean doInBackground(Stock... params) {
 
         SQLiteHelper dbHelper = SQLiteHelper.getInstance();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        Stock stock = params[0];
-        stock.setCollectStamp(System.currentTimeMillis());
+        long time = System.currentTimeMillis();
 
         ContentValues values = new ContentValues();
         values.put(Stock.Table.Column.COLLECT, collect);
-        values.put(Stock.Table.Column.COLLECT_STAMP, stock.getCollectStamp());
+        values.put(Stock.Table.Column.COLLECT_STAMP, time);
 
-        String where = Stock.Table.Column.CODE + " = ?";
-        String[] whereArgs = {params[0].getCode()};
+        StringBuilder builder = new StringBuilder();
+        builder.append(Stock.Table.Column.CODE);
+        builder.append(" in (");
+        String[] whereArgs = new String[params.length];
 
-        boolean flag = 0 < db.update(Stock.Table.NAME, values, where, whereArgs);
+        int i =0;
+        for (Stock s : params) {
+            s.setCollect(collect);
+            s.setCollectStamp(time);
 
-        int resId = 1 == collect ? R.string.collect_stock_success : R.string.remove_stock_success;
-        if(!flag) {
-            resId = 1 == collect ? R.string.collect_stock_failure : R.string.remove_stock_failure;
+            builder.append("?,");
+            whereArgs[i] = s.getCode();
+            ++i;
+        }
+        builder.deleteCharAt(builder.length() - 1);
+        builder.append(")");
+
+        if(1 == params.length) {
+            tips = params[0].getName() + " ";
+        } else {
+            tips = Analyzer.getContext().getString(R.string.selected_stock);
         }
 
-        String result = Analyzer.getContext().getString(resId);
-        result = String.format(result, stock.getName());
-
-        return result;
+        return params.length == db.update(Stock.Table.NAME, values, builder.toString(), whereArgs);
     }
 
     @Override
-    protected void onPostExecute(String result) {
-        Toast.makeText(Analyzer.getContext(), result, Toast.LENGTH_SHORT).show();
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+
+        String textSuccess = Analyzer.getContext().getString(R.string.collect_stock_success);
+        String textFailure = Analyzer.getContext().getString(R.string.collect_stock_failure);
+
+        if(0 == collect) {
+            textSuccess = Analyzer.getContext().getString(R.string.remove_stock_success);
+            textFailure = Analyzer.getContext().getString(R.string.remove_stock_failure);
+        }
+
+        if(aBoolean) {
+            tips = String.format(textSuccess, tips);
+        } else {
+            tips = String.format(textFailure, tips);
+        }
+
+        Toast.makeText(Analyzer.getContext(), tips, Toast.LENGTH_SHORT).show();
     }
 
     private int collect;
+    private String tips;// 加入自选的股票名称
 }

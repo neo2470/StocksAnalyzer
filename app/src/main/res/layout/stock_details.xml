@@ -39,7 +39,7 @@
         android:textSize="@dimen/stock_float" />
 
     <TextView
-        android:id="@+id/stockIncrease"
+        android:id="@+id/stockChange"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

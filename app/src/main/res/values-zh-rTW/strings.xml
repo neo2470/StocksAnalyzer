@@ -65,7 +65,13 @@
     <string name="collect_stock_failure">%1$s 加入自選股失敗</string>
     <string name="remove_stock_success">%1$s 已成功移出自選股</string>
     <string name="remove_stock_failure">%1$s 移出自選股失敗</string>
+    <string name="selected_stock">所選股票</string>
 
     <string name="key_ok">確定</string>
+    <string name="search_stock">股票搜尋</string>
+
+    <!-- StockFragment.java -->
+    <string name="contextual_add_collect">加入自選%1$s</string>
+    <string name="contextual_remove_collect">移出自選%1$s</string>
     
 </resources>

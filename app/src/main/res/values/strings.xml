@@ -65,7 +65,13 @@
     <string name="collect_stock_failure">%1$s is collected failure</string>
     <string name="remove_stock_success">%1$s is removed success</string>
     <string name="remove_stock_failure">%1$s is removed failure</string>
+    <string name="selected_stock">Selected stocks</string>
 
     <string name="key_ok">OK</string>
+    <string name="search_stock">Search Stock</string>
+
+    <!-- StockFragment.java -->
+    <string name="contextual_add_collect">Add Collect%1$s</string>
+    <string name="contextual_remove_collect">Remove Collect%1$s</string>
 
 </resources>

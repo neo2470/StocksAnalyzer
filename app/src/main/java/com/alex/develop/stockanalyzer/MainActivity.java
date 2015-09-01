@@ -1,13 +1,12 @@
 package com.alex.develop.stockanalyzer;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,7 +26,7 @@ import java.util.List;
  *
  * @author Created by alex 2014/10/23
  */
-public class MainActivity extends BaseActivity implements StockFragment.OnStockSelectedListener {
+public class MainActivity extends BaseActivity implements StockFragment.OnStockHandleListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,9 +63,9 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
 
         Analyzer.setLoadView(findViewById(R.id.loading));
 
-        ViewHolder viewHolder = new ViewHolder(getSupportFragmentManager());
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(viewHolder);
+        viewPager.setAdapter(viewPagerAdapter);
         viewPager.setOffscreenPageLimit(3);
     }
 
@@ -94,13 +93,9 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // 自选股数据刷新
-        fragList.get(1).onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onStockSelected(int index, int from) {
-        CandleActivity.start(this, index, from);
+        if(Activity.RESULT_OK == resultCode && StockFragment.REQUEST_SEARCH_STOCK == requestCode) {
+            onCollected();
+        }
     }
 
     public void onNavClicked(View view) {
@@ -129,9 +124,20 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockS
         }
     }
 
-    private class ViewHolder extends FragmentPagerAdapter {
+    @Override
+    public void onSelected(int index, int from) {
+        CandleActivity.start(this, index, from);
+    }
 
-        public ViewHolder(FragmentManager fm) {
+    @Override
+    public void onCollected() {
+        StockFragment stockFragment = (StockFragment) fragList.get(1);
+        stockFragment.updateCollectStockList();
+    }
+
+    private class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
