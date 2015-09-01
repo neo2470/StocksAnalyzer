@@ -11,11 +11,6 @@ import java.util.ArrayList;
 public class CandleList {
 
     public CandleList() {
-
-        low = 1000000.0f;
-        high = 0.0f;
-        volume = 0;
-
         nodes = new ArrayList<>();
     }
 
@@ -24,12 +19,6 @@ public class CandleList {
     }
 
     public void add(Node node) {
-
-        // 记录最低价格和最高价格
-        low = low > node.getLow() ? node.getLow() : low;
-        high = high < node.getHigh() ? node.getHigh() : high;
-        volume = volume < node.getVolume() ? node.getVolume() : volume;
-
         nodes.add(node);
         count += node.size();
     }
@@ -54,61 +43,84 @@ public class CandleList {
      */
     public void setScope(Cursor st, Cursor ed) {
 
-        // 同一个Node数据块内
-        if (st.node == ed.node) {
+        if (st.node == ed.node) {// 同一个Node数据块内
             Node node = get(st.node);
-            float[] data = node.getLowAndHigh(st.candle, ed.candle);
-            low = data[0];
-            high = data[1];
-            volume = node.getVolume();
-            Log.d("Test", low + ", " + high + ", " + volume);
+            node.setScope(st.candle, ed.candle);
 
-        } else {
-            low = Float.MAX_VALUE;
-            high = 0.0f;
+            low = node.getCandlestickLow();
+            high = node.getCandlestickHigh();
+            volume = node.getVolume();
+
+        } else {// 不同Node数据块
+
+            float lp = Float.MAX_VALUE;
+            float hp = 0.0f;
+            volume = 0;
+
             for (int i = st.node; i >= ed.node; --i) {
+
                 Node node = get(i);
-                float[] data;
+
                 if (i == st.node) {
-                    data = node.getLowAndHigh(st.candle, node.size() - 1);
+                    node.setScope(st.candle, node.size()-1);
                 } else if (i == ed.node) {
-                    data = node.getLowAndHigh(0, ed.candle);
+                    node.setScope(0, ed.candle);
                 } else {
-                    data = node.getLowAndHigh(0, node.size() - 1);
+                    node.setScope(0, node.size()-1);
                 }
 
-                low = low > data[0] ? data[0] : low;
-                high = high < data[1] ? data[1] : high;
+                if(lp > node.getCandlestickLow().getLow()) {
+                    lp = node.getCandlestickLow().getLow();
+                    low = node.getCandlestickLow();
+                }
+
+                if(hp < node.getCandlestickHigh().getHigh()) {
+                    hp = node.getCandlestickHigh().getHigh();
+                    high = node.getCandlestickHigh();
+                }
+
                 volume = volume < node.getVolume() ? node.getVolume() : volume;
             }
         }
     }
 
+
+
     /**
-     * 记录可见区域数据中股票价格的最低价格
-     *
-     * @return 在setScope()之前返回整个数据集合中的最低价格
+     * 取得可视区域内的最低价
+     * @return
      */
-    public float getLow() {
+    public float getLowest() {
+        return low.getLow();
+    }
+
+    public Candlestick getCandlestickLow() {
         return low;
     }
 
     /**
-     * 记录可见区域数据中股票价格的最高价格
-     *
-     * @return 在setScope()之前返回整个数据集合中的最高价格
+     * 取得可视区域内的最高价
+     * @return
      */
-    public float getHigh() {
+    public float getHighest() {
+        return high.getHigh();
+    }
+
+    public Candlestick getCandlestickHigh() {
         return high;
     }
 
+    /**
+     * 取得可视区域内的最大成交量
+     * @return
+     */
     public long getVolume() {
         return volume;
     }
 
-    private float low;
-    private float high;
-    private long volume;
+    private Candlestick low;// 在可视区域内，股价最低的K线
+    private Candlestick high;// 在可视区域内，股价最高的K线
+    private long volume;// 在可视区域内，成交量最大值
 
     private int count;// 统计存储的K线数据量
     private ArrayList<Node> nodes;

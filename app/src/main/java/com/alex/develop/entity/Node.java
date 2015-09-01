@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 /**
  * Created by alex on 15-7-31.
  * 存储一次查询获取的K线数据集合
@@ -9,9 +7,6 @@ import android.util.Log;
 public class Node {
 
     public Node(int size) {
-        low = Float.MAX_VALUE;
-        high = 0.0f;
-        volume = 0;
         index = -1;
         candlesticks = new Candlestick[size];
     }
@@ -21,10 +16,6 @@ public class Node {
     }
 
     public void add(Candlestick candle) {
-        low = low > candle.getLow() ? candle.getLow() : low;
-        high = high < candle.getHigh() ? candle.getHigh() : high;
-        volume = volume < candle.getVolume() ? candle.getVolume() : volume;
-
         candlesticks[++index] = candle;
     }
 
@@ -39,32 +30,61 @@ public class Node {
      * @param ed  结束位置
      * @return 0，最低价格;1，最高价格
      */
-    public float[] getLowAndHigh(int st, int ed) {
-        float[] data = {Float.MAX_VALUE, 0.0f};
+//    @Deprecated
+//    public float[] getLowAndHigh(int st, int ed) {
+//        float[] data = {Float.MAX_VALUE, 0.0f};
+//
+//        // 指定区域为整个数据块的时候，无须计算
+//        if (0 == st && size() == ed + 1) {
+//            data[0] = low;
+//            data[1] = high;
+//            return data;
+//        }
+//
+//        volume = 0;
+//        for (int i = st; i <= ed; ++i) {
+//            Candlestick candle = get(i);
+//            data[0] = data[0] > candle.getLow() ? candle.getLow() : data[0];
+//            data[1] = data[1] < candle.getHigh() ? candle.getHigh() : data[1];
+//            volume = volume < candle.getVolume() ? candle.getVolume() : volume;
+//        }
+//
+//        return data;
+//    }
 
-        // 指定区域为整个数据块的时候，无须计算
-        if (0 == st && size() == ed + 1) {
-            data[0] = low;
-            data[1] = high;
-            return data;
-        }
+    public void setScope(int st, int ed) {
 
+        float lp = Float.MAX_VALUE;
+        float hp = 0.0f;
         volume = 0;
-        for (int i = st; i <= ed; ++i) {
-            Candlestick candle = get(i);
-            data[0] = data[0] > candle.getLow() ? candle.getLow() : data[0];
-            data[1] = data[1] < candle.getHigh() ? candle.getHigh() : data[1];
-            volume = volume < candle.getVolume() ? candle.getVolume() : volume;
-        }
 
-        return data;
+        for(int i=st; i<=ed; ++i) {
+            Candlestick candle = get(i);
+
+            // 取得最小价格
+            if(lp > candle.getLow()) {
+                lp = candle.getLow();
+                low = candle;
+            }
+
+            // 取得最高价格
+            if(hp < candle.getHigh()) {
+                hp = candle.getHigh();
+                high = candle;
+            }
+
+            // 取得最高成交量
+            if(volume < candle.getVolume()) {
+                volume = candle.getVolume();
+            }
+        }
     }
 
-    public float getLow() {
+    public Candlestick getCandlestickLow() {
         return low;
     }
 
-    public float getHigh() {
+    public Candlestick getCandlestickHigh() {
         return high;
     }
 
@@ -72,20 +92,9 @@ public class Node {
         return volume;
     }
 
-    /**
-     * 存储本数据集合中的股票的最低价格
-     */
-    private float low;
-
-    /**
-     * 存储本数据集合中的股票的最高价格
-     */
-    private float high;
-
-    /**
-     * 存储本数据集合中的股票成交量的最大值
-     */
-    private long volume;
+    private Candlestick low;// 在可视区域内，股价最低的K线
+    private Candlestick high;// 在可视区域内，股价最高的K线
+    private long volume;// 在可视区域内，成交量最大值
 
     private int index;
 

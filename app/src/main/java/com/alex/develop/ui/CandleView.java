@@ -162,13 +162,11 @@ public class CandleView extends View {
 
     public void updateParameters() {
         CandleList data = stock.getCandleList();
-        kCfg.setRatio(kArea.height(), data.getHigh() - data.getLow());
-        kCfg.setReferValue(data.getLow());
+        kCfg.setRatio(kArea.height(), data.getHighest() - data.getLowest());
+        kCfg.setReferValue(data.getLowest());
 
         qCfg.setRatio(qArea.height(), data.getVolume());
         qCfg.setReferValue(0);
-
-        Log.d("Print-updateParameters", data.getHigh() + ", " + data.getLow() + ", " + data.getVolume());
 
         invalidate();
     }
