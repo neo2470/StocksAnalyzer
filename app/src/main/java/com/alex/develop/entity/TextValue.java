@@ -24,6 +24,17 @@ public class TextValue {
 
         textColor = Color.WHITE;
         rectColor = Color.GRAY;
+
+        alpha = 200;
+        showBorder = true;
+    }
+
+    public void setAlpha(int alpha) {
+        this.alpha = alpha;
+    }
+
+    public void setShowBorder(boolean showBorder) {
+        this.showBorder = showBorder;
     }
 
     public void setText(String text) {
@@ -38,6 +49,10 @@ public class TextValue {
 
     public void setTextColor(int color) {
         textColor = color;
+    }
+
+    public int getTextColor() {
+        return textColor;
     }
 
     public void setRectColor(int color) {
@@ -57,15 +72,17 @@ public class TextValue {
 
         if(null != text) {
 
-            pen.setColor(rectColor);
             pen.setAlpha(alpha);
-            pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
-            rect.offsetTo(x, y);
-            canvas.drawRect(rect, pen);
+            if(showBorder) {
+                pen.setColor(rectColor);
+                pen.setStyle(Paint.Style.FILL_AND_STROKE);
+
+                rect.offsetTo(x, y);
+                canvas.drawRect(rect, pen);
+            }
 
             pen.setColor(textColor);
-            pen.setAlpha(alpha);
             pen.setStyle(Paint.Style.FILL);
 
             canvas.drawText(text, x + padding, y - pen.getFontMetrics().top, pen);
@@ -91,7 +108,9 @@ public class TextValue {
 
     private int rectColor;
     private int textColor;
-    private final int alpha = 200;
+    private int alpha;
+
+    private boolean showBorder;
 
     private float padding;
 }

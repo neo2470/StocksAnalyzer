@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -109,10 +110,20 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             }
 
             @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            public boolean onCreateActionMode(final ActionMode mode, Menu menu) {
 
-                View view = View.inflate(act, R.layout.action_bar_titile, null);
+                View view = View.inflate(act, R.layout.collect_contextual_layout, null);
                 title = (TextView) view.findViewById(R.id.title);
+                ImageButton cancelBtn = (ImageButton) view.findViewById(R.id.cancel);
+                cancelBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(null != mode) {
+                            stockListAdapter.removeSelection();
+                            mode.finish();
+                        }
+                    }
+                });
                 mode.setCustomView(view);
 
                 return true;

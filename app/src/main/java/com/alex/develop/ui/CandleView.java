@@ -98,7 +98,7 @@ public class CandleView extends View {
 
         // 只在绘制区域内显示十字线
         if(kArea.left > event.getX()) {
-            crosshairs = false;
+            drawCross = false;
         }
 
         invalidate();
@@ -116,48 +116,8 @@ public class CandleView extends View {
 
         drawCandlesticks(canvas);
 
-        if (crosshairs) {
+        drawTextAndLine(canvas);
 
-            // 绘制十字线
-            pen.setColor(Color.WHITE);
-            canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
-            canvas.drawLine(touch.x, 0, touch.x, height, pen);
-
-            // 绘制横坐标
-            float value = 0.00f;
-            if(kArea.top < touch.y && touch.y < kArea.bottom) {
-                value = kCfg.px2val(touch.y);
-            }
-
-            if(qArea.top < touch.y && touch.y < qArea.bottom) {
-                value = qCfg.px2val(touch.y);
-            }
-
-            textValue.setText(String.format("%.2f", value));
-
-            float x1 = 0;
-            float y1 = touch.y - textValue.getBound().height() / 2;
-
-            // 考虑[上下]边界情况
-            y1 = 0 > y1 ? 0 : y1;
-            if(kArea.bottom < y1 + textValue.getBound().height()) {
-                y1 = kArea.bottom - textValue.getBound().height();
-            }
-            textValue.draw(x1, y1, canvas);
-
-            Candlestick candle = stock.getCandleList().get(csr.node).get(csr.candle);
-            dateValue.setText(candle.getDate());
-
-            float x2 = touch.x - dateValue.getBound().width() / 2;
-            float y2 = kArea.bottom - dateValue.getBound().height();
-
-            // 考虑[左右]边界情况
-            x2 = 0 > x2 ? 0 : x2;
-            if(kArea.right < x2 + dateValue.getBound().width()) {
-                x2 = kArea.right - dateValue.getBound().width();
-            }
-            dateValue.draw(x2, y2, canvas);
-        }
     }
 
     public void updateParameters() {
@@ -168,11 +128,14 @@ public class CandleView extends View {
         qCfg.setRatio(qArea.height(), data.getVolume());
         qCfg.setReferValue(0);
 
+        highestValue.setText(String.format("%.2f", data.getHighest()));
+        lowestValue.setText(String.format("%.2f", data.getLowest()));
+
         invalidate();
     }
 
     private void selectCandlestick(MotionEvent event) {
-        crosshairs = true;
+        drawCross = true;
 
         float x = event.getX();
         float y = event.getY();
@@ -273,6 +236,96 @@ public class CandleView extends View {
         }
     }
 
+    private void drawTextAndLine(Canvas canvas) {
+
+
+        // 绘制十字线及其对应得坐标
+        if (drawCross) {
+
+            // 绘制十字线
+            pen.setColor(Color.WHITE);
+            canvas.drawLine(kArea.left, touch.y, kArea.right, touch.y, pen);
+            canvas.drawLine(touch.x, 0, touch.x, height, pen);
+
+            // 绘制横坐标
+            float value = 0.00f;
+            boolean inKArea = true;// 手指是否在K线区域内
+            if(kArea.top < touch.y && touch.y < kArea.bottom) {
+                value = kCfg.px2val(touch.y);
+                inKArea = true;
+            }
+
+            if(qArea.top < touch.y && touch.y < qArea.bottom) {
+                value = qCfg.px2val(touch.y);
+                inKArea = false;
+            }
+
+            float x1 = 0;
+            float y1 = touch.y - textValue.getBound().height() / 2;
+
+            // 考虑[上下]边界情况
+            if(inKArea) {
+                y1 = kArea.top > y1 ? kArea.top : y1;
+                if (kArea.bottom < y1 + textValue.getBound().height()) {
+                    y1 = kArea.bottom - textValue.getBound().height();
+                }
+            } else {
+                y1 = qArea.top > y1 ? qArea.top : y1;
+                if (qArea.bottom < y1 + textValue.getBound().height()) {
+                    y1 = qArea.bottom - textValue.getBound().height();
+                }
+            }
+
+            // 手指移出kArea顶部的时候显示最大值
+            if(y1 == kArea.top) {
+                value = stock.getCandleList().getHighest();
+            }
+
+            textValue.setText(String.format("%.2f", value));
+            textValue.draw(x1, y1, canvas);// 绘制K线纵坐标(价格)
+
+            float x2 = touch.x - dateValue.getBound().width() / 2;
+            float y2 = kArea.bottom - dateValue.getBound().height();
+
+            // 考虑[左右]边界情况
+            x2 = 0 > x2 ? 0 : x2;
+            if(kArea.right < x2 + dateValue.getBound().width()) {
+                x2 = kArea.right - dateValue.getBound().width();
+            }
+
+            Candlestick candle = stock.getCandleList().get(csr.node).get(csr.candle);
+            dateValue.setText(candle.getDate());
+            dateValue.draw(x2, y2, canvas);// 绘制K线日期
+        }
+
+        // 绘制课时区域内股票的最高价和最低价
+        // TODO 尚未完成
+        CandleList data = stock.getCandleList();
+        if(0 < data.size()) {
+            Candlestick highest = data.getCandlestickHigh();
+            Candlestick lowest = data.getCandlestickLow();
+
+            final float offsetX = UnitHelper.dp2px(20);
+            final float offsetY = UnitHelper.dp2px(5);
+
+            float hX = highest.getCenterXofArea();
+            float hY = kCfg.val2px(highest.getHigh());
+
+            pen.setColor(highestValue.getTextColor());
+            canvas.drawLine(hX, hY, hX-offsetX, hY+offsetY, pen);
+
+            highestValue.draw(hX, hY, canvas);
+
+            float lX = lowest.getCenterXofArea();
+            float lY = kCfg.val2px(lowest.getLow());
+
+            pen.setColor(lowestValue.getTextColor());
+            canvas.drawLine(lX, lY, lX+offsetX, lY-offsetY, pen);
+
+            lowestValue.draw(lX+offsetX, lY-offsetY, canvas);
+        }
+    }
+
     private void initialize() {
         pen = new Paint();
         pen.setTextSize(30);
@@ -291,12 +344,23 @@ public class CandleView extends View {
 
         textValue = new TextValue();
         textValue.setTextSize(textSize);
+
         dateValue = new TextValue();
         dateValue.setTextSize(textSize);
 
+        highestValue = new TextValue();
+        highestValue.setTextSize(textSize);
+        highestValue.setShowBorder(false);
+        highestValue.setAlpha(255);
+
+        lowestValue = new TextValue();
+        lowestValue.setTextSize(textSize);
+        lowestValue.setShowBorder(false);
+        lowestValue.setAlpha(255);
+
         csr = new Cursor();
 
-        crosshairs = false;
+        drawCross = false;
     }
 
     private Paint pen;// 画笔
@@ -308,13 +372,15 @@ public class CandleView extends View {
 
     private TextValue textValue;
     private TextValue dateValue;
+    private TextValue highestValue;
+    private TextValue lowestValue;
 
     private Stock stock;
     private Cursor csr;
 
     private onCandlestickSelectedListener listener;
 
-    private boolean crosshairs;// 是否绘十字准线
+    private boolean drawCross;// 是否绘十字准线
 
     private int width;// View的宽度
     private int height;// View的高度
