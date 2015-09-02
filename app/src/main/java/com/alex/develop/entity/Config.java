@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import com.alex.develop.util.UnitHelper;
+
 /**
  * Created by alex on 15-8-4.
  * 根据画板的尺寸来计算K线显示的宽度、间距以及某种
@@ -67,6 +69,9 @@ public class Config {
 
     public static final int ITEM_AMOUNTS = 30;// 初始状态下，屏幕上显示的K线个数
     public static final float ITEM_SPACE_WIDTH_RATIO = 0.3f;// K线间隔占K线宽度的比例
+
+    public static final float ITEM_MARK_OFFSET_X = UnitHelper.dp2px(20);
+    public static final float ITEM_MARK_OFFSET_Y = UnitHelper.dp2px(5);
 
     private float referV;// y=0时，对应的某种量的值
     private float referY;// y=0时，对应在屏幕上的位置

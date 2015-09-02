@@ -17,6 +17,8 @@ import com.alex.develop.entity.Enum;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
 
+import java.util.Random;
+
 /**
  * Created by alex on 15-6-14.
  * 自定义View，主要用于绘制K线图
@@ -299,31 +301,72 @@ public class CandleView extends View {
         }
 
         // 绘制课时区域内股票的最高价和最低价
-        // TODO 尚未完成
         CandleList data = stock.getCandleList();
         if(0 < data.size()) {
             Candlestick highest = data.getCandlestickHigh();
             Candlestick lowest = data.getCandlestickLow();
 
-            final float offsetX = UnitHelper.dp2px(20);
-            final float offsetY = UnitHelper.dp2px(5);
-
-            float hX = highest.getCenterXofArea();
-            float hY = kCfg.val2px(highest.getHigh());
-
+            float[] high = getDrawTextXY(highest, true, highestValue);
             pen.setColor(highestValue.getTextColor());
-            canvas.drawLine(hX, hY, hX-offsetX, hY+offsetY, pen);
+            canvas.drawLine(high[0], high[1], high[2], high[3], pen);
+            highestValue.draw(high[4], high[5], canvas);
 
-            highestValue.draw(hX, hY, canvas);
-
-            float lX = lowest.getCenterXofArea();
-            float lY = kCfg.val2px(lowest.getLow());
-
+            float[] low = getDrawTextXY(lowest, false, lowestValue);
             pen.setColor(lowestValue.getTextColor());
-            canvas.drawLine(lX, lY, lX+offsetX, lY-offsetY, pen);
-
-            lowestValue.draw(lX+offsetX, lY-offsetY, canvas);
+            canvas.drawLine(low[0], low[1], low[2], low[3], pen);
+            lowestValue.draw(low[4], low[5], canvas);
         }
+    }
+
+    /**
+     * 计算绘制最高价和最低价所需的坐标信息
+     * @param candle 目标K线
+     * @param highOrLow true，最高价；false，最低价
+     * @param textValue 将被绘制的价格字符串
+     * @return
+     *
+     * [0] : 价格指示线条的起始坐标X
+     * [1] : 价格指示线条的起始坐标Y
+     * [2] : 价格指示线条的结束坐标X
+     * [3] : 价格指示线条的结束坐标Y
+     * [4] : 价格字符串绘制的起始坐标X
+     * [5] : 价格字符串绘制的起始坐标Y
+     */
+    private float[] getDrawTextXY(Candlestick candle, boolean highOrLow, TextValue textValue) {
+        float[] data = new float[6];
+
+        data[0] = candle.getCenterXofArea();
+        data[1] = kCfg.val2px(highOrLow ? candle.getHigh() : candle.getLow());
+
+        if(highOrLow) {
+            data[3] = data[1] + Config.ITEM_MARK_OFFSET_Y;
+        } else {
+            data[3] = data[1] - Config.ITEM_MARK_OFFSET_Y;
+        }
+
+        data[5] = data[3] - textValue.getBound().height() / 2;
+
+        if(kArea.left > data[0]-Config.ITEM_MARK_OFFSET_X-textValue.getBound().width()) {// 必须绘制在右侧
+            data[2] = data[0] + Config.ITEM_MARK_OFFSET_X;
+            data[4] = data[2];
+        } else if(kArea.right < data[0]+Config.ITEM_MARK_OFFSET_X+highestValue.getBound().width()) {// 必须绘制在左侧
+            data[2] = data[0] - Config.ITEM_MARK_OFFSET_X;
+            data[4] = data[2] - textValue.getBound().width();
+        } else {// 左右皆可
+            if(leftOrRight) {// 左侧
+                data[2] = data[0] - Config.ITEM_MARK_OFFSET_X;
+                data[4] = data[2] - textValue.getBound().width();
+            } else {// 右侧
+                data[2] = data[0] + Config.ITEM_MARK_OFFSET_X;
+                data[4] = data[2];
+            }
+
+            // 保证当最高价K线和最低价K线都在屏幕中间时，两者的指示线方向相反
+            // TODO 此功能存在BUG
+//            leftOrRight = !leftOrRight;
+        }
+
+        return data;
     }
 
     private void initialize() {
@@ -361,6 +404,8 @@ public class CandleView extends View {
         csr = new Cursor();
 
         drawCross = false;
+
+        leftOrRight = 0 == new Random().nextInt() >> 1;
     }
 
     private Paint pen;// 画笔
@@ -381,6 +426,7 @@ public class CandleView extends View {
     private onCandlestickSelectedListener listener;
 
     private boolean drawCross;// 是否绘十字准线
+    private boolean leftOrRight;
 
     private int width;// View的宽度
     private int height;// View的高度
