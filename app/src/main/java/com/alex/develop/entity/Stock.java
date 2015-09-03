@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.alex.develop.task.CollectStockTask;
 import com.alex.develop.task.QueryStockHistory;
+import com.alex.develop.util.DateHelper;
 import com.alex.develop.util.StockDataAPIHelper;
 
 import org.json.JSONArray;
@@ -272,7 +273,7 @@ public final class Stock extends BaseObject {
             suspend = true;
         }
 
-        today.setDate(data[30]);
+        today.setDate(data[30].replace(StockDataAPIHelper.SINA_DATE_DIVIDER, ""));
         time = data[31];
 
         stamp = System.currentTimeMillis();
@@ -298,14 +299,33 @@ public final class Stock extends BaseObject {
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
             if(code.endsWith(this.code)) {
                 JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
-                Node node = new Node(candle.length());
+
+                int size = candle.length();
+
+                if(DateHelper.isMarketOpen() && 0 == candleList.size()) {
+                    ++size;
+                }
+
+                Node node = new Node(size);
                 for(int i=0; i<candle.length(); ++i) {
                     Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
                     node.add(candlestick);
                 }
-                candleList.add(node);
 
-                flag = candle.length();
+                if(0 == candleList.size()) {// K线日期最新的结点
+
+                    /**
+                     * 在开盘期间，由于搜狐的历史数据没有当天的数据，此时使用新浪的当日数据；
+                     * 收盘后，搜狐的数据才包含当天的数据，此时使用搜狐的数据
+                     */
+                    String lastCandleDate = node.get(candle.length()-1).getDate();
+                    if(!lastCandleDate.equals(today.getDate())) {
+                        node.add(today);
+                    }
+                }
+
+                candleList.add(node);
+                flag = size;
             }
         } catch (JSONException e) {
             e.printStackTrace();

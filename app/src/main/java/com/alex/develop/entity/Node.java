@@ -23,35 +23,6 @@ public class Node {
         return candlesticks[index];
     }
 
-    /**
-     * 计算指定区域的最低价格和最高价格
-     *
-     * @param st 起始位置
-     * @param ed  结束位置
-     * @return 0，最低价格;1，最高价格
-     */
-//    @Deprecated
-//    public float[] getLowAndHigh(int st, int ed) {
-//        float[] data = {Float.MAX_VALUE, 0.0f};
-//
-//        // 指定区域为整个数据块的时候，无须计算
-//        if (0 == st && size() == ed + 1) {
-//            data[0] = low;
-//            data[1] = high;
-//            return data;
-//        }
-//
-//        volume = 0;
-//        for (int i = st; i <= ed; ++i) {
-//            Candlestick candle = get(i);
-//            data[0] = data[0] > candle.getLow() ? candle.getLow() : data[0];
-//            data[1] = data[1] < candle.getHigh() ? candle.getHigh() : data[1];
-//            volume = volume < candle.getVolume() ? candle.getVolume() : volume;
-//        }
-//
-//        return data;
-//    }
-
     public void setScope(int st, int ed) {
 
         float lp = Float.MAX_VALUE;

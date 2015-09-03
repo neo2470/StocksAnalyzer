@@ -1,7 +1,10 @@
 package com.alex.develop.util;
 
+import com.alex.develop.entity.Constant;
 import com.alex.develop.entity.Enum;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -134,6 +137,39 @@ public class DateHelper {
         data[1] = today();
 
         return data;
+    }
+
+    /**
+     * 根据时间判断市场是否开盘
+     * @return
+     */
+    public static boolean isMarketOpen() {
+        boolean flag = false;
+
+        Calendar c = Calendar.getInstance();
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+        // 周末不开市
+        if(Calendar.SATURDAY == dayOfWeek || Calendar.SUNDAY == dayOfWeek) {
+            return flag;
+        }
+
+        final String today = today();
+        DateFormat df = new SimpleDateFormat("yyyyMMdd HH:mm:ss", Locale.CHINA);
+
+        try {
+            long open = df.parse(today + " " + Constant.MARKET_OPEN).getTime();
+            long close = df.parse(today + " " + Constant.MARKET_CLOSE).getTime();
+            long current = System.currentTimeMillis();
+
+            if(open < current && current < close) {
+                flag = true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return flag;
     }
 
     private static int[] days = {

@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.ui.CandleView;
+import com.alex.develop.util.DateHelper;
 
 import java.util.List;
 
@@ -139,27 +139,17 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
 
     public void updateHeaderInfo(Candlestick candlestick) {
 
-        if(null == candlestick) {
-            String data = getString(R.string.stock_default);
-
-            holder.candleClose.setText(String.format(getString(R.string.candle_close), data));
-            holder.candleOpen.setText(String.format(getString(R.string.candle_open), data));
-            holder.candleHigh.setText(String.format(getString(R.string.candle_high), data));
-            holder.candleVolume.setText(String.format(getString(R.string.candle_volume), data));
-
-            holder.candleChange.setText(String.format(getString(R.string.candle_change), data));
-            holder.candleExchange.setText(String.format(getString(R.string.candle_exchange), data));
-            holder.candleLow.setText(String.format(getString(R.string.candle_low), data));
-            holder.candleAmount.setText(String.format(getString(R.string.candle_amount), data));
-
-            return;
+        String today = DateHelper.today();
+        String closeStr = getString(R.string.candle_close);
+        if(DateHelper.isMarketOpen() && candlestick.getDate().equals(today)) {
+            closeStr = getString(R.string.candle_new);
         }
 
         holder.stockName.setText(stock.getName());
         holder.stockCode.setText(stock.getCode());
 
         // 最新
-        String close = String.format(getString(R.string.candle_close), candlestick.getCloseString());
+        String close = String.format(closeStr, candlestick.getCloseString());
         holder.candleClose.setText(close);
 
         // 今开

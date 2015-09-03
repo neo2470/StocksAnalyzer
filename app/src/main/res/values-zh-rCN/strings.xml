@@ -48,8 +48,9 @@
     <string name="start_tips_update">更新数据 %1$d</string>
 
     <!-- stock_header_layout.xml-->
-    <string name="candle_close">最新 %1$s</string>
-    <string name="candle_open">今开 %1$s</string>
+    <string name="candle_new">最新 %1$s</string>
+    <string name="candle_close">收盘 %1$s</string>
+    <string name="candle_open">开盘 %1$s</string>
     <string name="candle_high">最高 %1$s</string>
     <string name="candle_volume">成交量 %1$s</string>
     <string name="candle_volume_unit_million">万(手)</string>

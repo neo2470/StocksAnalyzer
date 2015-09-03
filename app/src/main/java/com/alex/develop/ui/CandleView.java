@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.Debug;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -163,50 +162,6 @@ public class CandleView extends View {
     }
 
     /**
-     * 绘制K线图形的表格背景
-     * @param canvas
-     */
-    private void drawLines(Canvas canvas) {
-
-        // 绘制表格背景
-        pen.setColor(Color.WHITE);
-        pen.setTextSize(UnitHelper.sp2px(15));
-
-        // 左侧边界线
-        canvas.drawLine(kArea.left, 0, kArea.left, kArea.bottom, pen);
-
-        float xWidth = kArea.width() / tdNum;
-        float yHeight = kArea.height() / trNum;
-
-        float x, y;
-        boolean xEnd = false, yEnd = false;
-        for(int i=1,j=1;;++i,++j) {
-
-            x = kArea.left + xWidth*i;
-            y = yHeight*j;
-
-            // 竖线
-            if(i < tdNum) {
-                canvas.drawLine(x, 0, x, kArea.bottom, pen);
-            } else {
-                xEnd = true;
-            }
-
-            // 横线
-            if(j < trNum) {
-//                canvas.drawText("100.00", 0, y+5, pen);
-                canvas.drawLine(kArea.left, y, kArea.right, y, pen);
-            } else {
-                yEnd = true;
-            }
-
-            if(xEnd && yEnd) {
-                break;
-            }
-        }
-    }
-
-    /**
      * 绘制K线
      */
     private void drawCandlesticks(Canvas canvas) {
@@ -227,8 +182,6 @@ public class CandleView extends View {
 
                 for (int j = start; j <= stop; ++j) {
                     Candlestick candle = node.get(j);
-//                    pen.setColor(Color.RED);
-//                    canvas.drawText(j+"", x, 50, pen);
                     candle.drawCandle(x, kCfg, canvas, pen);
                     candle.drawVOL(x, qCfg, canvas, pen);
                     x += Config.itemWidth + Config.itemSpace;
@@ -240,6 +193,23 @@ public class CandleView extends View {
 
     private void drawTextAndLine(Canvas canvas) {
 
+        CandleList data = stock.getCandleList();
+
+        // 绘制课时区域内股票的最高价和最低价
+        if(0 < data.size()) {
+            Candlestick highest = data.getCandlestickHigh();
+            Candlestick lowest = data.getCandlestickLow();
+
+            float[] high = getDrawTextXY(highest, true, highestValue);
+            pen.setColor(highestValue.getTextColor());
+            canvas.drawLine(high[0], high[1], high[2], high[3], pen);
+            highestValue.draw(high[4], high[5], canvas);
+
+            float[] low = getDrawTextXY(lowest, false, lowestValue);
+            pen.setColor(lowestValue.getTextColor());
+            canvas.drawLine(low[0], low[1], low[2], low[3], pen);
+            lowestValue.draw(low[4], low[5], canvas);
+        }
 
         // 绘制十字线及其对应得坐标
         if (drawCross) {
@@ -280,7 +250,7 @@ public class CandleView extends View {
 
             // 手指移出kArea顶部的时候显示最大值
             if(y1 == kArea.top) {
-                value = stock.getCandleList().getHighest();
+                value = data.getHighest();
             }
 
             textValue.setText(String.format("%.2f", value));
@@ -295,26 +265,9 @@ public class CandleView extends View {
                 x2 = kArea.right - dateValue.getBound().width();
             }
 
-            Candlestick candle = stock.getCandleList().get(csr.node).get(csr.candle);
+            Candlestick candle = data.get(csr.node).get(csr.candle);
             dateValue.setText(candle.getDate());
             dateValue.draw(x2, y2, canvas);// 绘制K线日期
-        }
-
-        // 绘制课时区域内股票的最高价和最低价
-        CandleList data = stock.getCandleList();
-        if(0 < data.size()) {
-            Candlestick highest = data.getCandlestickHigh();
-            Candlestick lowest = data.getCandlestickLow();
-
-            float[] high = getDrawTextXY(highest, true, highestValue);
-            pen.setColor(highestValue.getTextColor());
-            canvas.drawLine(high[0], high[1], high[2], high[3], pen);
-            highestValue.draw(high[4], high[5], canvas);
-
-            float[] low = getDrawTextXY(lowest, false, lowestValue);
-            pen.setColor(lowestValue.getTextColor());
-            canvas.drawLine(low[0], low[1], low[2], low[3], pen);
-            lowestValue.draw(low[4], low[5], canvas);
         }
     }
 
@@ -353,17 +306,17 @@ public class CandleView extends View {
             data[2] = data[0] - Config.ITEM_MARK_OFFSET_X;
             data[4] = data[2] - textValue.getBound().width();
         } else {// 左右皆可
-            if(leftOrRight) {// 左侧
+
+            // 保证当最高价K线和最低价K线都在屏幕中间时，两者的指示线方向相反
+            boolean flag = highOrLow ? highLeft : lowLeft;
+
+            if(flag) {// 左侧
                 data[2] = data[0] - Config.ITEM_MARK_OFFSET_X;
                 data[4] = data[2] - textValue.getBound().width();
             } else {// 右侧
                 data[2] = data[0] + Config.ITEM_MARK_OFFSET_X;
                 data[4] = data[2];
             }
-
-            // 保证当最高价K线和最低价K线都在屏幕中间时，两者的指示线方向相反
-            // TODO 此功能存在BUG
-//            leftOrRight = !leftOrRight;
         }
 
         return data;
@@ -405,7 +358,8 @@ public class CandleView extends View {
 
         drawCross = false;
 
-        leftOrRight = 0 == new Random().nextInt() >> 1;
+        highLeft = new Random().nextBoolean();
+        lowLeft = !highLeft;
     }
 
     private Paint pen;// 画笔
@@ -426,10 +380,9 @@ public class CandleView extends View {
     private onCandlestickSelectedListener listener;
 
     private boolean drawCross;// 是否绘十字准线
-    private boolean leftOrRight;
+    private boolean highLeft;// 绘制最高价的指示线是否向左
+    private boolean lowLeft;// 绘制最低价的指示线是否向左
 
     private int width;// View的宽度
     private int height;// View的高度
-    private int trNum = 10;// 背景表格行数
-    private int tdNum = 5;// 背景表格列数
 }
