@@ -23,6 +23,22 @@ public class Node {
         return candlesticks[index];
     }
 
+    /**
+     * 取得日期最靠前的一天的K线数据
+     * @return
+     */
+    public Candlestick getOldest() {
+        return candlesticks[0];
+    }
+
+    /**
+     * 取得日期最靠后的一天的K线的数据
+     * @return
+     */
+    public Candlestick getLastest() {
+        return candlesticks[index];
+    }
+
     public void setScope(int st, int ed) {
 
         float lp = Float.MAX_VALUE;

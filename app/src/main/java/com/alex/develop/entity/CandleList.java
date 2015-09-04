@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
@@ -21,6 +19,7 @@ public class CandleList {
     public void add(Node node) {
         nodes.add(node);
         count += node.size();
+        start = node.getOldest().getDate();
     }
 
     public Node get(int index) {
@@ -118,9 +117,15 @@ public class CandleList {
         return volume;
     }
 
+    public String getStartDate() {
+        return start;
+    }
+
     private Candlestick low;// 在可视区域内，股价最低的K线
     private Candlestick high;// 在可视区域内，股价最高的K线
     private long volume;// 在可视区域内，成交量最大值
+
+    private String start;// 记录该数据结构中存储数据的起始日期
 
     private int count;// 统计存储的K线数据量
     private ArrayList<Node> nodes;
