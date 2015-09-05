@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -48,28 +49,28 @@ public final class Stock extends BaseObject {
         this.code = code;
         this.name = name;
 
-        if(null == candleList) {
+        if (null == candleList) {
             candleList = new CandleList();
 
-            if(null == today) {
+            if (null == today) {
                 today = new Candlestick();
                 today.setApiFrom(Enum.API.Sina);
             }
         }
 
-        if(null == salePrice) {
+        if (null == salePrice) {
             salePrice = new float[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
-        if(null == saleVolume) {
+        if (null == saleVolume) {
             saleVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
-        if(null == buyPrice) {
+        if (null == buyPrice) {
             buyPrice = new float[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
-        if(null == buyVolume) {
+        if (null == buyVolume) {
             buyVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
         }
 
@@ -217,6 +218,7 @@ public final class Stock extends BaseObject {
 
     /**
      * 重置数据可视区域的游标
+     *
      * @return boolean，如果{candleList}中所含的数据量
      * 少于要显示的数据量{Config.ITEM_AMOUNTS}返回false，
      * 否则返回true
@@ -224,7 +226,7 @@ public final class Stock extends BaseObject {
     public boolean resetCursor() {
 
         // TODO 此方法貌似有些问题
-        if(candleList.getCount() < Config.ITEM_AMOUNTS) {
+        if (candleList.getCount() < Config.ITEM_AMOUNTS) {
             return false;
         }
 
@@ -257,7 +259,7 @@ public final class Stock extends BaseObject {
         today.setAmount(Float.valueOf(data[9]));// 成交额(单位：元)
         today.initialize();
 
-        for(int i=10,j=11,m=20,n=21,k=0;k< StockDataAPIHelper.SINA_ENTRUST_LEVEL;i+=2,j+=2,m+=2,n+=2,++k) {
+        for (int i = 10, j = 11, m = 20, n = 21, k = 0; k < StockDataAPIHelper.SINA_ENTRUST_LEVEL; i += 2, j += 2, m += 2, n += 2, ++k) {
 
             // 委买
             buyVolume[k] = Long.valueOf(data[i]);// 买k+1数量(单位：股)
@@ -269,7 +271,7 @@ public final class Stock extends BaseObject {
         }
 
         // 根据成交量判断是否停牌
-        if(StockDataAPIHelper.SINA_SUSPEND_VOLUME.equals(data[8])) {
+        if (StockDataAPIHelper.SINA_SUSPEND_VOLUME.equals(data[8])) {
             suspend = true;
         }
 
@@ -281,6 +283,7 @@ public final class Stock extends BaseObject {
 
     /**
      * 根据sohu股票行情接口读取数据
+     *
      * @param data sohu提供的json 数据
      * @return 读取到的数据量, <0, 表示没有读到任何数据(无此股票)；>0,为一共读取到的行情数量
      */
@@ -292,35 +295,42 @@ public final class Stock extends BaseObject {
             JSONObject info = array.getJSONObject(0);
 
             String status = info.optString(StockDataAPIHelper.SOHU_JSON_STATUS);
-            if(!status.equals(StockDataAPIHelper.SOHU_JSON_STATUS_OK)) {
+            if (!status.equals(StockDataAPIHelper.SOHU_JSON_STATUS_OK)) {
                 return flag;
             }
 
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
-            if(code.endsWith(this.code)) {
+            if (code.endsWith(this.code)) {
                 JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
 
                 int size = candle.length();
 
-                if(DateHelper.isMarketOpen() && 0 == candleList.size()) {
+                if (DateHelper.isMarketOpen() && 0 == candleList.size()) {
                     ++size;
                 }
 
                 Node node = new Node(size);
-                for(int i=0; i<candle.length(); ++i) {
+                for (int i = 0; i < candle.length(); ++i) {
                     Candlestick candlestick = new Candlestick(candle.optJSONArray(i));
                     node.add(candlestick);
                 }
 
-                if(0 == candleList.size()) {// K线日期最新的结点
+                if (0 == candleList.size()) {// K线日期最新的结点
 
                     /**
                      * 在开盘期间，由于搜狐的历史数据没有当天的数据，此时使用新浪的当日数据；
                      * 收盘后，搜狐的数据才包含当天的数据，此时使用搜狐的数据
                      */
-                    String lastCandleDate = node.get(candle.length()-1).getDate();
-                    if(!lastCandleDate.equals(today.getDate())) {
-                        node.add(today);
+
+                    if (DateHelper.isMarketOpen()) {
+
+                        String lastCandleDate = node.get(size - 2).getDate();
+                        if (!lastCandleDate.equals(today.getDate())) {
+                            node.add(today);
+                        }
+
+                    } else {
+                        today = node.get(size - 1);
                     }
                 }
 

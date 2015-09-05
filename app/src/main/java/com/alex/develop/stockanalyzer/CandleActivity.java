@@ -123,8 +123,6 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
                     updateHeaderInfo(stock.getToday());
                 }
             });
-
-            updateHeaderInfo(stock.getToday());
         }
 
         candleView = (CandleView) findViewById(R.id.candleView);

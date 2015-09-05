@@ -19,20 +19,21 @@ public class Config {
     }
 
     /**
-     * 计算某种量与画布高度的比，用于量与画布尺寸(px)的相互转换
-     * @param height 画布的高度(px)
-     * @param value 某种量的最大值与最小值之差
-     *
-     * @example 在绘制K线图的情况下：
-     * height 表示K线图画板的高度,
-     * value 表示股票的最高价格与最低价格之差（某个特定区间内）
-     *
-     * @example 在绘制指标VOL(成交量)的情况下：
-     * height 表示绘制指标的画板的高度
-     * value 表示成交量的最大值与最小值(0)之差（某个特定区间内）
+     * 绘图区域的高度
+     * @param height
      */
-    public void setRatio(float height, float value) {
-        ratio = value / height;
+    public void setHeight(float height) {
+        this.height = height;
+        getRatio();
+    }
+
+    /**
+     * 绘图区域表示的值的大小
+     * @param value
+     */
+    public void setValue(float value) {
+        this.value = value;
+        getRatio();
     }
 
     /**
@@ -60,8 +61,22 @@ public class Config {
         return referY - (value - referV) / ratio;
     }
 
+    /**
+     * px转某种量的值
+     * @param px
+     * @return
+     */
     public float px2val(float px) {
         return referV + (referY - px) * ratio;
+    }
+
+    /**
+     * 计算height和value的比值
+     */
+    private void getRatio() {
+        if(0.0f < value && 0.0f < height) {
+            ratio = value / height;
+        }
     }
 
     public static float itemWidth;// K线的宽度
@@ -72,6 +87,9 @@ public class Config {
 
     public static final float ITEM_MARK_OFFSET_X = UnitHelper.dp2px(20);
     public static final float ITEM_MARK_OFFSET_Y = UnitHelper.dp2px(5);
+
+    private float height;// 绘图区域的高度
+    private float value;// 绘图区域表示值的大小
 
     private float referV;// y=0时，对应的某种量的值
     private float referY;// y=0时，对应在屏幕上的位置

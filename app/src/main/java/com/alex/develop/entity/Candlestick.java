@@ -243,7 +243,7 @@ public class Candlestick extends BaseObject {
             kArea.bottom = kCfg.val2px(close);
         }
 
-//        Log.d("Debug-Candlestick-Draw", date + ", " + kArea.left + ", " + kArea.top);
+        Log.d("Debug-Candlestick-Draw", date + ", " + kArea.left + ", " + kArea.top);
 
         float x1 = x + Config.itemWidth / 2;
         float y1 = kCfg.val2px(high);

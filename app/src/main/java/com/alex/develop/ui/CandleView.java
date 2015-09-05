@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -39,9 +38,9 @@ public class CandleView extends View {
         csr.setCandleList(this.stock.getCandleList());
 
         // 重置游标成功，则说明已经下载过数据，无需重复下载
-        // TODO 此处的逻辑貌似有问题，发现了一个BUG
         if(stock.resetCursor()) {
             updateParameters();
+            mListener.onSelected(stock.getToday());
             return ;
         }
 
@@ -52,12 +51,13 @@ public class CandleView extends View {
                 super.onPostExecute(integer);
                 stock.resetCursor();
                 updateParameters();
+                mListener.onSelected(stock.getToday());
             }
         }.execute(Enum.Month.Jul, Enum.Period.Day);
     }
 
     public void setOnCandlestickSelectedListener(onCandlestickSelectedListener listener) {
-        this.listener = listener;
+        mListener = listener;
     }
 
     @Override
@@ -74,6 +74,7 @@ public class CandleView extends View {
             kArea.bottom = divider;
             Config.init(kArea.width());
             kCfg.setReferYpx(kArea.bottom);
+            kCfg.setHeight(kArea.height());
         }
 
 
@@ -82,6 +83,7 @@ public class CandleView extends View {
             qArea.top = divider;
             qArea.bottom = h;
             qCfg.setReferYpx(qArea.bottom);
+            qCfg.setHeight(qArea.height());
         }
     }
 
@@ -123,10 +125,10 @@ public class CandleView extends View {
 
     public void updateParameters() {
         CandleList data = stock.getCandleList();
-        kCfg.setRatio(kArea.height(), data.getHighest() - data.getLowest());
+        kCfg.setValue(data.getHighest() - data.getLowest());
         kCfg.setReferValue(data.getLowest());
 
-        qCfg.setRatio(qArea.height(), data.getVolume());
+        qCfg.setValue(data.getVolume());
         qCfg.setReferValue(0);
 
         highestValue.setText(String.format("%.2f", data.getHighest()));
@@ -158,7 +160,7 @@ public class CandleView extends View {
         CandleList data = stock.getCandleList();
         Candlestick candle = data.get(csr.node).get(csr.candle);
         touch.x = candle.getCenterXofArea();
-        listener.onSelected(candle);
+        mListener.onSelected(candle);
     }
 
     /**
@@ -377,7 +379,7 @@ public class CandleView extends View {
     private Stock stock;
     private Cursor csr;
 
-    private onCandlestickSelectedListener listener;
+    private onCandlestickSelectedListener mListener;
 
     private boolean drawCross;// 是否绘十字准线
     private boolean highLeft;// 绘制最高价的指示线是否向左
