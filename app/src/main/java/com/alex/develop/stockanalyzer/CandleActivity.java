@@ -146,37 +146,50 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
         holder.stockName.setText(stock.getName());
         holder.stockCode.setText(stock.getCode());
 
-        // 最新
-        String close = String.format(closeStr, candlestick.getCloseString());
-        holder.candleClose.setText(close);
+        if(null == candlestick) {
+            String data = getString(R.string.stock_default);
+            holder.candleClose.setText(String.format(getString(R.string.candle_close), data));
+            holder.candleOpen.setText(String.format(getString(R.string.candle_open), data));
+            holder.candleHigh.setText(String.format(getString(R.string.candle_high), data));
+            holder.candleVolume.setText(String.format(getString(R.string.candle_volume), data));
+            holder.candleChange.setText(String.format(getString(R.string.candle_change), data));
+            holder.candleExchange.setText(String.format(getString(R.string.candle_exchange), data));
+            holder.candleLow.setText(String.format(getString(R.string.candle_low), data));
+            holder.candleAmount.setText(String.format(getString(R.string.candle_amount), data));
+        } else {
 
-        // 今开
-        String open = String.format(getString(R.string.candle_open), candlestick.getOpenString());
-        holder.candleOpen.setText(open);
+            // 最新
+            String close = String.format(closeStr, candlestick.getCloseString());
+            holder.candleClose.setText(close);
 
-        // 最高
-        String high = String.format(getString(R.string.candle_high), candlestick.getHighString());
-        holder.candleHigh.setText(high);
+            // 今开
+            String open = String.format(getString(R.string.candle_open), candlestick.getOpenString());
+            holder.candleOpen.setText(open);
 
-        // 成交量
-        String volume = String.format(getString(R.string.candle_volume), candlestick.getVolumeString());
-        holder.candleVolume.setText(volume);
+            // 最高
+            String high = String.format(getString(R.string.candle_high), candlestick.getHighString());
+            holder.candleHigh.setText(high);
 
-        // 涨幅
-        String change = String.format(getString(R.string.candle_change), candlestick.getChangeString());
-        holder.candleChange.setText(change);
+            // 成交量
+            String volume = String.format(getString(R.string.candle_volume), candlestick.getVolumeString());
+            holder.candleVolume.setText(volume);
 
-        // 换手
-        String exchange = String.format(getString(R.string.candle_exchange), candlestick.getExchangeString());
-        holder.candleExchange.setText(exchange);
+            // 涨幅
+            String change = String.format(getString(R.string.candle_change), candlestick.getChangeString());
+            holder.candleChange.setText(change);
 
-        // 最低
-        String low = String.format(getString(R.string.candle_low), candlestick.getLowString());
-        holder.candleLow.setText(low);
+            // 换手
+            String exchange = String.format(getString(R.string.candle_exchange), candlestick.getExchangeString());
+            holder.candleExchange.setText(exchange);
 
-        // 成交额
-        String amount = String.format(getString(R.string.candle_amount), candlestick.getAmountString());
-        holder.candleAmount.setText(amount);
+            // 最低
+            String low = String.format(getString(R.string.candle_low), candlestick.getLowString());
+            holder.candleLow.setText(low);
+
+            // 成交额
+            String amount = String.format(getString(R.string.candle_amount), candlestick.getAmountString());
+            holder.candleAmount.setText(amount);
+        }
     }
 
     private void updateStock() {

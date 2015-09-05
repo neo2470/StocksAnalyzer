@@ -208,8 +208,7 @@ public class Candlestick extends BaseObject {
 
         from = Enum.API.Sohu;
 
-//        Log.d("Print-fromSohu", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume + "," + money + ", " + getIncreaseString() + ", " + getTurnoverString());
-
+//        Log.d("Print-fromSohu", date + ", " + open + ", " + close + ", " + getChangeString());
     }
 
     public void drawCandle(float x, Config kCfg, Canvas canvas, Paint pen) {

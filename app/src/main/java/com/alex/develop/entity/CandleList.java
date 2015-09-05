@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import com.alex.develop.util.DateHelper;
+
 import java.util.ArrayList;
 
 /**
@@ -10,6 +12,7 @@ public class CandleList {
 
     public CandleList() {
         nodes = new ArrayList<>();
+        old = DateHelper.today();
     }
 
     public int size() {
@@ -19,7 +22,12 @@ public class CandleList {
     public void add(Node node) {
         nodes.add(node);
         count += node.size();
-        start = node.getOldest().getDate();
+
+        old = node.getOldest().getDate();
+
+        if(1 == size()) {
+            last = node.getLastest().getDate();
+        }
     }
 
     public Node get(int index) {
@@ -117,15 +125,20 @@ public class CandleList {
         return volume;
     }
 
-    public String getStartDate() {
-        return start;
+    public String getOldDate() {
+        return old;
+    }
+
+    public String getLastDate() {
+        return last;
     }
 
     private Candlestick low;// 在可视区域内，股价最低的K线
     private Candlestick high;// 在可视区域内，股价最高的K线
     private long volume;// 在可视区域内，成交量最大值
 
-    private String start;// 记录该数据结构中存储数据的起始日期
+    private String old;// 记录该数据结构中存储数据的起始日期
+    private String last;// 记录该数据结构中存储数据的结束日期
 
     private int count;// 统计存储的K线数据量
     private ArrayList<Node> nodes;

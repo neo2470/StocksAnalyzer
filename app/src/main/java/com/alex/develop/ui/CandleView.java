@@ -47,13 +47,19 @@ public class CandleView extends View {
         new QueryStockHistory(this.stock) {
 
             @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mListener.onSelected(null);
+            }
+
+            @Override
             protected void onPostExecute(Integer integer) {
                 super.onPostExecute(integer);
                 stock.resetCursor();
                 updateParameters();
                 mListener.onSelected(stock.getToday());
             }
-        }.execute(Enum.Month.Jul, Enum.Period.Day);
+        }.execute(Enum.Period.Day);
     }
 
     public void setOnCandlestickSelectedListener(onCandlestickSelectedListener listener) {

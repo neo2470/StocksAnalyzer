@@ -205,6 +205,10 @@ public final class Stock extends BaseObject {
         return ed;
     }
 
+    public void setAllDataIsDownload(boolean allDataIsDownload) {
+        this.allDataIsDownload = allDataIsDownload;
+    }
+
     /**
      * 将游标{st}和{ed}同时向左或向右移动{day}个数据单位
      *
@@ -226,7 +230,7 @@ public final class Stock extends BaseObject {
     public boolean resetCursor() {
 
         // TODO 此方法貌似有些问题
-        if (candleList.getCount() < Config.ITEM_AMOUNTS) {
+        if (candleList.getCount() == 0) {
             return false;
         }
 
@@ -246,7 +250,7 @@ public final class Stock extends BaseObject {
     }
 
     public void requestData() {
-        new QueryStockHistory(this).execute(Enum.Month.Jul, Enum.Period.Day);
+        new QueryStockHistory(this).execute(Enum.Period.Day);
     }
 
     public void fromSina(String[] data) {
@@ -270,13 +274,9 @@ public final class Stock extends BaseObject {
             salePrice[k] = Float.valueOf(data[n]);// 卖k+1报价（单位：元）
         }
 
-        // 根据成交量判断是否停牌
-        if (StockDataAPIHelper.SINA_SUSPEND_VOLUME.equals(data[8])) {
-            suspend = true;
-        }
-
         today.setDate(data[30].replace(StockDataAPIHelper.SINA_DATE_DIVIDER, ""));
         time = data[31];
+        suspend = data[32].equals(StockDataAPIHelper.SINA_SUSPEND);
 
         stamp = System.currentTimeMillis();
     }
@@ -287,17 +287,11 @@ public final class Stock extends BaseObject {
      * @param data sohu提供的json 数据
      * @return 读取到的数据量, <0, 表示没有读到任何数据(无此股票)；>0,为一共读取到的行情数量
      */
-    public int formSohu(String data) {
+    public int formSohu(JSONArray data) {
 
         int flag = -1;
         try {
-            JSONArray array = new JSONArray(data);
-            JSONObject info = array.getJSONObject(0);
-
-            String status = info.optString(StockDataAPIHelper.SOHU_JSON_STATUS);
-            if (!status.equals(StockDataAPIHelper.SOHU_JSON_STATUS_OK)) {
-                return flag;
-            }
+            JSONObject info = data.getJSONObject(0);
 
             String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
             if (code.endsWith(this.code)) {
@@ -358,6 +352,8 @@ public final class Stock extends BaseObject {
     private int collect;// 股票是否被收藏
     private int search;// 股票被搜索的次数
     private int index;// 在{Analyzer.stockList}中的索引
+
+    private boolean allDataIsDownload;// 该股票的历史数据已经被全部下载
 
     private Cursor st;// 被绘制的K线的起始位置
     private Cursor ed;// 被绘制的K线的结束位置

@@ -30,6 +30,8 @@ public class Cursor {
      */
     public void move(int day) {
 
+        // TODO 此方法有BUG
+
         ArrayList<Node> nodes = candleList.getNodes();
 
         // 不需要移动

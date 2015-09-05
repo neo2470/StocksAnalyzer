@@ -1,65 +1,95 @@
 package com.alex.develop.task;
 
 import android.os.AsyncTask;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.util.Log;
 
 import com.alex.develop.entity.*;
-import com.alex.develop.entity.Enum;
-import com.alex.develop.entity.Enum.EnumType;
-import com.alex.develop.stockanalyzer.Analyzer;
-import com.alex.develop.stockanalyzer.R;
+import com.alex.develop.entity.Enum.Period;
 import com.alex.develop.util.DateHelper;
 import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.StockDataAPIHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by alex on 15-7-18.
  * 查询某支股票历史行情数据
- * @param EnumType 有二个参数，p1为{Enum.Month}类型，指明要查询的是从几月起之前的数据，具体查询多少，需要根据p2做出判断；p2为{Enum.Period}类型，指明需要的数据周期，是日，周，月
+ * @param Period {Enum.Period}类型，指明需要的数据周期，是日，周，月
  * @param Integer 查询到的行情数据数量
  */
-public class QueryStockHistory extends AsyncTask<EnumType, Void, Integer> {
+public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
 
     public QueryStockHistory(Stock stock) {
         this.stock = stock;
     }
 
     @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
+    protected Integer doInBackground(Period... params) {
 
-        Animation anim = AnimationUtils.loadAnimation(Analyzer.getContext(), R.anim.loading_data);
-        Analyzer.getLoadView().setVisibility(View.VISIBLE);
-        Analyzer.getLoadView().startAnimation(anim);
-    }
+        // TODO FIND BUG
 
-    @Override
-    protected Integer doInBackground(EnumType... params) {
+        String end = stock.getCandleList().getOldDate();
+        String start = end;
 
-        int length = params.length;
+        int offset;// 根据不同的周期（月、周、日）选择不同的偏移时间
 
-        // 查询周期,默认是天
-        Enum.Period period = Enum.Period.Day;
-
-        String[] date = DateHelper.getDateScope(params);
-
-        if(1 < length) {
-            period = (Enum.Period) params[length - 1];
+        switch (params[0]) {
+            case Month:
+                offset = -Constant.DATE_OFFSET_MONTH;
+                break;
+            case Week:
+                offset = -Constant.DATE_OFFSET_WEEK;
+                break;
+            default:
+                offset = -Constant.DATE_OFFSET_DAY;
         }
 
-        String url = StockDataAPIHelper.getSohuHistoryUrl(stock.getCode(), date[0], date[1], period);
-        String data = NetworkHelper.getWebContent(url, StockDataAPIHelper.SOHU_CHARSET);
-        return stock.formSohu(data);
-    }
+        JSONArray dataRaw = null;
 
-    @Override
-    protected void onPostExecute(Integer integer) {
-        super.onPostExecute(integer);
+        int count = 0;// 统计本次下载到的数据量
+        boolean gotData = false;// 是否已经下载到数据
 
-        Analyzer.getLoadView().setVisibility(View.GONE);
-        Analyzer.getLoadView().clearAnimation();
+        do {
+
+            start = DateHelper.offset(start, offset);
+
+            String url = StockDataAPIHelper.getSohuHistoryUrl(stock.getCode(), start, end, params[0]);
+            String data = NetworkHelper.getWebContent(url, StockDataAPIHelper.SOHU_CHARSET);
+
+            try {
+
+                dataRaw = new JSONArray(data);
+
+                JSONObject obj = dataRaw.optJSONObject(0);
+
+                final int status = obj.optInt(StockDataAPIHelper.SOHU_JSON_STATUS);
+                if (obj.has(StockDataAPIHelper.SOHU_JSON_HQ) && status == StockDataAPIHelper.SOHU_JSON_STATUS_OK) {
+
+                    count += stock.formSohu(dataRaw);
+                    gotData = true;
+
+                    if(Config.ITEM_AMOUNTS > count) {
+                        end = stock.getCandleList().getOldDate();
+                    } else {
+                        break;
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+                if(gotData) {
+                    stock.setAllDataIsDownload(true);
+                    break;
+                }
+            }
+
+        } while (true);
+
+        Log.d("Print", start + ", " + end + ", " + count);
+
+        return count;
     }
 
     private Stock stock;
