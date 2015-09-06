@@ -249,10 +249,6 @@ public final class Stock extends BaseObject {
         return true;
     }
 
-    public void requestData() {
-        new QueryStockHistory(this).execute(Enum.Period.Day);
-    }
-
     public void fromSina(String[] data) {
         today.setOpen(Float.valueOf(data[1]));// 开盘价
         today.setLastClose(Float.valueOf(data[2])); // 昨日收盘价

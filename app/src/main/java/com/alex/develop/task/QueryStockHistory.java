@@ -2,9 +2,14 @@ package com.alex.develop.task;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum.Period;
+import com.alex.develop.stockanalyzer.Analyzer;
+import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.util.DateHelper;
 import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.StockDataAPIHelper;
@@ -23,6 +28,14 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
 
     public QueryStockHistory(Stock stock) {
         this.stock = stock;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Animation anim = AnimationUtils.loadAnimation(Analyzer.getContext(), R.anim.loading_data);
+        Analyzer.getCandleActivityLoadView().setVisibility(View.VISIBLE);
+        Analyzer.getCandleActivityLoadView().startAnimation(anim);
     }
 
     @Override
@@ -85,11 +98,20 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
                 }
             }
 
+            Log.d("Print-Circle", start + ", " + end + ", " + count + "---------------------------------");
+
         } while (true);
 
-        Log.d("Print", start + ", " + end + ", " + count);
+        Log.d("Print-Over", start + ", " + end + ", " + count + "---------------------------------");
 
         return count;
+    }
+
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+        Analyzer.getCandleActivityLoadView().setVisibility(View.GONE);
+        Analyzer.getCandleActivityLoadView().clearAnimation();
     }
 
     private Stock stock;

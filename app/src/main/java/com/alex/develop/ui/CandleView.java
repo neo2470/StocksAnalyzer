@@ -6,12 +6,18 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
+import com.alex.develop.stockanalyzer.Analyzer;
+import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
 
@@ -44,22 +50,8 @@ public class CandleView extends View {
             return ;
         }
 
-        new QueryStockHistory(this.stock) {
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                mListener.onSelected(null);
-            }
-
-            @Override
-            protected void onPostExecute(Integer integer) {
-                super.onPostExecute(integer);
-                stock.resetCursor();
-                updateParameters();
-                mListener.onSelected(stock.getToday());
-            }
-        }.execute(Enum.Period.Day);
+        // 下载数据并重置游标
+        requestData(true);
     }
 
     public void setOnCandlestickSelectedListener(onCandlestickSelectedListener listener) {
@@ -141,6 +133,29 @@ public class CandleView extends View {
         lowestValue.setText(String.format("%.2f", data.getLowest()));
 
         invalidate();
+    }
+
+    public void cancelTask() {
+        if(null != task && !task.isCancelled()) {
+            task.cancel(true);
+        }
+    }
+
+    private void requestData(final boolean resetCursor) {
+        task = new QueryStockHistory(stock) {
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+
+                if(resetCursor && stock.resetCursor()) {
+                    updateParameters();
+                    mListener.onSelected(stock.getToday());
+                }
+            }
+        };
+
+        task.execute(Enum.Period.Day);
     }
 
     private void selectCandlestick(MotionEvent event) {
@@ -384,6 +399,7 @@ public class CandleView extends View {
 
     private Stock stock;
     private Cursor csr;
+    private QueryStockHistory task;
 
     private onCandlestickSelectedListener mListener;
 

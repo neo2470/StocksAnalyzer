@@ -21,10 +21,9 @@ public class QueryStockToday extends AsyncTask<Stock, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-
         Animation anim = AnimationUtils.loadAnimation(Analyzer.getContext(), R.anim.loading_data);
-        Analyzer.getLoadView().setVisibility(View.VISIBLE);
-        Analyzer.getLoadView().startAnimation(anim);
+        Analyzer.getMainActivityLoadView().setVisibility(View.VISIBLE);
+        Analyzer.getMainActivityLoadView().startAnimation(anim);
     }
 
     @Override
@@ -36,8 +35,7 @@ public class QueryStockToday extends AsyncTask<Stock, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-
-        Analyzer.getLoadView().setVisibility(View.GONE);
-        Analyzer.getLoadView().clearAnimation();
+        Analyzer.getMainActivityLoadView().setVisibility(View.GONE);
+        Analyzer.getMainActivityLoadView().clearAnimation();
     }
 }

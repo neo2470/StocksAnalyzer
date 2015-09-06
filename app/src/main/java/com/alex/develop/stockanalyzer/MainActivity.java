@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,7 +62,7 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
             fragList.add(new SelectFragment());
         }
 
-        Analyzer.setLoadView(findViewById(R.id.loading));
+        Analyzer.setMainActivityLoadView(findViewById(R.id.loading));
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);

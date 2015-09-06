@@ -29,12 +29,20 @@ public class Analyzer extends Application {
         return context;
     }
 
-    public static View getLoadView() {
-        return loadView;
+    public static View getMainActivityLoadView() {
+        return loadView1;
     }
 
-    public static void setLoadView(View loadView) {
-        Analyzer.loadView = loadView;
+    public static void setMainActivityLoadView(View loadView) {
+        Analyzer.loadView1 = loadView;
+    }
+
+    public static View getCandleActivityLoadView() {
+        return loadView2;
+    }
+
+    public static void setCandleActivityLoadView(View loadView) {
+        Analyzer.loadView2 = loadView;
     }
 
     public static List<Stock> getStockList() {
@@ -110,5 +118,6 @@ public class Analyzer extends Application {
     private static Context context;
     private static List<Stock> stockList;
     private static List<Stock> stockCollect;
-    private static View loadView;
+    private static View loadView1;
+    private static View loadView2;
 }

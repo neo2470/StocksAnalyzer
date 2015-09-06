@@ -91,8 +91,6 @@ public class CandleList {
         }
     }
 
-
-
     /**
      * 取得可视区域内的最低价
      * @return

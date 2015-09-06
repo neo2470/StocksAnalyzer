@@ -182,7 +182,7 @@ public class Candlestick extends BaseObject {
 
         from = Enum.API.Yahoo;
 
-//        Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume);
+        Log.d("Print", date + ", " + open + ", " + high + ", " + low + ", " + close + ", " + volume);
     }
 
     public void fromSohu(JSONArray data) {
@@ -208,7 +208,7 @@ public class Candlestick extends BaseObject {
 
         from = Enum.API.Sohu;
 
-//        Log.d("Print-fromSohu", date + ", " + open + ", " + close + ", " + getChangeString());
+        Log.d("Print-fromSohu", date + ", " + open + ", " + close + ", " + getChangeString());
     }
 
     public void drawCandle(float x, Config kCfg, Canvas canvas, Paint pen) {
