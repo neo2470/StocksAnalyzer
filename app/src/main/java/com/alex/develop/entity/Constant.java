@@ -8,7 +8,7 @@ public final class Constant {
     public static final String MARKET_OPEN = "09:30:00";
     public static final String MARKET_CLOSE = "15:00:00";
 
-    public static final int DATE_OFFSET_DAY = 90;
+    public static final int DATE_OFFSET_DAY = 60;
     public static final int DATE_OFFSET_WEEK = 180;
     public static final int DATE_OFFSET_MONTH = 730;
 

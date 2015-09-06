@@ -31,28 +31,21 @@ public class CollectStockTask extends AsyncTask<Stock, Void, Boolean> {
         SQLiteHelper dbHelper = SQLiteHelper.getInstance();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        long time = System.currentTimeMillis();
-
-        ContentValues values = new ContentValues();
-        values.put(Stock.Table.Column.COLLECT, collect);
-        values.put(Stock.Table.Column.COLLECT_STAMP, time);
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(Stock.Table.Column.CODE);
-        builder.append(" in (");
-        String[] whereArgs = new String[params.length];
-
-        int i =0;
+        boolean flag = true;
         for (Stock s : params) {
             s.setCollect(collect);
-            s.setCollectStamp(time);
 
-            builder.append("?,");
-            whereArgs[i] = s.getCode();
-            ++i;
+            ContentValues values = new ContentValues();
+            values.put(Stock.Table.Column.COLLECT, collect);
+            values.put(Stock.Table.Column.COLLECT_STAMP, s.getCollectStamp());
+
+            String where = Stock.Table.Column.CODE + " = ?";
+            String[] whereArgs = {s.getCode()};
+
+            if(1 != db.update(Stock.Table.NAME, values, where, whereArgs)) {
+                flag = false;
+            }
         }
-        builder.deleteCharAt(builder.length() - 1);
-        builder.append(")");
 
         if(1 == params.length) {
             tips = params[0].getName() + " ";
@@ -60,7 +53,7 @@ public class CollectStockTask extends AsyncTask<Stock, Void, Boolean> {
             tips = Analyzer.getContext().getString(R.string.selected_stock);
         }
 
-        return params.length == db.update(Stock.Table.NAME, values, builder.toString(), whereArgs);
+        return flag;
     }
 
     @Override

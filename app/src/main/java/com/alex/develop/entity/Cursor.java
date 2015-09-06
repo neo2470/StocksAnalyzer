@@ -30,8 +30,6 @@ public class Cursor {
      */
     public void move(int day) {
 
-        // TODO 此方法有BUG
-
         ArrayList<Node> nodes = candleList.getNodes();
 
         // 不需要移动
@@ -49,6 +47,8 @@ public class Cursor {
                 candle = cIndex;
             } else {
 
+                cIndex -= nodes.get(nIndex).size();
+
                 while (true) {
 
                     --nIndex;
@@ -61,12 +61,13 @@ public class Cursor {
                     }
 
                     Node data = nodes.get(nIndex);
-                    cIndex -= data.size();
 
                     if (data.size() > cIndex) {
                         node = nIndex;
                         candle = cIndex;
                         break;
+                    } else {
+                        cIndex -= data.size();
                     }
                 }
             }
@@ -96,7 +97,7 @@ public class Cursor {
                     Node data = nodes.get(nIndex);
                     cIndex += data.size();
 
-                    if(0 > cIndex) {
+                    if(0 < cIndex) {
                         node = nIndex;
                         candle = cIndex;
                         break;

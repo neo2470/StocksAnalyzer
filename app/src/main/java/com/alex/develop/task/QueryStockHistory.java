@@ -10,6 +10,7 @@ import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum.Period;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
+import com.alex.develop.ui.LoadingDialog;
 import com.alex.develop.util.DateHelper;
 import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.StockDataAPIHelper;
@@ -40,8 +41,6 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
 
     @Override
     protected Integer doInBackground(Period... params) {
-
-        // TODO FIND BUG
 
         String end = stock.getCandleList().getOldDate();
         String start = end;
@@ -83,11 +82,16 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
                     count += stock.formSohu(dataRaw);
                     gotData = true;
 
+                    Log.d("Print-Yes", start + ", " + end + ", " + "---------------------------------[" + count + "]");
+
                     if(Config.ITEM_AMOUNTS > count) {
-                        end = stock.getCandleList().getOldDate();
+                        end = DateHelper.offset(start, -1);
                     } else {
                         break;
                     }
+                } else {
+
+                    Log.d("Print-No", start + ", " + end + ", " + "---------------------------------[" + count + "]");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -97,12 +101,7 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
                     break;
                 }
             }
-
-            Log.d("Print-Circle", start + ", " + end + ", " + count + "---------------------------------");
-
         } while (true);
-
-        Log.d("Print-Over", start + ", " + end + ", " + count + "---------------------------------");
 
         return count;
     }

@@ -135,15 +135,13 @@ public class CandleActivity extends BaseActivity implements CandleView.onCandles
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    protected void onStop() {
+        super.onStop();
 
-        // UP 退出时，取消尚未完成的异步任务
-        if(android.R.id.home == item.getItemId()) {
-            if (null != candleView) {
-                candleView.cancelTask();
-            }
+        // 退出时，取消尚未完成的异步任务
+        if (null != candleView) {
+            candleView.cancelTask();
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

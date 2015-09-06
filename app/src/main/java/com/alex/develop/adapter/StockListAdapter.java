@@ -104,6 +104,7 @@ public class StockListAdapter extends BaseAdapter {
         Stock stock = stocks.get(position);
         if(isSelect) {
             mSelectedItems.put(position, true);
+            stock.setCollectStamp(System.currentTimeMillis());
             mSelectedStocks.add(stock);
         } else {
             mSelectedItems.delete(position);

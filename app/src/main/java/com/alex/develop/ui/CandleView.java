@@ -159,12 +159,12 @@ public class CandleView extends View {
     }
 
     private void selectCandlestick(MotionEvent event) {
-        drawCross = true;
 
         float x = event.getX();
         float y = event.getY();
-
         touch.set(x, y);
+
+        drawCross = true;
 
         // 使得十字线自动吸附K线
         String[] temp  = String.format("%.2f", (x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
@@ -309,7 +309,12 @@ public class CandleView extends View {
      * [5] : 价格字符串绘制的起始坐标Y
      */
     private float[] getDrawTextXY(Candlestick candle, boolean highOrLow, TextValue textValue) {
+
         float[] data = new float[6];
+
+        if(null == candle) {
+            return data;
+        }
 
         data[0] = candle.getCenterXofArea();
         data[1] = kCfg.val2px(highOrLow ? candle.getHigh() : candle.getLow());

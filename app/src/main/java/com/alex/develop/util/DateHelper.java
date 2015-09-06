@@ -55,7 +55,7 @@ public class DateHelper {
         }
 
         // month(每月从0开始计数，即1实际上表示2月)
-        int month = Integer.valueOf(date.substring(4, 6));
+        int month = Integer.valueOf(date.substring(4, 6)) - 1;
 
         // day
         int day = Integer.valueOf(date.substring(6, 8));

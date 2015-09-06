@@ -229,7 +229,6 @@ public final class Stock extends BaseObject {
      */
     public boolean resetCursor() {
 
-        // TODO 此方法貌似有些问题
         if (candleList.getCount() == 0) {
             return false;
         }
@@ -320,7 +319,7 @@ public final class Stock extends BaseObject {
                         }
 
                     } else {
-                        today = node.get(size - 1);
+//                        today = node.get(size - 1);
                     }
                 }
 
