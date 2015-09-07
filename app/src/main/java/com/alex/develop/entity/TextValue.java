@@ -42,6 +42,11 @@ public class TextValue {
         measureText();
     }
 
+    public void setText(float text) {
+        this.text = String.format("%.2f", text);
+        measureText();
+    }
+
     public void setTextSize(float fontSize) {
         pen.setTextSize(fontSize);
         measureText();

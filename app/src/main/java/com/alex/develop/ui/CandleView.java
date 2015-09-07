@@ -123,8 +123,8 @@ public class CandleView extends View {
         qCfg.setValue(data.getVolume());
         qCfg.setReferValue(0);
 
-        highestValue.setText(String.format("%.2f", data.getHighest()));
-        lowestValue.setText(String.format("%.2f", data.getLowest()));
+        highestValue.setText(data.getHighest());
+        lowestValue.setText(data.getLowest());
 
         invalidate();
     }
@@ -176,6 +176,18 @@ public class CandleView extends View {
         touch.x = candle.getCenterXofArea();
         mListener.onSelected(candle);
 
+        float value = 0.00f;
+        if(kArea.top < touch.y && touch.y < kArea.bottom) {
+            value = kCfg.px2val(touch.y);
+            inKArea = true;
+        }
+
+        if(qArea.top < touch.y && touch.y < qArea.bottom) {
+            value = qCfg.px2val(touch.y);
+            inKArea = false;
+        }
+
+        textValue.setText(value);
         dateValue.setText(candle.getDate());
 
         drawCross = true;
@@ -240,17 +252,6 @@ public class CandleView extends View {
             canvas.drawLine(touch.x, 0, touch.x, height, pen);
 
             // 绘制横坐标
-            float value = 0.00f;
-            boolean inKArea = true;// 手指是否在K线区域内
-            if(kArea.top < touch.y && touch.y < kArea.bottom) {
-                value = kCfg.px2val(touch.y);
-                inKArea = true;
-            }
-
-            if(qArea.top < touch.y && touch.y < qArea.bottom) {
-                value = qCfg.px2val(touch.y);
-                inKArea = false;
-            }
 
             float x1 = 0;
             float y1 = touch.y - textValue.getBound().height() / 2;
@@ -270,10 +271,9 @@ public class CandleView extends View {
 
             // 手指移出kArea顶部的时候显示最大值
             if(y1 == kArea.top) {
-                value = data.getHighest();
+                textValue.setText(data.getHighest());
             }
 
-            textValue.setText(String.format("%.2f", value));
             textValue.draw(x1, y1, canvas);// 绘制K线纵坐标(价格)
 
             float x2 = touch.x - dateValue.getBound().width() / 2;
@@ -382,6 +382,8 @@ public class CandleView extends View {
 
         highLeft = new Random().nextBoolean();
         lowLeft = !highLeft;
+
+        inKArea = true;
     }
 
     private Paint pen;// 画笔
@@ -405,6 +407,7 @@ public class CandleView extends View {
     private boolean drawCross;// 是否绘十字准线
     private boolean highLeft;// 绘制最高价的指示线是否向左
     private boolean lowLeft;// 绘制最低价的指示线是否向左
+    private boolean inKArea;// 手指是否在K线区域内
 
     private int width;// View的宽度
     private int height;// View的高度

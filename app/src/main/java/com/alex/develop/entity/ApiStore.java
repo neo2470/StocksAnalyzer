@@ -1,10 +1,13 @@
 package com.alex.develop.entity;
 
+import com.alex.develop.util.NetworkHelper;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * Created by alex on 15-9-7.
@@ -101,6 +104,8 @@ public class ApiStore {
         private static final String JSON_LIST_DATE = "listDate";
         private static final String JSON_TICKER = KEY_TICKER;
 
+        private static final String CHARTSET = "UTF-8";
+
         private static final String API_URL = "http://apis.baidu.com/wxlink/getequ/getequ?";
     }
 
@@ -113,31 +118,11 @@ public class ApiStore {
      * @return 返回结果
      */
     public static String request(Stock... stocks) {
-        BufferedReader reader = null;
-        String result = null;
-        StringBuffer sbf = new StringBuffer();
+
         String httpUrl = getStockInfoUrl(stocks);
+        HashMap<String, String> header = new HashMap<>();
+        header.put(StockInfo.KEY_API_KEY, StockInfo.VALUE_API_KEY);
 
-        try {
-            URL url = new URL(httpUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            connection.setRequestMethod("GET");
-            // 填入apikey到HTTP header
-            connection.setRequestProperty("apikey", "7099530a107f136565aa4e1dafc3f74f");
-            connection.connect();
-            InputStream is = connection.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            String strRead = null;
-            while ((strRead = reader.readLine()) != null) {
-                sbf.append(strRead);
-                sbf.append("\r\n");
-            }
-            reader.close();
-            result = sbf.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+        return NetworkHelper.getWebContent(httpUrl, header, StockInfo.CHARTSET);
     }
 }
