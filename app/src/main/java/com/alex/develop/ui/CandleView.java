@@ -6,18 +6,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
-import com.alex.develop.stockanalyzer.Analyzer;
-import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
 
@@ -164,8 +158,6 @@ public class CandleView extends View {
         float y = event.getY();
         touch.set(x, y);
 
-        drawCross = true;
-
         // 使得十字线自动吸附K线
         String[] temp  = String.format("%.2f", (x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
         int intSub = Integer.valueOf(temp[0]);
@@ -180,8 +172,13 @@ public class CandleView extends View {
 
         CandleList data = stock.getCandleList();
         Candlestick candle = data.get(csr.node).get(csr.candle);
+
         touch.x = candle.getCenterXofArea();
         mListener.onSelected(candle);
+
+        dateValue.setText(candle.getDate());
+
+        drawCross = true;
     }
 
     /**
@@ -287,9 +284,6 @@ public class CandleView extends View {
             if(kArea.right < x2 + dateValue.getBound().width()) {
                 x2 = kArea.right - dateValue.getBound().width();
             }
-
-            Candlestick candle = data.get(csr.node).get(csr.candle);
-            dateValue.setText(candle.getDate());
             dateValue.draw(x2, y2, canvas);// 绘制K线日期
         }
     }

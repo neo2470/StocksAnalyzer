@@ -76,6 +76,8 @@ public final class Stock extends BaseObject {
 
         st = new Cursor(candleList);
         ed = new Cursor(candleList);
+
+        listDate = "19901219";
     }
 
     public String getCodeCN() {
@@ -205,6 +207,14 @@ public final class Stock extends BaseObject {
         return ed;
     }
 
+    public String getListDate() {
+        return listDate;
+    }
+
+    public void setListDate(String listDate) {
+        this.listDate = listDate;
+    }
+
     public void setAllDataIsDownload(boolean allDataIsDownload) {
         this.allDataIsDownload = allDataIsDownload;
     }
@@ -294,9 +304,9 @@ public final class Stock extends BaseObject {
 
                 int size = candle.length();
 
-                if (DateHelper.isMarketOpen() && 0 == candleList.size()) {
-                    ++size;
-                }
+//                if (DateHelper.isMarketOpen() && 0 == candleList.size()) {
+//                    ++size;
+//                }
 
                 Node node = new Node(size);
                 for (int i = 0; i < candle.length(); ++i) {
@@ -304,24 +314,24 @@ public final class Stock extends BaseObject {
                     node.add(candlestick);
                 }
 
-                if (0 == candleList.size()) {// K线日期最新的结点
-
-                    /**
-                     * 在开盘期间，由于搜狐的历史数据没有当天的数据，此时使用新浪的当日数据；
-                     * 收盘后，搜狐的数据才包含当天的数据，此时使用搜狐的数据
-                     */
-
-                    if (DateHelper.isMarketOpen()) {
-
-                        String lastCandleDate = node.get(size - 2).getDate();
-                        if (!lastCandleDate.equals(today.getDate())) {
-                            node.add(today);
-                        }
-
-                    } else {
+//                if (0 == candleList.size()) {// K线日期最新的结点
+//
+//                    /**
+//                     * 在开盘期间，由于搜狐的历史数据没有当天的数据，此时使用新浪的当日数据；
+//                     * 收盘后，搜狐的数据才包含当天的数据，此时使用搜狐的数据
+//                     */
+//
+//                    if (DateHelper.isMarketOpen()) {
+//
+//                        String lastCandleDate = node.get(size - 2).getDate();
+//                        if (!lastCandleDate.equals(today.getDate())) {
+//                            node.add(today);
+//                        }
+//
+//                    } else {
 //                        today = node.get(size - 1);
-                    }
-                }
+//                    }
+//                }
 
                 candleList.add(node);
                 flag = size;
@@ -347,6 +357,7 @@ public final class Stock extends BaseObject {
     private int collect;// 股票是否被收藏
     private int search;// 股票被搜索的次数
     private int index;// 在{Analyzer.stockList}中的索引
+    private String listDate;// 股票上市日期
 
     private boolean allDataIsDownload;// 该股票的历史数据已经被全部下载
 

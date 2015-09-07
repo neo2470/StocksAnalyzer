@@ -114,6 +114,38 @@ public class DateHelper {
     }
 
     /**
+     * 比较两个日期谁前谁后
+     * @param left 日期1
+     * @param right 日期2
+     * @return -1，left在right前面；0，left与right为同一天；1，left在right后面
+     */
+    public static int compare(String left, String right) {
+        int flag = 0;
+
+        if(left.equals(right)) {// 日期相等
+            return flag;
+        }
+
+        DateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.CHINA);
+
+        try {
+            long lt = df.parse(left).getTime();
+            long rt = df.parse(right).getTime();
+
+            if(0 > lt-rt) {
+                flag = -1;
+            } else {
+                flag = 1;
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return flag;
+    }
+
+    /**
      * 根据时间判断市场是否开盘
      * @return
      */

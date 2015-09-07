@@ -61,7 +61,6 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
         JSONArray dataRaw = null;
 
         int count = 0;// 统计本次下载到的数据量
-        boolean gotData = false;// 是否已经下载到数据
 
         do {
 
@@ -80,7 +79,6 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
                 if (obj.has(StockDataAPIHelper.SOHU_JSON_HQ) && status == StockDataAPIHelper.SOHU_JSON_STATUS_OK) {
 
                     count += stock.formSohu(dataRaw);
-                    gotData = true;
 
                     Log.d("Print-Yes", start + ", " + end + ", " + "---------------------------------[" + count + "]");
 
@@ -96,12 +94,17 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
             } catch (JSONException e) {
                 e.printStackTrace();
 
-                if(gotData) {
+                int flag = DateHelper.compare(start, stock.getListDate());
+                if(1 == flag) {// {start}在上市日期之后，下载数据
+                    end = DateHelper.offset(start, -1);
+                } else {// 历史数据已经全部被下载
                     stock.setAllDataIsDownload(true);
                     break;
                 }
             }
         } while (true);
+
+        Log.d("Print", ApiStore.request(stock));
 
         return count;
     }
