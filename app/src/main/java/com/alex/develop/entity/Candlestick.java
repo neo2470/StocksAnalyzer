@@ -1,15 +1,12 @@
 package com.alex.develop.entity;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
-import com.alex.develop.util.StockDataAPIHelper;
 
 import org.json.JSONArray;
 
@@ -172,7 +169,7 @@ public class Candlestick extends BaseObject {
     }
 
     public void fromYahoo(String[] data) {
-        date = data[0].replace(StockDataAPIHelper.SINA_DATE_DIVIDER, "");// 日期
+        date = data[0].replace(ApiStore.SBL_MINUS, "");// 日期
         open = Float.valueOf(data[1]);// 开盘价
         high = Float.valueOf(data[2]);// 最高价
         low = Float.valueOf(data[3]);// 最低价
@@ -186,7 +183,7 @@ public class Candlestick extends BaseObject {
     }
 
     public void fromSohu(JSONArray data) {
-        date = data.optString(0).replace(StockDataAPIHelper.SOHU_DATE_DIVIDER, "");// 日期
+        date = data.optString(0).replace(ApiStore.SBL_MINUS, "");// 日期
         open = (float) data.optDouble(1);// 开盘价
         close = (float) data.optDouble(2);// 收盘价
         vary = (float) data.optDouble(3);// 涨跌

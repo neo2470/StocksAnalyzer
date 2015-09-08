@@ -77,10 +77,11 @@ public class TextValue {
 
         if(null != text) {
 
-            pen.setAlpha(alpha);
-
             if(showBorder) {
+
                 pen.setColor(rectColor);
+                pen.setAlpha(alpha);
+
                 pen.setStyle(Paint.Style.FILL_AND_STROKE);
 
                 rect.offsetTo(x, y);
@@ -88,6 +89,8 @@ public class TextValue {
             }
 
             pen.setColor(textColor);
+            pen.setAlpha(alpha);
+
             pen.setStyle(Paint.Style.FILL);
 
             canvas.drawText(text, x + padding, y - pen.getFontMetrics().top, pen);

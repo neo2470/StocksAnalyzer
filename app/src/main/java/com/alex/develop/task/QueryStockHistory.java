@@ -10,10 +10,8 @@ import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum.Period;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
-import com.alex.develop.ui.LoadingDialog;
 import com.alex.develop.util.DateHelper;
 import com.alex.develop.util.NetworkHelper;
-import com.alex.develop.util.StockDataAPIHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,8 +64,8 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
 
             start = DateHelper.offset(start, offset);
 
-            String url = StockDataAPIHelper.getSohuHistoryUrl(stock.getCode(), start, end, params[0]);
-            String data = NetworkHelper.getWebContent(url, StockDataAPIHelper.SOHU_CHARSET);
+            String url = ApiStore.getSohuHistoryUrl(stock.getCode(), start, end, params[0]);
+            String data = NetworkHelper.getWebContent(url, ApiStore.SOHU_CHARSET);
 
             try {
 
@@ -75,8 +73,8 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
 
                 JSONObject obj = dataRaw.optJSONObject(0);
 
-                final int status = obj.optInt(StockDataAPIHelper.SOHU_JSON_STATUS);
-                if (obj.has(StockDataAPIHelper.SOHU_JSON_HQ) && status == StockDataAPIHelper.SOHU_JSON_STATUS_OK) {
+                final int status = obj.optInt(ApiStore.SOHU_JSON_STATUS);
+                if (obj.has(ApiStore.SOHU_JSON_HQ) && status == ApiStore.SOHU_JSON_STATUS_OK) {
 
                     count += stock.formSohu(dataRaw);
 

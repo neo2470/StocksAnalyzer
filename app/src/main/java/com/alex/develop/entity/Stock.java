@@ -4,17 +4,10 @@ import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.alex.develop.task.CollectStockTask;
-import com.alex.develop.task.QueryStockHistory;
-import com.alex.develop.util.DateHelper;
-import com.alex.develop.util.StockDataAPIHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Created by alex on 15-5-22.
@@ -59,19 +52,19 @@ public final class Stock extends BaseObject {
         }
 
         if (null == salePrice) {
-            salePrice = new float[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
+            salePrice = new float[ApiStore.SINA_ENTRUST_LEVEL];
         }
 
         if (null == saleVolume) {
-            saleVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
+            saleVolume = new long[ApiStore.SINA_ENTRUST_LEVEL];
         }
 
         if (null == buyPrice) {
-            buyPrice = new float[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
+            buyPrice = new float[ApiStore.SINA_ENTRUST_LEVEL];
         }
 
         if (null == buyVolume) {
-            buyVolume = new long[StockDataAPIHelper.SINA_ENTRUST_LEVEL];
+            buyVolume = new long[ApiStore.SINA_ENTRUST_LEVEL];
         }
 
         st = new Cursor(candleList);
@@ -268,7 +261,7 @@ public final class Stock extends BaseObject {
         today.setAmount(Float.valueOf(data[9]));// 成交额(单位：元)
         today.initialize();
 
-        for (int i = 10, j = 11, m = 20, n = 21, k = 0; k < StockDataAPIHelper.SINA_ENTRUST_LEVEL; i += 2, j += 2, m += 2, n += 2, ++k) {
+        for (int i = 10, j = 11, m = 20, n = 21, k = 0; k < ApiStore.SINA_ENTRUST_LEVEL; i += 2, j += 2, m += 2, n += 2, ++k) {
 
             // 委买
             buyVolume[k] = Long.valueOf(data[i]);// 买k+1数量(单位：股)
@@ -279,9 +272,9 @@ public final class Stock extends BaseObject {
             salePrice[k] = Float.valueOf(data[n]);// 卖k+1报价（单位：元）
         }
 
-        today.setDate(data[30].replace(StockDataAPIHelper.SINA_DATE_DIVIDER, ""));
+        today.setDate(data[30].replace(ApiStore.SBL_MINUS, ""));
         time = data[31];
-        suspend = data[32].equals(StockDataAPIHelper.SINA_SUSPEND);
+        suspend = data[32].equals(ApiStore.SINA_SUSPEND);
 
         stamp = System.currentTimeMillis();
     }
@@ -298,9 +291,9 @@ public final class Stock extends BaseObject {
         try {
             JSONObject info = data.getJSONObject(0);
 
-            String code = info.optString(StockDataAPIHelper.SOHU_JSON_CODE);
+            String code = info.optString(ApiStore.SOHU_JSON_CODE);
             if (code.endsWith(this.code)) {
-                JSONArray candle = info.optJSONArray(StockDataAPIHelper.SOHU_JSON_HQ);
+                JSONArray candle = info.optJSONArray(ApiStore.SOHU_JSON_HQ);
 
                 int size = candle.length();
 

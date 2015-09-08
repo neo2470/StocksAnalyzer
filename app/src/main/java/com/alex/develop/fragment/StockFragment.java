@@ -18,12 +18,12 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.alex.develop.adapter.StockListAdapter;
+import com.alex.develop.entity.ApiStore;
 import com.alex.develop.entity.Stock;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.CandleActivity;
 import com.alex.develop.task.CollectStockTask;
 import com.alex.develop.task.QueryStockToday;
-import com.alex.develop.util.StockDataAPIHelper;
 import com.alex.develop.stockanalyzer.R;
 
 import java.util.ArrayList;
@@ -237,7 +237,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         for(int i = queryStart; i<queryStop; ++i) {
             Stock stock = stocks.get(i);
             long stamp = System.currentTimeMillis();
-            if(StockDataAPIHelper.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {//5秒内不重复查询
+            if(ApiStore.SINA_REFRESH_INTERVAL < stamp - stock.getStamp()) {//5秒内不重复查询
                 if(!stock.getTime().startsWith("15")) {// 15:00:00以后不重复查询
                     temp.add(stock);
                 }
@@ -245,6 +245,10 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
         }
 
         Stock[] stocks =temp.toArray(new Stock[temp.size()]);
+
+        if(0 == stocks.length) {
+            return;
+        }
 
         new QueryStockToday() {
 
