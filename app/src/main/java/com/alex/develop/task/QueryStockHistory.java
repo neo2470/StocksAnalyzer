@@ -102,8 +102,6 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
             }
         } while (true);
 
-        Log.d("Print", ApiStore.request(stock));
-
         return count;
     }
 

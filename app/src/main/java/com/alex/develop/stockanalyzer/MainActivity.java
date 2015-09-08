@@ -14,9 +14,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 
+import com.alex.develop.entity.Stock;
 import com.alex.develop.fragment.PositionFragment;
 import com.alex.develop.fragment.SelectFragment;
 import com.alex.develop.fragment.StockFragment;
+import com.alex.develop.task.QueryStockBasicInfo;
 import com.alex.develop.ui.NonSlidableViewPager;
 
 import java.util.ArrayList;
@@ -97,6 +99,15 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
         if(Activity.RESULT_OK == resultCode && StockFragment.REQUEST_SEARCH_STOCK == requestCode) {
             onCollected();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        List<Stock> list = Analyzer.getStockList();
+        Stock[] stocks = list.toArray(new Stock[list.size()]);
+        new QueryStockBasicInfo().execute(stocks);
     }
 
     public void onNavClicked(View view) {

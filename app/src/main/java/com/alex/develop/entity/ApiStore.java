@@ -148,7 +148,7 @@ public class ApiStore {
      */
     private static boolean shOrsz(Stock stock) {
         boolean flag = false;
-        if (stock.getCode().startsWith("600")) {
+        if (stock.getCode().startsWith("6")) {
             flag = true;
         }
         return flag;
@@ -190,17 +190,15 @@ public class ApiStore {
      */
     public static final String JDWX_API_KEY = "apikey";
     public static final String JDWX_API_KEY_VALUE = "7099530a107f136565aa4e1dafc3f74f";
-    private static final String JDWX_JSON_LIST_DATE = "listDate";
-    private static final String JDWX_JSON_TICKER = "ticker";
+    public static final String JDWX_JSON_LIST_DATE = "listDate";
+    public static final String JDWX_JSON_TICKER = "ticker";
+    public static final String JDWX_JSON_RETCODE = "retCode";
+    public static final String JDWX_JSON_RESULT = "result";
+    public static final String JDWX_JSON_DATA = "data";
+
+    public static final int JDWX_JSON_STATUS_OK = 1;
+
     public static final String JDWX_CHARTSET = "UTF-8";
+
     private static final String JDWX_API_URL = "http://apis.baidu.com/wxlink/getequ/getequ?";
-
-    public static String request(Stock... stocks) {
-
-        String httpUrl = getStockInfoUrl(stocks);
-        HashMap<String, String> header = new HashMap<>();
-        header.put(JDWX_API_KEY, JDWX_API_KEY_VALUE);
-
-        return NetworkHelper.getWebContent(httpUrl, header, JDWX_CHARTSET);
-    }
 }

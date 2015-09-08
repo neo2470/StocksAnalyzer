@@ -21,6 +21,7 @@ public final class Stock extends BaseObject {
             public static final String CODE = "code";// 股票代码
             public static final String CODE_CN = "code_cn";// 股票拼音首字母代码
             public static final String NAME = "name";// 股票名称
+            public static final String LIST_DATE = "list_date";// 上市日期
             public static final String COLLECT = "collect";// 股票是否被收藏
             public static final String COLLECT_STAMP = "collect_stamp";// 股票被收藏的时间戳
             public static final String SEARCH = "search";// 股票被搜索的次数
@@ -33,6 +34,7 @@ public final class Stock extends BaseObject {
                         Column.CODE + " char(10)," +
                         Column.CODE_CN + " char(10)," +
                         Column.NAME + " nchar(10)," +
+                        Column.LIST_DATE + " char(10)," +
                         Column.COLLECT + " INTEGER," +
                         Column.COLLECT_STAMP + " TEXT," +
                         Column.SEARCH + " INTEGER)";
