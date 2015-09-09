@@ -101,15 +101,6 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        List<Stock> list = Analyzer.getStockList();
-        Stock[] stocks = list.toArray(new Stock[list.size()]);
-        new QueryStockBasicInfo().execute(stocks);
-    }
-
     public void onNavClicked(View view) {
         boolean isChecked = ((RadioButton) view).isChecked();
         switch (view.getId()) {
@@ -163,6 +154,12 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
             return fragList.size();
         }
     }
+
+//    private void downloadBasicInformation() {
+//        List<Stock> list = Analyzer.getStockList();
+//        Stock[] stocks = list.toArray(new Stock[list.size()]);
+//        new QueryStockBasicInfo().execute(stocks);
+//    }
 
     private NonSlidableViewPager viewPager;
     private List<Fragment> fragList;

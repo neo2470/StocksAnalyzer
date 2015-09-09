@@ -1,14 +1,5 @@
 package com.alex.develop.entity;
 
-import com.alex.develop.util.NetworkHelper;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-
 /**
  * Created by alex on 15-9-7.
  * 汇聚各种使用到的API
@@ -99,7 +90,7 @@ public class ApiStore {
         secIdBuilder.append(SBL_EQL);
 
         StringBuilder tickerBuilder = new StringBuilder();
-        tickerBuilder.append("ticker");
+        tickerBuilder.append(JDWX_JSON_TICKER);
         tickerBuilder.append(SBL_EQL);
 
         for (Stock stock : stocks) {
@@ -133,9 +124,27 @@ public class ApiStore {
         tickerBuilder.append(SBL_EQL);
         tickerBuilder.append(JDWX_JSON_LIST_DATE);
 
-        // ...
+        // 查询的字段
         tickerBuilder.append(SBL_CMA);
         tickerBuilder.append(JDWX_JSON_TICKER);
+
+        tickerBuilder.append(SBL_CMA);
+        tickerBuilder.append(JDWX_JSON_FULLNAME);
+
+        tickerBuilder.append(SBL_CMA);
+        tickerBuilder.append(JDWX_JSON_OFFICE);
+
+        tickerBuilder.append(SBL_CMA);
+        tickerBuilder.append(JDWX_JSON_LIST_STATUS);
+
+        tickerBuilder.append(SBL_CMA);
+        tickerBuilder.append(JDWX_JSON_TOTAL_SHARE);
+
+        tickerBuilder.append(SBL_CMA);
+        tickerBuilder.append(JDWX_JSON_NONREST_FLOAT_A);
+
+        tickerBuilder.append(SBL_CMA);
+        tickerBuilder.append(JDWX_JSON_PRIME_OPERATING);
 
         return JDWX_API_URL + secIdBuilder + SBL_AND + tickerBuilder;
     }
@@ -190,14 +199,20 @@ public class ApiStore {
      */
     public static final String JDWX_API_KEY = "apikey";
     public static final String JDWX_API_KEY_VALUE = "7099530a107f136565aa4e1dafc3f74f";
-    public static final String JDWX_JSON_LIST_DATE = "listDate";
-    public static final String JDWX_JSON_TICKER = "ticker";
+    public static final String JDWX_JSON_LIST_DATE = "listDate";// 上市日期
+    public static final String JDWX_JSON_TICKER = "ticker";// 股票代码
     public static final String JDWX_JSON_RETCODE = "retCode";
     public static final String JDWX_JSON_RESULT = "result";
     public static final String JDWX_JSON_DATA = "data";
+    public static final String JDWX_JSON_FULLNAME = "secFullName";// 上市公司全称
+    public static final String JDWX_JSON_OFFICE = "officeAddr";// 办公地址
+    public static final String JDWX_JSON_LIST_STATUS = "listStatusCD";// 上市状态
+    public static final String JDWX_JSON_TOTAL_SHARE = "totalShares";// 总股本
+    public static final String JDWX_JSON_NONREST_FLOAT_A = "nonrestfloatA";// 无限售流通股本，如果为A股，该列为最新无限售流通A股股本数量；如果为B股，该列为最新流通B股股本数量
+    public static final String JDWX_JSON_PRIME_OPERATING = "primeOperating";// 主营业务范围
+    public static final String JDWX_JSON_DEFAULT = "NULL";
 
     public static final int JDWX_JSON_STATUS_OK = 1;
-
     public static final String JDWX_CHARTSET = "UTF-8";
 
     private static final String JDWX_API_URL = "http://apis.baidu.com/wxlink/getequ/getequ?";

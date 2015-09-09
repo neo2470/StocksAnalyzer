@@ -21,7 +21,16 @@ public final class Stock extends BaseObject {
             public static final String CODE = "code";// 股票代码
             public static final String CODE_CN = "code_cn";// 股票拼音首字母代码
             public static final String NAME = "name";// 股票名称
+            public static final String FULL_NAME = "full_name";// 上市公司全称
+            public static final String OFFICE_ADDR = "office_address";// 办公地址
+
+            public static final String LIST_STATUS = "list_status";// 上市状态
             public static final String LIST_DATE = "list_date";// 上市日期
+
+            public static final String TOTAL_SHARE = "total_shares";// 总股本
+            public static final String NONREST_FLOAT_A = "nonrest_float_a";// 无限售流通股本，如果为A股，该列为最新无限售流通A股股本数量；如果为B股，该列为最新流通B股股本数量
+            public static final String PRIME_OPERATING = "prime_operating";// 主营业务范围
+
             public static final String COLLECT = "collect";// 股票是否被收藏
             public static final String COLLECT_STAMP = "collect_stamp";// 股票被收藏的时间戳
             public static final String SEARCH = "search";// 股票被搜索的次数
@@ -34,7 +43,16 @@ public final class Stock extends BaseObject {
                         Column.CODE + " char(10)," +
                         Column.CODE_CN + " char(10)," +
                         Column.NAME + " nchar(10)," +
+                        Column.FULL_NAME + " TEXT," +
+                        Column.OFFICE_ADDR + " TEXT," +
+
+                        Column.LIST_STATUS + " char(2)," +
                         Column.LIST_DATE + " char(10)," +
+
+                        Column.TOTAL_SHARE + " TEXT," +
+                        Column.NONREST_FLOAT_A + " TEXT," +
+                        Column.PRIME_OPERATING + " TEXT," +
+
                         Column.COLLECT + " INTEGER," +
                         Column.COLLECT_STAMP + " TEXT," +
                         Column.SEARCH + " INTEGER)";

@@ -26,10 +26,6 @@ import java.util.List;
  */
 public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
 
-    public QueryStockBasicInfo() {
-        builder = new StringBuilder();
-    }
-
     @Override
     protected Void doInBackground(Stock... params) {
 
@@ -47,10 +43,12 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
         List<Stock> stocks = new ArrayList<>();
 
         int count = 0;
-        int total = 1;
+        int total = 0;
         boolean fetchData = false;
         boolean first = true;
         for (Stock stock : params) {
+
+            ++total;
 
             if(first && stock.getCode().startsWith("0")) {
                 fetchData = true;
@@ -60,6 +58,14 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
             }
 
             if (fetchData || size == count || total == params.length) {
+
+                // 最后一只也要加入查询得队列
+                if(total == params.length) {
+                    if (!exc.contains(stock.getCode())) {
+                        stocks.add(stock);
+                    }
+                }
+
                 String url = ApiStore.getStockInfoUrl(stocks.toArray(new Stock[stocks.size()]));
                 String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARTSET);
                 fromJSON(content, stocks);
@@ -73,12 +79,9 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
             if (!exc.contains(stock.getCode())) {
                 stocks.add(stock);
             }
-
-            ++total;
         }
 
         Log.d("Print-Total", "查到的数据 " + statistics);
-        Log.d("Print-Total", "未查到的数据 " + builder.toString());
 
         return null;
     }
@@ -96,37 +99,41 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
 
                     for (int i = 0, j = 0; i < data.length(); ++i, ++j) {
                         JSONObject item = data.optJSONObject(i);
-                        String listDate = item.optString(ApiStore.JDWX_JSON_LIST_DATE);
-                        String ticker = item.optString(ApiStore.JDWX_JSON_TICKER);
-
                         Stock stock = stocks.get(j);
-
-                        if (!ticker.equals(stock.getCode())) {
-
-                            builder.append(stock.getCode());
-                            builder.append(",");
-
-//                            --i;
-//                            continue;
-                        }
-
-                        write2SQLite(stock, listDate, ticker);
+                        write2SQLite(stock, item);
                     }
                 }
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private boolean write2SQLite(Stock stock, String listDate, String ticker) {
+    private boolean write2SQLite(Stock stock, JSONObject data) {
 
         SQLiteHelper dbHelper = SQLiteHelper.getInstance();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
+        String ticker = data.optString(ApiStore.JDWX_JSON_TICKER);
+
+        String fullName = data.optString(ApiStore.JDWX_JSON_FULLNAME);
+        String officeAddr = data.optString(ApiStore.JDWX_JSON_OFFICE, ApiStore.JDWX_JSON_DEFAULT);
+        String listStatus = data.optString(ApiStore.JDWX_JSON_LIST_STATUS);
+        String listDate = data.optString(ApiStore.JDWX_JSON_LIST_DATE).replace(ApiStore.SBL_MINUS, "");
+
+        String totalShare = data.optString(ApiStore.JDWX_JSON_TOTAL_SHARE);
+        String nonrestFloatA = data.optString(ApiStore.JDWX_JSON_NONREST_FLOAT_A);
+        String primeOperting = data.optString(ApiStore.JDWX_JSON_PRIME_OPERATING, ApiStore.JDWX_JSON_DEFAULT);
+
         ContentValues values = new ContentValues();
+        values.put(Stock.Table.Column.FULL_NAME, fullName);
+        values.put(Stock.Table.Column.OFFICE_ADDR, officeAddr);
+        values.put(Stock.Table.Column.LIST_STATUS, listStatus);
         values.put(Stock.Table.Column.LIST_DATE, listDate);
+
+        values.put(Stock.Table.Column.TOTAL_SHARE, totalShare);
+        values.put(Stock.Table.Column.NONREST_FLOAT_A, nonrestFloatA);
+        values.put(Stock.Table.Column.PRIME_OPERATING, primeOperting);
 
         String where = Stock.Table.Column.CODE + " = ?";
         String[] whereArgs = {stock.getCode()};
@@ -147,5 +154,4 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
     }
 
     private int statistics;
-    private StringBuilder builder;
 }

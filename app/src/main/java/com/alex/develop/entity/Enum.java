@@ -134,4 +134,11 @@ public final class Enum extends BaseObject {
         Sohu,
         Yahoo
     }
+
+    public enum ListStatus {
+        L,  // 上市
+        S,  // 暂停
+        DE, // 已退市
+        UN  // 未上市
+    }
 }
