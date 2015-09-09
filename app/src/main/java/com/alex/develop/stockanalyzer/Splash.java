@@ -97,12 +97,16 @@ public class Splash extends BaseActivity {
 							String stockCode = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.CODE));
 							String stockCodeCN = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.CODE_CN));
 							String stockName = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.NAME));
+							String listDate = cursor.getString(cursor.getColumnIndex(Stock.Table.Column.LIST_DATE));
+
 							int collect = cursor.getInt(cursor.getColumnIndex(Stock.Table.Column.COLLECT));
 							long collectStamp = cursor.getLong(cursor.getColumnIndex(Stock.Table.Column.COLLECT_STAMP));
 							int search = cursor.getInt(cursor.getColumnIndex(Stock.Table.Column.SEARCH));
 
 							Stock stock = new Stock(stockCode, stockName);
 							stock.setCodeCN(stockCodeCN);
+							stock.setListDate(listDate);
+
 							stock.setCollect(collect);
 							stock.setCollectStamp(collectStamp);
 							stock.setSearch(search);
@@ -338,6 +342,7 @@ public class Splash extends BaseActivity {
 					values.put(Stock.Table.Column.CODE, data[0]);
 					values.put(Stock.Table.Column.CODE_CN, data[1]);
 					values.put(Stock.Table.Column.NAME, data[2]);
+					values.put(Stock.Table.Column.LIST_DATE, data[3]);
 					values.put(Stock.Table.Column.COLLECT, 0);
 					values.put(Stock.Table.Column.COLLECT_STAMP, 0);
 					values.put(Stock.Table.Column.SEARCH, 0);

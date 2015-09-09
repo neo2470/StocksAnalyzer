@@ -8,6 +8,7 @@ import android.util.SparseArray;
 
 import com.alex.develop.entity.ApiStore;
 import com.alex.develop.entity.Stock;
+import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.util.NetworkHelper;
 import com.alex.develop.util.SQLiteHelper;
 
@@ -16,6 +17,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,18 +38,41 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
         /**
          * No Data Returned Stock
          */
-        HashSet<String> exc = new HashSet<>();
-        exc.add("000033");
-        exc.add("000520");
+        excp = new HashSet<>();
+        excp.add("000033");
+        excp.add("000520");
+
+        queryInformationForAllStocks(header);
+
+//        queryInformationForStocks(header, params);
+
+        return null;
+    }
+
+    private void queryInformationForStocks(HashMap<String, String> header, Stock... stocks) {
+        List<Stock> data = Arrays.asList(stocks);
+        String url = ApiStore.getStockInfoUrl(data);
+        String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARTSET);
+        fromJSON(content, data);
+    }
+
+    /**
+     *
+     * @param header
+     */
+    private void queryInformationForAllStocks(HashMap<String, String> header) {
 
         final int size = 100;
+
+        List<Stock> data = Analyzer.getStockList();
+
         List<Stock> stocks = new ArrayList<>();
 
         int count = 0;
         int total = 0;
         boolean fetchData = false;
         boolean first = true;
-        for (Stock stock : params) {
+        for (Stock stock : data) {
 
             ++total;
 
@@ -57,16 +83,16 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
                 fetchData = false;
             }
 
-            if (fetchData || size == count || total == params.length) {
+            if (fetchData || size == count || total == data.size()) {
 
                 // 最后一只也要加入查询得队列
-                if(total == params.length) {
-                    if (!exc.contains(stock.getCode())) {
+                if(total == data.size()) {
+                    if (!excp.contains(stock.getCode())) {
                         stocks.add(stock);
                     }
                 }
 
-                String url = ApiStore.getStockInfoUrl(stocks.toArray(new Stock[stocks.size()]));
+                String url = ApiStore.getStockInfoUrl(stocks);
                 String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARTSET);
                 fromJSON(content, stocks);
 
@@ -76,14 +102,12 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
                 ++count;
             }
 
-            if (!exc.contains(stock.getCode())) {
+            if (!excp.contains(stock.getCode())) {
                 stocks.add(stock);
             }
         }
 
         Log.d("Print-Total", "查到的数据 " + statistics);
-
-        return null;
     }
 
     private void fromJSON(String content, List<Stock> stocks) {
@@ -153,5 +177,6 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
         return flag;
     }
 
+    private HashSet<String> excp;
     private int statistics;
 }

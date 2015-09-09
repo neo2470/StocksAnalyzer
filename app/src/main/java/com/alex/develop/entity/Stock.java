@@ -39,23 +39,23 @@ public final class Stock extends BaseObject {
         public static final String NAME = "stock_list";
         public static final String SQL_CREATE =
                 "CREATE TABLE " + NAME + " (" +
-                        Column._ID + " INTEGER PRIMARY KEY," +
-                        Column.CODE + " char(10)," +
-                        Column.CODE_CN + " char(10)," +
-                        Column.NAME + " nchar(10)," +
-                        Column.FULL_NAME + " TEXT," +
-                        Column.OFFICE_ADDR + " TEXT," +
+                        Column._ID + " INTEGER PRIMARY KEY NOT NULL," +
+                        Column.CODE + " TEXT NOT NULL," +
+                        Column.CODE_CN + " TEXT NOT NULL," +
+                        Column.NAME + " TEXT NOT NULL," +
+                        Column.FULL_NAME + " TEXT DEFAULT ('NULL')," +
+                        Column.OFFICE_ADDR + " TEXT DEFAULT ('NULL')," +
 
-                        Column.LIST_STATUS + " char(2)," +
-                        Column.LIST_DATE + " char(10)," +
+                        Column.LIST_STATUS + " TEXT DEFAULT ('NULL')," +
+                        Column.LIST_DATE + " NUMERIC NOT NULL," +
 
-                        Column.TOTAL_SHARE + " TEXT," +
-                        Column.NONREST_FLOAT_A + " TEXT," +
-                        Column.PRIME_OPERATING + " TEXT," +
+                        Column.TOTAL_SHARE + " INTEGER DEFAULT (0)," +
+                        Column.NONREST_FLOAT_A + " INTEGER DEFAULT (0)," +
+                        Column.PRIME_OPERATING + " TEXT DEFAULT ('NULL')," +
 
-                        Column.COLLECT + " INTEGER," +
-                        Column.COLLECT_STAMP + " TEXT," +
-                        Column.SEARCH + " INTEGER)";
+                        Column.COLLECT + " INTEGER DEFAULT (0)," +
+                        Column.COLLECT_STAMP + " INTEGER DEFAULT (0)," +
+                        Column.SEARCH + " INTEGER DEFAULT (0))";
     }
 
     public Stock(String code, String name) {
@@ -89,8 +89,6 @@ public final class Stock extends BaseObject {
 
         st = new Cursor(candleList);
         ed = new Cursor(candleList);
-
-        listDate = "19901219";
     }
 
     public String getCodeCN() {

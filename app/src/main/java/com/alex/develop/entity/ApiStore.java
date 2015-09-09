@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import java.util.List;
+
 /**
  * Created by alex on 15-9-7.
  * 汇聚各种使用到的API
@@ -83,7 +85,7 @@ public class ApiStore {
         return builder.toString();
     }
 
-    public static String getStockInfoUrl(Stock... stocks) {
+    public static String getStockInfoUrl(List<Stock> stocks) {
 
         StringBuilder secIdBuilder = new StringBuilder();
         secIdBuilder.append("secID");
