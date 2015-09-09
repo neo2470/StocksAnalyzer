@@ -112,5 +112,12 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
         Analyzer.getCandleActivityLoadView().clearAnimation();
     }
 
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        Analyzer.getCandleActivityLoadView().setVisibility(View.GONE);
+        Analyzer.getCandleActivityLoadView().clearAnimation();
+    }
+
     private Stock stock;
 }

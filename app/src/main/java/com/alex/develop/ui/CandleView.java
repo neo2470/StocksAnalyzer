@@ -34,6 +34,9 @@ public class CandleView extends View {
 
     public void setStock(final Stock stock) {
 
+        cancelTask();
+        touchable = false;
+
         this.stock = stock;
         csr.setCandleList(this.stock.getCandleList());
 
@@ -82,6 +85,10 @@ public class CandleView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        if(!touchable) {
+            return true;
+        }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN :
                 selectCandlestick(event);
@@ -125,6 +132,9 @@ public class CandleView extends View {
 
         highestValue.setText(data.getHighest());
         lowestValue.setText(data.getLowest());
+
+        touchable = true;
+        drawCross = false;
 
         invalidate();
     }
@@ -408,6 +418,7 @@ public class CandleView extends View {
     private boolean highLeft;// 绘制最高价的指示线是否向左
     private boolean lowLeft;// 绘制最低价的指示线是否向左
     private boolean inKArea;// 手指是否在K线区域内
+    private boolean touchable;// 触摸屏幕是否有效
 
     private int width;// View的宽度
     private int height;// View的高度
