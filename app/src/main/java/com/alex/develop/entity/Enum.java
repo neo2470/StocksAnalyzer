@@ -135,10 +135,24 @@ public final class Enum extends BaseObject {
         Yahoo
     }
 
+    /**
+     * 股票得上市状态
+     */
     public enum ListStatus {
         L,  // 上市
         S,  // 暂停
         DE, // 已退市
         UN  // 未上市
     }
+
+    /**
+     * 触控屏幕时的操作模式
+     */
+    public enum ActionMode {
+        None,// 不进行任何操作（屏蔽TouchEvent）
+        Select,// 选择某天的K线数据
+        Drag,// 拖拽查看历史行情
+        Scale// 缩放
+    }
+
 }

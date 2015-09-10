@@ -9,6 +9,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
@@ -33,10 +34,6 @@ public class CandleView extends View {
     }
 
     public void setStock(final Stock stock) {
-
-        cancelTask();
-        touchable = false;
-
         this.stock = stock;
         csr.setCandleList(this.stock.getCandleList());
 
@@ -85,25 +82,20 @@ public class CandleView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if(!touchable) {
-            return true;
-        }
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                selectCandlestick(event);
+                onActionDown(event);
                 break;
             case MotionEvent.ACTION_MOVE :
-                selectCandlestick(event);
+                onActionMove(event);
                 break;
-        }
-
-        // 只在绘制区域内显示十字线
-        if(kArea.left > event.getX()) {
-            drawCross = false;
+            case MotionEvent.ACTION_UP:
+                onActionUp(event);
+                break;
         }
 
         invalidate();
+
         return true;
     }
 
@@ -113,11 +105,15 @@ public class CandleView extends View {
 
         pen.setStyle(Paint.Style.STROKE);
         pen.setColor(Color.parseColor("#424242"));
+
+        // 绘制区域边框
         canvas.drawRect(kArea, pen);
         canvas.drawRect(qArea, pen);
 
+        // 绘制K线
         drawCandlesticks(canvas);
 
+        // 绘制十字线及纵横坐标
         drawTextAndLine(canvas);
 
     }
@@ -133,9 +129,6 @@ public class CandleView extends View {
         highestValue.setText(data.getHighest());
         lowestValue.setText(data.getLowest());
 
-        touchable = true;
-        drawCross = false;
-
         invalidate();
     }
 
@@ -143,6 +136,48 @@ public class CandleView extends View {
         if(null != task && !task.isCancelled()) {
             task.cancel(true);
         }
+    }
+
+    private void onActionDown(MotionEvent event) {
+        downMillis = System.currentTimeMillis();
+        down.set(event.getX(), event.getY());
+    }
+
+    private void onActionMove(MotionEvent event) {
+        moveMillis = System.currentTimeMillis();
+
+        // 单指操作
+        if(1 == event.getPointerCount()) {
+
+            touch.set(event.getX(), event.getY());
+
+            float moveX = touch.x - down.x;
+
+            /**
+             * {Enum.ActionMode.Select} 和 {Enum.ActionMode.Drag} 的区分
+             *
+             * 在ActionDown之后的{MODE_SELECT_TRIGGER}时间内，触点的水平位移
+             * Math.abs(moveX)小于{TREMBLE_LIMIT}距离[即：手指在抖动，并没有
+             * 发生实际位移]时为{Select}模式，否则为{Drag}模式
+             *
+             */
+            if(TREMBLE_LIMIT < Math.abs(moveX)) {
+
+                if(MODE_SELECT_TRIGGER < moveMillis-downMillis) {
+                    mode = Enum.ActionMode.Select;
+                    selectCandlestick();
+                    Toast.makeText(getContext(), "Select Mode", Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+                mode = Enum.ActionMode.Drag;
+                Toast.makeText(getContext(), "Drag Mode", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void onActionUp(MotionEvent event) {
+        drawcross = false;
     }
 
     private void requestData(final boolean resetCursor) {
@@ -162,14 +197,10 @@ public class CandleView extends View {
         task.execute(Enum.Period.Day);
     }
 
-    private void selectCandlestick(MotionEvent event) {
-
-        float x = event.getX();
-        float y = event.getY();
-        touch.set(x, y);
+    private void selectCandlestick() {
 
         // 使得十字线自动吸附K线
-        String[] temp  = String.format("%.2f", (x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
+        String[] temp  = String.format("%.2f", (touch.x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
         int intSub = Integer.valueOf(temp[0]);
         float floatSub = Float.valueOf("0." + temp[1]);
 
@@ -199,8 +230,7 @@ public class CandleView extends View {
 
         textValue.setText(value);
         dateValue.setText(candle.getDate());
-
-        drawCross = true;
+        drawcross = true;
     }
 
     /**
@@ -254,7 +284,7 @@ public class CandleView extends View {
         }
 
         // 绘制十字线及其对应得坐标
-        if (drawCross) {
+        if (drawcross && Enum.ActionMode.Select == mode) {
 
             // 绘制十字线
             pen.setColor(Color.WHITE);
@@ -361,6 +391,7 @@ public class CandleView extends View {
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
         pen.setStrokeWidth(UnitHelper.dp2px(1));
 
+        down = new PointF();
         touch = new PointF();
         kArea = new RectF();
         kCfg = new Config();
@@ -388,8 +419,6 @@ public class CandleView extends View {
 
         csr = new Cursor();
 
-        drawCross = false;
-
         highLeft = new Random().nextBoolean();
         lowLeft = !highLeft;
 
@@ -397,7 +426,10 @@ public class CandleView extends View {
     }
 
     private Paint pen;// 画笔
+
+    private PointF down;// 落点
     private PointF touch;// 触点，当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线
+
     private RectF kArea;// 绘制K线部分图形区域
     private Config kCfg;// K线图的配置信息
     private RectF qArea;// 绘制指标部分区域
@@ -414,12 +446,19 @@ public class CandleView extends View {
 
     private onCandlestickSelectedListener mListener;
 
-    private boolean drawCross;// 是否绘十字准线
+    private boolean drawcross;// 是否绘制十字线
     private boolean highLeft;// 绘制最高价的指示线是否向左
     private boolean lowLeft;// 绘制最低价的指示线是否向左
     private boolean inKArea;// 手指是否在K线区域内
-    private boolean touchable;// 触摸屏幕是否有效
+
+    private Enum.ActionMode mode;// 触摸屏幕时的操作
 
     private int width;// View的宽度
     private int height;// View的高度
+
+    private long downMillis;// ActionDown的时刻
+    private long moveMillis;// ActionMove的时刻
+
+    private final int MODE_SELECT_TRIGGER = 500;
+    private final int TREMBLE_LIMIT = (int) UnitHelper.dp2px(2);
 }
