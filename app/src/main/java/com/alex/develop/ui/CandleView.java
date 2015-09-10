@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -82,7 +83,7 @@ public class CandleView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch (event.getAction()) {
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN :
                 onActionDown(event);
                 break;
@@ -153,31 +154,48 @@ public class CandleView extends View {
 
             float moveX = touch.x - down.x;
 
-            /**
-             * {Enum.ActionMode.Select} 和 {Enum.ActionMode.Drag} 的区分
-             *
-             * 在ActionDown之后的{MODE_SELECT_TRIGGER}时间内，触点的水平位移
-             * Math.abs(moveX)小于{TREMBLE_LIMIT}距离[即：手指在抖动，并没有
-             * 发生实际位移]时为{Select}模式，否则为{Drag}模式
-             *
-             */
-            if(TREMBLE_LIMIT < Math.abs(moveX)) {
+            if(setMode) {
 
-                if(MODE_SELECT_TRIGGER < moveMillis-downMillis) {
-                    mode = Enum.ActionMode.Select;
-                    selectCandlestick();
-                    Toast.makeText(getContext(), "Select Mode", Toast.LENGTH_SHORT).show();
+                /**
+                 * {Enum.ActionMode.Select} 和 {Enum.ActionMode.Drag} 的区分
+                 *
+                 * 在ActionDown之后的{MODE_SELECT_TRIGGER}时间内，触点的水平位移
+                 * Math.abs(moveX)小于{TREMBLE_LIMIT}距离[即：手指在抖动，并没有
+                 * 发生实际位移]时为{Select}模式，否则为{Drag}模式
+                 *
+                 */
+
+                if (MODE_SELECT_TRIGGER < moveMillis-downMillis) {
+                    if(TREMBLE_LIMIT > Math.abs(moveX)) {
+                        setMode = false;
+                        mode = Enum.ActionMode.Select;
+                        Toast.makeText(getContext(), "Select Mode", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    if(TREMBLE_LIMIT < Math.abs(moveX)) {
+                        setMode = false;
+                        mode = Enum.ActionMode.Drag;
+                        Toast.makeText(getContext(), "Drag Mode", Toast.LENGTH_SHORT).show();
+                    }
                 }
-
-            } else {
-                mode = Enum.ActionMode.Drag;
-                Toast.makeText(getContext(), "Drag Mode", Toast.LENGTH_SHORT).show();
             }
+
+            switch (mode) {
+                case Select : {
+                    selectCandlestick();
+                    break;
+                }
+                case Drag : {
+                    break;
+                }
+            }
+
         }
     }
 
     private void onActionUp(MotionEvent event) {
-        drawcross = false;
+        setMode = true;
+        drawCross = false;
     }
 
     private void requestData(final boolean resetCursor) {
@@ -230,7 +248,7 @@ public class CandleView extends View {
 
         textValue.setText(value);
         dateValue.setText(candle.getDate());
-        drawcross = true;
+        drawCross = true;
     }
 
     /**
@@ -284,7 +302,7 @@ public class CandleView extends View {
         }
 
         // 绘制十字线及其对应得坐标
-        if (drawcross && Enum.ActionMode.Select == mode) {
+        if (drawCross && Enum.ActionMode.Select == mode) {
 
             // 绘制十字线
             pen.setColor(Color.WHITE);
@@ -423,6 +441,7 @@ public class CandleView extends View {
         lowLeft = !highLeft;
 
         inKArea = true;
+        setMode = true;
     }
 
     private Paint pen;// 画笔
@@ -446,10 +465,11 @@ public class CandleView extends View {
 
     private onCandlestickSelectedListener mListener;
 
-    private boolean drawcross;// 是否绘制十字线
+    private boolean drawCross;// 是否绘制十字线
     private boolean highLeft;// 绘制最高价的指示线是否向左
     private boolean lowLeft;// 绘制最低价的指示线是否向左
     private boolean inKArea;// 手指是否在K线区域内
+    private boolean setMode;// 是否允许设置模式
 
     private Enum.ActionMode mode;// 触摸屏幕时的操作
 
@@ -459,6 +479,6 @@ public class CandleView extends View {
     private long downMillis;// ActionDown的时刻
     private long moveMillis;// ActionMove的时刻
 
-    private final int MODE_SELECT_TRIGGER = 500;
+    private final int MODE_SELECT_TRIGGER = 100;
     private final int TREMBLE_LIMIT = (int) UnitHelper.dp2px(2);
 }
