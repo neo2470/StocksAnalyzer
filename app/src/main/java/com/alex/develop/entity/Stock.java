@@ -236,8 +236,16 @@ public final class Stock extends BaseObject {
      * @param day
      */
     public void moveCursor(int day) {
-        ed.move(day);
-        st.move(day);
+        if(0 < day) {
+            if(0 == ed.move(day) && 1 >= ed.getArrive()) {
+                st.move(day);
+            }
+        } else {
+            if(0 == st.move(day) && 1 >= ed.getArrive()) {
+                ed.move(day);
+            }
+        }
+
         candleList.setScope(st, ed);
     }
 

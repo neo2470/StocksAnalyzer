@@ -16,6 +16,19 @@ public class Config {
     public static void init(float width) {
         itemWidth = width / (ITEM_AMOUNTS + (1 + ITEM_AMOUNTS) * ITEM_SPACE_WIDTH_RATIO);
         itemSpace = itemWidth * ITEM_SPACE_WIDTH_RATIO;
+        factor = 1.0f;
+    }
+
+    public static void setScaleFactor(float factor) {
+        Config.factor = factor;
+    }
+
+    public static float getItemWidth() {
+        return itemWidth * factor;
+    }
+
+    public static float getItemSpace() {
+        return itemSpace * factor;
     }
 
     /**
@@ -79,14 +92,15 @@ public class Config {
         }
     }
 
-    public static float itemWidth;// K线的宽度
-    public static float itemSpace;// K线的间隔
-
     public static final int ITEM_AMOUNTS = 30;// 初始状态下，屏幕上显示的K线个数
     public static final float ITEM_SPACE_WIDTH_RATIO = 0.3f;// K线间隔占K线宽度的比例
 
     public static final float ITEM_MARK_OFFSET_X = UnitHelper.dp2px(20);
     public static final float ITEM_MARK_OFFSET_Y = UnitHelper.dp2px(5);
+
+    private static float itemWidth;// K线的宽度
+    private static float itemSpace;// K线的间隔
+    private static float factor;
 
     private float height;// 绘图区域的高度
     private float value;// 绘图区域表示值的大小
@@ -94,4 +108,5 @@ public class Config {
     private float referV;// y=0时，对应的某种量的值
     private float referY;// y=0时，对应在屏幕上的位置
     private float ratio;// 某种量与画布高度的比值
+
 }

@@ -216,7 +216,7 @@ public class Candlestick extends BaseObject {
         int colorFall = Analyzer.getContext().getResources().getColor(R.color.stock_fall);
 
         kArea.left = x;
-        kArea.right = x + Config.itemWidth;
+        kArea.right = x + Config.getItemWidth();
 
         if (open < close) {
             pen.setColor(colorRise);
@@ -241,7 +241,7 @@ public class Candlestick extends BaseObject {
 
 //        Log.d("Debug-Candlestick-Draw", date + ", " + kArea.left + ", " + kArea.top);
 
-        float x1 = x + Config.itemWidth / 2;
+        float x1 = x + Config.getItemWidth() / 2;
         float y1 = kCfg.val2px(high);
         float y2 = kCfg.val2px(low);
 
@@ -273,7 +273,7 @@ public class Candlestick extends BaseObject {
         }
 
         vArea.left = x;
-        vArea.right = x + Config.itemWidth;
+        vArea.right = x + Config.getItemWidth();
         vArea.bottom = qCfg.val2px(0);
         vArea.top = qCfg.val2px(volume);
 

@@ -70,7 +70,6 @@ public class CandleView extends View {
             kCfg.setHeight(kArea.height());
         }
 
-
         if(null != qArea) {
             qArea.right = w;
             qArea.top = divider;
@@ -83,7 +82,7 @@ public class CandleView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN :
                 onActionDown(event);
                 break;
@@ -142,6 +141,11 @@ public class CandleView extends View {
     private void onActionDown(MotionEvent event) {
         downMillis = System.currentTimeMillis();
         down.set(event.getX(), event.getY());
+        moveDis = 0;
+
+        if(2 == event.getPointerCount()) {
+            downDisWith2Pointer = Math.abs(event.getX(0) - event.getX(1));
+        }
     }
 
     private void onActionMove(MotionEvent event) {
@@ -186,10 +190,25 @@ public class CandleView extends View {
                     break;
                 }
                 case Drag : {
+                    moveVisualZone();
                     break;
                 }
             }
 
+        }
+
+        if(2 == event.getPointerCount()) {
+            if(setMode) {
+                setMode = false;
+                mode = Enum.ActionMode.Scale;
+                Toast.makeText(getContext(), "Scale Mode", Toast.LENGTH_SHORT).show();
+            }
+
+//            float moveDisWith2Pointer = Math.abs(event.getX(0) - event.getX(1));
+//            if(moveDisWith2Pointer + 10 > downDisWith2Pointer) {
+//                Config.setScaleFactor(moveDisWith2Pointer / downDisWith2Pointer);
+//                updateParameters();
+//            }
         }
     }
 
@@ -218,7 +237,7 @@ public class CandleView extends View {
     private void selectCandlestick() {
 
         // 使得十字线自动吸附K线
-        String[] temp  = String.format("%.2f", (touch.x-kArea.left) / (Config.itemWidth + Config.itemSpace)).split("\\.");
+        String[] temp  = String.format("%.2f", (touch.x-kArea.left) / (Config.getItemWidth() + Config.getItemSpace())).split("\\.");
         int intSub = Integer.valueOf(temp[0]);
         float floatSub = Float.valueOf("0." + temp[1]);
 
@@ -251,12 +270,23 @@ public class CandleView extends View {
         drawCross = true;
     }
 
+    private void moveVisualZone() {
+        final float dx = touch.x - down.x;
+        moveDis += dx;
+
+        int length = (int) (-dx / (Config.getItemWidth()+Config.getItemSpace()));
+        stock.moveCursor(length);
+
+//        down.x = touch.x;
+//        updateParameters();
+    }
+
     /**
      * 绘制K线
      */
     private void drawCandlesticks(Canvas canvas) {
 
-        float x = kArea.left + Config.itemSpace;
+        float x = kArea.left + Config.getItemSpace();
 
         CandleList data = stock.getCandleList();
         Cursor ed = stock.getEnd();
@@ -274,7 +304,7 @@ public class CandleView extends View {
                     Candlestick candle = node.get(j);
                     candle.drawCandle(x, kCfg, canvas, pen);
                     candle.drawVOL(x, qCfg, canvas, pen);
-                    x += Config.itemWidth + Config.itemSpace;
+                    x += Config.getItemWidth() + Config.getItemSpace();
 //                    Log.d("Print Candlestick # " + j, candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
                 }
             }
@@ -442,6 +472,8 @@ public class CandleView extends View {
 
         inKArea = true;
         setMode = true;
+
+        mode = Enum.ActionMode.Select;
     }
 
     private Paint pen;// 画笔
@@ -478,6 +510,9 @@ public class CandleView extends View {
 
     private long downMillis;// ActionDown的时刻
     private long moveMillis;// ActionMove的时刻
+
+    private float moveDis;
+    private float downDisWith2Pointer;
 
     private final int MODE_SELECT_TRIGGER = 100;
     private final int TREMBLE_LIMIT = (int) UnitHelper.dp2px(2);

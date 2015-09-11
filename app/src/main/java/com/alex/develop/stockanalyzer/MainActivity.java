@@ -7,18 +7,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 
-import com.alex.develop.entity.Stock;
 import com.alex.develop.fragment.PositionFragment;
 import com.alex.develop.fragment.SelectFragment;
 import com.alex.develop.fragment.StockFragment;
-import com.alex.develop.task.QueryStockBasicInfo;
 import com.alex.develop.ui.NonSlidableViewPager;
 
 import java.util.ArrayList;
