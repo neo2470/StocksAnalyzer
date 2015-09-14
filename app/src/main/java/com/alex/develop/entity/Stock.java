@@ -246,6 +246,8 @@ public final class Stock extends BaseObject {
             }
         }
 
+        Log.d("Print", st.getArrive() + ", " + ed.getArrive());
+
         candleList.setScope(st, ed);
     }
 
