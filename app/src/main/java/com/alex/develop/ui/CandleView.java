@@ -60,7 +60,7 @@ public class CandleView extends View {
         width = w;
         height = h;
 
-        float divider = h * 0.8f;
+        float divider = h * 0.75f;
 
         if(null != kArea) {
             kArea.right = w;
@@ -116,6 +116,15 @@ public class CandleView extends View {
         // 绘制十字线及纵横坐标
         drawTextAndLine(canvas);
 
+        // for test
+        if(0 < stock.getCandleList().size()) {
+            pen.setColor(Color.YELLOW);
+            Candlestick st = stock.getStartCandle();
+            canvas.drawCircle(st.getCenterXofArea(), st.getCenterYofArea(), 10, pen);
+
+            Candlestick ed = stock.getEndCandle();
+            canvas.drawCircle(ed.getCenterXofArea(), ed.getCenterYofArea(), 10, pen);
+        }
     }
 
     public void updateParameters() {
@@ -274,14 +283,14 @@ public class CandleView extends View {
         final float dx = touch.x - down.x;
         moveDis += dx;
 
-        int length = (int) (moveDis / (Config.getItemWidth()+Config.getItemSpace()));
-        if(1 <= length) {
+        int length = (int) (-dx / (Config.getItemWidth()+Config.getItemSpace()));
+//        if(1 <= length) {
             stock.moveCursor(length);
             updateParameters();
-            moveDis = 0;
-        }
+//            moveDis = 0;
+//        }
 
-        down.x = touch.x;
+//        down.x = touch.x;
     }
 
     /**

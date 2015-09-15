@@ -214,8 +214,16 @@ public final class Stock extends BaseObject {
         return st;
     }
 
+    public Candlestick getStartCandle() {
+        return candleList.get(st.node).get(st.candle);
+    }
+
     public Cursor getEnd() {
         return ed;
+    }
+
+    public Candlestick getEndCandle() {
+        return candleList.get(ed.node).get(ed.candle);
     }
 
     public String getListDate() {
@@ -237,11 +245,33 @@ public final class Stock extends BaseObject {
      */
     public void moveCursor(int day) {
         if(0 < day) {
-            if(0 == ed.move(day) && 1 >= ed.getArrive()) {
+            if(1 == ed.move(day)){
+
+                // ed已经移动到最新的数据，ed无法再向前移动移动
+                // 若ed非第一次到达该位置，则st也不可以移动，
+                // 保持2者间距不变
+
+                if(1 >= ed.getArrive()) {
+                    st.move(day);
+                } else {
+                    // TODO 已经达到最新数据
+                }
+            } else {
                 st.move(day);
             }
         } else {
-            if(0 == st.move(day) && 1 >= ed.getArrive()) {
+
+            if(-1 == st.move(day)){
+
+                // st已经移动到最旧的数据，st无法再向前移动移动
+                // 若st非第一次到达该位置，则ed也不可以移动，
+                // 保持2者间距不变
+                if(1 >= st.getArrive()) {
+                    ed.move(day);
+                } else {
+                    // TODO 这里要提醒下载历史数据啦
+                }
+            } else {
                 ed.move(day);
             }
         }

@@ -160,6 +160,10 @@ public class Candlestick extends BaseObject {
         return kArea.left + kArea.width() / 2;
     }
 
+    public float getCenterYofArea() {
+        return kArea.top + kArea.height() / 2;
+    }
+
     public void setApiFrom(Enum.API from) {
         this.from = from;
     }
