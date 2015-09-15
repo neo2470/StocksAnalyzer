@@ -39,7 +39,6 @@ public class Cursor {
 
         // 不需要移动
         if(0 == day) {
-            arrive = 0;
             return flag;
         }
 
@@ -51,6 +50,7 @@ public class Cursor {
             // 同一个Node内
             if(nodes.get(nIndex).size() > cIndex) {
                 candle = cIndex;
+                arrive = 0;
             } else {
 
                 cIndex -= nodes.get(nIndex).size();
@@ -73,14 +73,13 @@ public class Cursor {
                     if (data.size() > cIndex) {
                         node = nIndex;
                         candle = cIndex;
-                        arrive = 0;
                         break;
                     } else {
                         cIndex -= data.size();
                     }
+                    arrive = 0;
                 }
             }
-
         } else {// View向左移动(股票数据越来越旧)
 
             // 负数取绝对值
@@ -92,6 +91,7 @@ public class Cursor {
             // 同一个Node内
             if(0 <= cIndex) {
                 candle = cIndex;
+                arrive = 0;
             } else {
                 while (true) {
                     ++nIndex;
@@ -111,12 +111,11 @@ public class Cursor {
                     if(0 < cIndex) {
                         node = nIndex;
                         candle = cIndex;
-                        arrive = 0;
                         break;
                     }
+                    arrive = 0;
                 }
             }
-
         }
 
         return flag;

@@ -274,11 +274,14 @@ public class CandleView extends View {
         final float dx = touch.x - down.x;
         moveDis += dx;
 
-        int length = (int) (-dx / (Config.getItemWidth()+Config.getItemSpace()));
-        stock.moveCursor(length);
+        int length = (int) (moveDis / (Config.getItemWidth()+Config.getItemSpace()));
+        if(1 <= length) {
+            stock.moveCursor(length);
+            updateParameters();
+            moveDis = 0;
+        }
 
-//        down.x = touch.x;
-//        updateParameters();
+        down.x = touch.x;
     }
 
     /**
