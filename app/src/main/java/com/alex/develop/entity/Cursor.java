@@ -78,6 +78,13 @@ public class Cursor {
 
                     // 如果超出左侧界限，则将{cursor}设置为最左侧（CandleList）的元素
                     if(0 > nIndex) {
+
+                        // 计算实际移动的天数
+//                        moveDays = nodes.get(node).size() - candle - 1;
+//                        for(int i=0; i<=node; ++i) {
+//                            moveDays += nodes.get(i).size();
+//                        }
+
                         node = 0;
                         candle = nodes.get(0).size() - 1;
                         flag = Move.Moved;
@@ -118,6 +125,13 @@ public class Cursor {
 
                     // 如果超出右侧界限，则将{cursor}设置为最右侧（CandleList）的元素
                     if(nodes.size() <= nIndex) {
+
+                        // 计算实际移动的天数
+//                        moveDays = candle;
+//                        for(int i=node; i<nodes.size(); ++i) {
+//                            moveDays += nodes.get(i).size();
+//                        }
+
                         node = nodes.size() - 1;
                         candle = 0;
                         flag = Move.Moved;
