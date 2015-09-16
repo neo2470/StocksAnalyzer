@@ -40,7 +40,7 @@ public class QueryStockHistory extends AsyncTask<Period, Void, Integer> {
     @Override
     protected Integer doInBackground(Period... params) {
 
-        String end = stock.getCandleList().getOldDate();
+        String end = stock.getCandleList().getOldestDate();
         String start = end;
 
         int offset;// 根据不同的周期（月、周、日）选择不同的偏移时间

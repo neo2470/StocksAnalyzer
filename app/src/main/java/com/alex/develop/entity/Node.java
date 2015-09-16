@@ -35,7 +35,7 @@ public class Node {
      * 取得日期最靠后的一天的K线的数据
      * @return
      */
-    public Candlestick getLastest() {
+    public Candlestick getNewest() {
         return candlesticks[index];
     }
 

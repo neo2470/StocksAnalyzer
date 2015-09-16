@@ -12,7 +12,7 @@ public class CandleList {
 
     public CandleList() {
         nodes = new ArrayList<>();
-        old = DateHelper.today();
+        oldest = DateHelper.today();
     }
 
     public int size() {
@@ -23,10 +23,10 @@ public class CandleList {
         nodes.add(node);
         count += node.size();
 
-        old = node.getOldest().getDate();
+        oldest = node.getOldest().getDate();
 
         if(1 == size()) {
-            last = node.getLastest().getDate();
+            newest = node.getNewest().getDate();
         }
     }
 
@@ -123,20 +123,20 @@ public class CandleList {
         return volume;
     }
 
-    public String getOldDate() {
-        return old;
+    public String getOldestDate() {
+        return oldest;
     }
 
-    public String getLastDate() {
-        return last;
+    public String getNewestDate() {
+        return newest;
     }
 
     private Candlestick low;// 在可视区域内，股价最低的K线
     private Candlestick high;// 在可视区域内，股价最高的K线
     private long volume;// 在可视区域内，成交量最大值
 
-    private String old;// 记录该数据结构中存储数据的起始日期
-    private String last;// 记录该数据结构中存储数据的结束日期
+    private String oldest;// 记录该数据结构中存储数据的起始日期
+    private String newest;// 记录该数据结构中存储数据的结束日期
 
     private int count;// 统计存储的K线数据量
     private ArrayList<Node> nodes;

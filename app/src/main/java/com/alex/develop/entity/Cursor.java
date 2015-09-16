@@ -23,8 +23,20 @@ public class Cursor {
         csr.candle = candle;
     }
 
-    public int getArrive() {
-        return arrive;
+    public boolean isOldest() {
+        final int node = candleList.size() - 1;
+        final int candle = 0;
+        return node == this.node && candle == this.candle;
+    }
+
+    public boolean isNewest() {
+        final int node = 0;
+        final int candle = candleList.get(node).size() - 1;
+        return node == this.node && candle == this.candle;
+    }
+
+    public int getMoveDays() {
+        return moveDays;
     }
 
     /**
@@ -35,14 +47,19 @@ public class Cursor {
     public Move move(int day) {
 
         ArrayList<Node> nodes = candleList.getNodes();
-        Move flag = Move.Moved;
+        Move flag = Move.None;
+        moveDays = day;
 
         // 不需要移动
         if(0 == day) {
-            return flag = Move.None;
+            return flag;
         }
 
         if(day > 0) {// View向右移动(股票数据越来越新)
+
+            if(isNewest()) {
+                return flag;
+            }
 
             int nIndex = node;
             int cIndex = candle + day - 1;
@@ -50,7 +67,7 @@ public class Cursor {
             // 同一个Node内
             if(nodes.get(nIndex).size() > cIndex) {
                 candle = cIndex;
-                arrive = 0;
+                flag = Move.Moved;
             } else {
 
                 cIndex -= nodes.get(nIndex).size();
@@ -63,8 +80,7 @@ public class Cursor {
                     if(0 > nIndex) {
                         node = 0;
                         candle = nodes.get(0).size() - 1;
-                        flag = Move.ArriveEnd;
-                        ++arrive;
+                        flag = Move.Moved;
                         break;
                     }
 
@@ -73,14 +89,18 @@ public class Cursor {
                     if (data.size() > cIndex) {
                         node = nIndex;
                         candle = cIndex;
+                        flag = Move.Moved;
                         break;
                     } else {
                         cIndex -= data.size();
                     }
-                    arrive = 0;
                 }
             }
         } else {// View向左移动(股票数据越来越旧)
+
+            if(isOldest()) {
+                return Move.None;
+            }
 
             // 负数取绝对值
             day = -day;
@@ -91,7 +111,7 @@ public class Cursor {
             // 同一个Node内
             if(0 <= cIndex) {
                 candle = cIndex;
-                arrive = 0;
+                flag = Move.Moved;
             } else {
                 while (true) {
                     ++nIndex;
@@ -100,8 +120,7 @@ public class Cursor {
                     if(nodes.size() <= nIndex) {
                         node = nodes.size() - 1;
                         candle = 0;
-                        flag = Move.ArriveStart;
-                        ++arrive;
+                        flag = Move.Moved;
                         break;
                     }
 
@@ -111,9 +130,9 @@ public class Cursor {
                     if(0 < cIndex) {
                         node = nIndex;
                         candle = cIndex;
+                        flag = Move.Moved;
                         break;
                     }
-                    arrive = 0;
                 }
             }
         }
@@ -127,11 +146,9 @@ public class Cursor {
 
     public enum Move {
         None,
-        Moved,
-        ArriveStart,
-        ArriveEnd
+        Moved
     }
 
-    private int arrive;// 连续到达边界的次数
+    private int moveDays;// 移动的天数
     private CandleList candleList;
 }

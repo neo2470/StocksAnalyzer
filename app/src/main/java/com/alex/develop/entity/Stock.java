@@ -245,44 +245,14 @@ public final class Stock extends BaseObject {
      */
     public void moveCursor(int day) {
         if(0 < day) {
-            final Cursor.Move type = ed.move(day);
-            if(Cursor.Move.ArriveEnd == type){
-
-                // ed已经移动到最新的数据，ed无法再向前移动移动
-                // 若ed非第一次到达该位置，则st也不可以移动，
-                // 保持2者间距不变
-
-                if(1 >= ed.getArrive()) {
-                    st.move(day);
-                } else {
-                    // TODO 已经达到最新数据
-                }
+            if (Cursor.Move.Moved == ed.move(day)) {
+                st.move(ed.getMoveDays());
             }
-
-            if(Cursor.Move.Moved == type){
-                st.move(day);
-            }
-
         } else {
-            final Cursor.Move type = st.move(day);
-            if(Cursor.Move.ArriveStart == type){
-
-                // st已经移动到最旧的数据，st无法再向前移动移动
-                // 若st非第一次到达该位置，则ed也不可以移动，
-                // 保持2者间距不变
-                if(1 >= st.getArrive()) {
-                    ed.move(day);
-                } else {
-                    // TODO 这里要提醒下载历史数据啦
-                }
-            }
-
-            if(Cursor.Move.Moved == type){
-                ed.move(day);
+            if (Cursor.Move.Moved == st.move(day)) {
+                ed.move(st.getMoveDays());
             }
         }
-
-        Log.d("Print", day + ", (" + st.node + ", " + st.candle + ")   (" + ed.node + ", " + ed.candle + ")");
         candleList.setScope(st, ed);
     }
 
