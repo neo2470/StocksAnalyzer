@@ -245,7 +245,8 @@ public final class Stock extends BaseObject {
      */
     public void moveCursor(int day) {
         if(0 < day) {
-            if(1 == ed.move(day)){
+            final Cursor.Move type = ed.move(day);
+            if(Cursor.Move.ArriveEnd == type){
 
                 // ed已经移动到最新的数据，ed无法再向前移动移动
                 // 若ed非第一次到达该位置，则st也不可以移动，
@@ -256,12 +257,15 @@ public final class Stock extends BaseObject {
                 } else {
                     // TODO 已经达到最新数据
                 }
-            } else {
+            }
+
+            if(Cursor.Move.Moved == type){
                 st.move(day);
             }
-        } else {
 
-            if(-1 == st.move(day)){
+        } else {
+            final Cursor.Move type = st.move(day);
+            if(Cursor.Move.ArriveStart == type){
 
                 // st已经移动到最旧的数据，st无法再向前移动移动
                 // 若st非第一次到达该位置，则ed也不可以移动，
@@ -271,13 +275,14 @@ public final class Stock extends BaseObject {
                 } else {
                     // TODO 这里要提醒下载历史数据啦
                 }
-            } else {
+            }
+
+            if(Cursor.Move.Moved == type){
                 ed.move(day);
             }
         }
 
-        Log.d("Print", day + ", " + st.getArrive() + ", " + ed.getArrive());
-
+        Log.d("Print", day + ", (" + st.node + ", " + st.candle + ")   (" + ed.node + ", " + ed.candle + ")");
         candleList.setScope(st, ed);
     }
 

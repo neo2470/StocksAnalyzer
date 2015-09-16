@@ -154,5 +154,4 @@ public final class Enum extends BaseObject {
         Drag,// 拖拽查看历史行情
         Scale// 缩放
     }
-
 }

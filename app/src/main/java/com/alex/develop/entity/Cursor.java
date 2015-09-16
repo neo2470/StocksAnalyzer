@@ -32,14 +32,14 @@ public class Cursor {
      * @param day day > 0，向右移动；day < 0，向左移动
      * @return -1，游标移动至数据的起点；1，游标移动至数据的终点；0，其他情况
      */
-    public int move(int day) {
+    public Move move(int day) {
 
         ArrayList<Node> nodes = candleList.getNodes();
-        int flag = 0;
+        Move flag = Move.Moved;
 
         // 不需要移动
         if(0 == day) {
-            return flag;
+            return flag = Move.None;
         }
 
         if(day > 0) {// View向右移动(股票数据越来越新)
@@ -63,7 +63,7 @@ public class Cursor {
                     if(0 > nIndex) {
                         node = 0;
                         candle = nodes.get(0).size() - 1;
-                        flag = 1;
+                        flag = Move.ArriveEnd;
                         ++arrive;
                         break;
                     }
@@ -100,7 +100,7 @@ public class Cursor {
                     if(nodes.size() <= nIndex) {
                         node = nodes.size() - 1;
                         candle = 0;
-                        flag = -1;
+                        flag = Move.ArriveStart;
                         ++arrive;
                         break;
                     }
@@ -124,6 +124,13 @@ public class Cursor {
     public int node;// CandleList中用于定位Node的索引
 
     public int candle;// Node中用于定位Candlestick的索引
+
+    public enum Move {
+        None,
+        Moved,
+        ArriveStart,
+        ArriveEnd
+    }
 
     private int arrive;// 连续到达边界的次数
     private CandleList candleList;
