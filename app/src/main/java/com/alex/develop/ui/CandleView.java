@@ -182,13 +182,13 @@ public class CandleView extends View {
                     if(TREMBLE_LIMIT > Math.abs(moveX)) {
                         setMode = false;
                         mode = Enum.ActionMode.Select;
-                        Toast.makeText(getContext(), "Select Mode", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "Select Mode", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     if(TREMBLE_LIMIT < Math.abs(moveX)) {
                         setMode = false;
                         mode = Enum.ActionMode.Drag;
-                        Toast.makeText(getContext(), "Drag Mode", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "Drag Mode", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -254,7 +254,7 @@ public class CandleView extends View {
             ++intSub;
         }
 
-        stock.getStart().copy(csr);
+        csr.copy(stock.getStart());
         csr.move(intSub);
 
         CandleList data = stock.getCandleList();

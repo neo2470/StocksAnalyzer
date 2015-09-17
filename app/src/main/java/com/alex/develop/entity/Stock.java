@@ -2,7 +2,9 @@ package com.alex.develop.entity;
 
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.task.CollectStockTask;
 
 import org.json.JSONArray;
@@ -89,6 +91,7 @@ public final class Stock extends BaseObject {
 
         st = new Cursor(candleList);
         ed = new Cursor(candleList);
+        tp = new Cursor(candleList);
     }
 
     public String getCodeCN() {
@@ -245,14 +248,36 @@ public final class Stock extends BaseObject {
      */
     public void moveCursor(int day) {
         if(0 < day) {
-            if (Cursor.Move.Moved == ed.move(day)) {
-                st.move(ed.getMoveDays());
+
+            final Cursor.Move type = ed.move(day);
+
+            // 移动游标
+            if (Cursor.Move.None != type) {
+                tp.copy(ed);
+                tp.move(-Config.ITEM_AMOUNTS);
+                st.copy(tp);
             }
+
+            if(Cursor.Move.ArriveNewest == type) {
+                Toast.makeText(Analyzer.getContext(), "已达到最新数据", Toast.LENGTH_SHORT).show();
+            }
+
         } else {
-            if (Cursor.Move.Moved == st.move(day)) {
-                ed.move(st.getMoveDays());
+
+            final Cursor.Move type = st.move(day);
+
+            // 移动游标
+            if (Cursor.Move.None != type) {
+                tp.copy(st);
+                tp.move(Config.ITEM_AMOUNTS);
+                ed.copy(tp);
+            }
+
+            if(Cursor.Move.ArriveOldest == type) {
+                Toast.makeText(Analyzer.getContext(), "需要下载数据", Toast.LENGTH_SHORT).show();
             }
         }
+
         candleList.setScope(st, ed);
     }
 
@@ -389,6 +414,7 @@ public final class Stock extends BaseObject {
 
     private Cursor st;// 被绘制的K线的起始位置
     private Cursor ed;// 被绘制的K线的结束位置
+    private Cursor tp;// 中转Cursor
 
     private Candlestick today;// 今日行情
 

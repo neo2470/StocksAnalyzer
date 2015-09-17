@@ -1,5 +1,7 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -18,9 +20,13 @@ public class Cursor {
         this.candleList = candleList;
     }
 
+    /**
+     * 从{csr}复制数据，纳为己用
+     * @param csr 被复制得数据
+     */
     public void copy(Cursor csr) {
-        csr.node = node;
-        csr.candle = candle;
+        node = csr.node;
+        candle = csr.candle;
     }
 
     public boolean isOldest() {
@@ -35,20 +41,20 @@ public class Cursor {
         return node == this.node && candle == this.candle;
     }
 
-    public int getMoveDays() {
-        return moveDays;
-    }
-
     /**
      * 将游标{cursor}移动{day}个单位
      * @param day day > 0，向右移动；day < 0，向左移动
-     * @return -1，游标移动至数据的起点；1，游标移动至数据的终点；0，其他情况
+     * @return
+     *
+     * Move.None，未发生移动
+     * Move.Moved，发生了移动
+     * Move.ArriveOldest，移动到最旧数据（提示要下载数据）
+     * Move.ArriveNewest，移动到最新数据（提示已是最新数据）
      */
     public Move move(int day) {
 
         ArrayList<Node> nodes = candleList.getNodes();
         Move flag = Move.None;
-        moveDays = day;
 
         // 不需要移动
         if(0 == day) {
@@ -57,6 +63,7 @@ public class Cursor {
 
         if(day > 0) {// View向右移动(股票数据越来越新)
 
+            // 数据已经最新，无需移动
             if(isNewest()) {
                 return flag;
             }
@@ -78,13 +85,6 @@ public class Cursor {
 
                     // 如果超出左侧界限，则将{cursor}设置为最左侧（CandleList）的元素
                     if(0 > nIndex) {
-
-                        // 计算实际移动的天数
-//                        moveDays = nodes.get(node).size() - candle - 1;
-//                        for(int i=0; i<=node; ++i) {
-//                            moveDays += nodes.get(i).size();
-//                        }
-
                         node = 0;
                         candle = nodes.get(0).size() - 1;
                         flag = Move.Moved;
@@ -106,7 +106,7 @@ public class Cursor {
         } else {// View向左移动(股票数据越来越旧)
 
             if(isOldest()) {
-                return Move.None;
+                return flag;
             }
 
             // 负数取绝对值
@@ -125,13 +125,6 @@ public class Cursor {
 
                     // 如果超出右侧界限，则将{cursor}设置为最右侧（CandleList）的元素
                     if(nodes.size() <= nIndex) {
-
-                        // 计算实际移动的天数
-//                        moveDays = candle;
-//                        for(int i=node; i<nodes.size(); ++i) {
-//                            moveDays += nodes.get(i).size();
-//                        }
-
                         node = nodes.size() - 1;
                         candle = 0;
                         flag = Move.Moved;
@@ -151,6 +144,9 @@ public class Cursor {
             }
         }
 
+        flag = isOldest() ? Move.ArriveOldest : flag;
+        flag = isNewest() ? Move.ArriveNewest : flag;
+
         return flag;
     }
 
@@ -160,9 +156,9 @@ public class Cursor {
 
     public enum Move {
         None,
-        Moved
+        Moved,
+        ArriveOldest,
+        ArriveNewest
     }
-
-    private int moveDays;// 移动的天数
     private CandleList candleList;
 }
