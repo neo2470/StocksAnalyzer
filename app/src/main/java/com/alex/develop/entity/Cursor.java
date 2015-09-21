@@ -1,7 +1,5 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
