@@ -73,5 +73,15 @@
             android:onClick="onNavClicked"
             android:text="选股" />
 
+        <RadioButton
+            android:id="@+id/financeNews"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:gravity="center"
+            android:onClick="onNavClicked"
+            android:text="新闻" />
+
     </RadioGroup>
 </LinearLayout>

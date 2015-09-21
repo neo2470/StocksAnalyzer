@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 
+import com.alex.develop.fragment.NewsFragment;
 import com.alex.develop.fragment.PositionFragment;
 import com.alex.develop.fragment.SelectFragment;
 import com.alex.develop.fragment.StockFragment;
@@ -59,6 +60,9 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
 
             // 选股
             fragList.add(new SelectFragment());
+
+            // 新闻
+            fragList.add(new NewsFragment());
         }
 
         Analyzer.setMainActivityLoadView(findViewById(R.id.loading));
@@ -66,7 +70,7 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager = (NonSlidableViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(viewPagerAdapter);
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(5);
     }
 
     @Override
@@ -119,6 +123,11 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
             case R.id.selectStock:
                 if (isChecked) {
                     viewPager.setCurrentItem(3);
+                }
+                break;
+            case R.id.financeNews:
+                if (isChecked) {
+                    viewPager.setCurrentItem(4);
                 }
                 break;
         }
