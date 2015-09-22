@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.alex.develop.entity.Constant;
 import com.alex.develop.entity.Enum;
+import com.alex.develop.stockanalyzer.Analyzer;
+import com.alex.develop.stockanalyzer.R;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -143,6 +145,36 @@ public class DateHelper {
         }
 
         return flag;
+    }
+
+    public static String getDateFromNow(String dateWithTime) {
+
+        // TODO here has BUG
+
+        String result = "";
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        try {
+            final long now = new Date().getTime() / 1000;
+            final long date = df.parse(dateWithTime).getTime() / 1000;
+            long differ = now - date;
+
+            if(60 > differ) {
+                result.concat(differ+" ").concat(Analyzer.getContext().getString(R.string.news_time_second));
+            } else if(3600 > differ) {
+                differ /= 60;
+                result.concat(differ+" ").concat(Analyzer.getContext().getString(R.string.news_time_minute));
+            } else if(86400 > differ) {
+                differ /= 3600;
+                result.concat(differ+" ").concat(Analyzer.getContext().getString(R.string.news_time_hour));
+            } else {
+                result = dateWithTime.split(" ")[0];
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     /**

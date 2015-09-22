@@ -1,18 +1,23 @@
 package com.alex.develop.entity;
 
+import android.util.Log;
+
+import com.alex.develop.util.DateHelper;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  * Created by alex on 15年9月21日.
+ * 新闻类
  */
 public class News {
 
     public News(JSONObject data) {
         nid = data.optString("nid");
-        title = data.optString("title");
-        desc = data.optString("desc");
-        link = data.optString("link");
+        title = data.optString("title").trim();
+        desc = data.optString("desc").trim();
+        link = data.optString("link").trim();
 
         // 解析新闻配图
         final String imageUrls = "imageurls";
@@ -30,6 +35,11 @@ public class News {
 
         source = data.optString("source");
         pubDate = data.optString("pubDate");
+
+        Log.d("Print", title);
+        Log.d("Print", pubDate);
+        Log.d("Print", source);
+        Log.d("Print", "----------------------------");
     }
 
     public String getNid() {
@@ -62,6 +72,10 @@ public class News {
 
     public String getPubDate() {
         return pubDate;
+    }
+
+    public String getPubDateFromNow() {
+        return DateHelper.getDateFromNow(pubDate);
     }
 
     private String nid;// 新闻ID

@@ -33,7 +33,7 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
     protected Void doInBackground(Stock... params) {
 
         HashMap<String, String> header = new HashMap<>();
-        header.put(ApiStore.JDWX_API_KEY, ApiStore.JDWX_API_KEY_VALUE);
+        header.put(ApiStore.BAIDU_APISTORE_API_KEY, ApiStore.BAIDU_APISTORE_API_VALUE);
 
         /**
          * No Data Returned Stock
@@ -52,7 +52,7 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
     private void queryInformationForStocks(HashMap<String, String> header, Stock... stocks) {
         List<Stock> data = Arrays.asList(stocks);
         String url = ApiStore.getStockInfoUrl(data);
-        String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARTSET);
+        String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARSET);
         fromJSON(content, data);
     }
 
@@ -93,7 +93,7 @@ public class QueryStockBasicInfo extends AsyncTask<Stock, Void, Void> {
                 }
 
                 String url = ApiStore.getStockInfoUrl(stocks);
-                String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARTSET);
+                String content = NetworkHelper.getWebContent(url, header, ApiStore.JDWX_CHARSET);
                 fromJSON(content, stocks);
 
                 stocks.clear();

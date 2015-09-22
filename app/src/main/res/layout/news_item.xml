@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:background="#3a3a46">
 
     <ImageView
         android:id="@+id/newsImg"
@@ -16,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/newsImg"
         android:text="中珠控股作价19亿元并购一体医疗 拓展肿瘤诊疗市场"
-        android:textSize="25sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/newsDesc"
@@ -32,6 +34,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/newsDesc"
-        android:text="6小时前 | 中国新闻网" />
+        android:text="6小时前 | 中国新闻网"/>
 
 </RelativeLayout>

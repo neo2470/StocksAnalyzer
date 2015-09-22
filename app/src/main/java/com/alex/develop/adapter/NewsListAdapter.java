@@ -8,16 +8,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alex.develop.entity.News;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by alex on 15年9月21日.
  */
 public class NewsListAdapter extends BaseAdapter {
+
+    public NewsListAdapter(ArrayList<News> news) {
+        this.news = news;
+    }
+
     @Override
     public int getCount() {
-        return 10;
+        return news.size();
     }
 
     @Override
@@ -45,6 +53,16 @@ public class NewsListAdapter extends BaseAdapter {
             convertView.setTag(holder);
         }
 
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+        News item = news.get(position);
+
+        holder.newsTitle.setText(item.getTitle());
+        holder.newsDesc.setText(item.getDesc());
+
+        String timeSource = Analyzer.getContext().getString(R.string.news_time_source);
+        timeSource = String.format(timeSource, item.getPubDateFromNow(), item.getSource());
+        holder.newsTimeASource.setText(timeSource);
+
         return convertView;
     }
 
@@ -54,4 +72,6 @@ public class NewsListAdapter extends BaseAdapter {
         TextView newsDesc;
         TextView newsTimeASource;
     }
+
+    private ArrayList<News> news;
 }

@@ -74,5 +74,10 @@
     <!-- StockFragment.java -->
     <string name="contextual_add_collect">加入自選%1$s</string>
     <string name="contextual_remove_collect">移出自選%1$s</string>
+
+    <!-- NewsListAdapter.java -->
+    <string name="news_time_second" >秒前</string>
+    <string name="news_time_minute" >分鐘前</string>
+    <string name="news_time_hour" >小時前</string>
     
 </resources>

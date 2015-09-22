@@ -75,4 +75,9 @@
     <string name="contextual_add_collect">加入自选%1$s</string>
     <string name="contextual_remove_collect">移出自选%1$s</string>
 
+    <!-- NewsListAdapter.java -->
+    <string name="news_time_second" >秒前</string>
+    <string name="news_time_minute" >分钟前</string>
+    <string name="news_time_hour" >小时前</string>
+
 </resources>

@@ -75,4 +75,9 @@
     <string name="contextual_add_collect">Add Collect%1$s</string>
     <string name="contextual_remove_collect">Remove Collect%1$s</string>
 
+    <!-- NewsListAdapter.java -->
+    <string name="news_time_second" >seconds ago</string>
+    <string name="news_time_minute" >minutes ago</string>
+    <string name="news_time_hour" >hours ago</string>
+
 </resources>
