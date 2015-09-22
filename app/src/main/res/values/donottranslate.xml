@@ -23,6 +23,6 @@
     <string name="key_split">-</string>
 
     <!-- NewsListAdapter.java -->
-    <string name="news_time_source" formatted="true">%1$s | %2$s</string>
+    <string name="news_time_source" formatted="false">%1$s | %2$s</string>
 
 </resources>

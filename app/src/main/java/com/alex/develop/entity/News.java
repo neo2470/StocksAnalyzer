@@ -15,9 +15,9 @@ public class News {
 
     public News(JSONObject data) {
         nid = data.optString("nid");
-        title = data.optString("title").trim();
-        desc = data.optString("desc").trim();
-        link = data.optString("link").trim();
+        title = data.optString("title").replace(" ", "");
+        desc = data.optString("desc");
+        link = data.optString("link");
 
         // 解析新闻配图
         final String imageUrls = "imageurls";
@@ -35,11 +35,6 @@ public class News {
 
         source = data.optString("source");
         pubDate = data.optString("pubDate");
-
-        Log.d("Print", title);
-        Log.d("Print", pubDate);
-        Log.d("Print", source);
-        Log.d("Print", "----------------------------");
     }
 
     public String getNid() {
@@ -59,7 +54,7 @@ public class News {
     }
 
     public boolean hasImage() {
-        return null == imgUrl;
+        return null != imgUrl;
     }
 
     public String getImgUrl() {

@@ -2,6 +2,7 @@ package com.alex.develop.util;
 
 import android.util.Log;
 
+import com.alex.develop.entity.ApiStore;
 import com.alex.develop.entity.Constant;
 import com.alex.develop.entity.Enum;
 import com.alex.develop.stockanalyzer.Analyzer;
@@ -154,18 +155,20 @@ public class DateHelper {
         String result = "";
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         try {
+
             final long now = new Date().getTime() / 1000;
             final long date = df.parse(dateWithTime).getTime() / 1000;
+
             long differ = now - date;
 
             if(60 > differ) {
-                result.concat(differ+" ").concat(Analyzer.getContext().getString(R.string.news_time_second));
+                result = differ + " " + Analyzer.getContext().getString(R.string.news_time_second);
             } else if(3600 > differ) {
                 differ /= 60;
-                result.concat(differ+" ").concat(Analyzer.getContext().getString(R.string.news_time_minute));
+                result = differ + " " + Analyzer.getContext().getString(R.string.news_time_minute);
             } else if(86400 > differ) {
                 differ /= 3600;
-                result.concat(differ+" ").concat(Analyzer.getContext().getString(R.string.news_time_hour));
+                result = differ + " " + Analyzer.getContext().getString(R.string.news_time_hour);
             } else {
                 result = dateWithTime.split(" ")[0];
             }

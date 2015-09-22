@@ -56,6 +56,12 @@ public class NewsListAdapter extends BaseAdapter {
         ViewHolder holder = (ViewHolder) convertView.getTag();
         News item = news.get(position);
 
+        if(item.hasImage()) {
+            holder.newsImg.setVisibility(View.VISIBLE);
+        } else {
+            holder.newsImg.setVisibility(View.GONE);
+        }
+
         holder.newsTitle.setText(item.getTitle());
         holder.newsDesc.setText(item.getDesc());
 
