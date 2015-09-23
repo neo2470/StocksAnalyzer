@@ -79,5 +79,9 @@
     <string name="news_time_second" >秒前</string>
     <string name="news_time_minute" >分鐘前</string>
     <string name="news_time_hour" >小時前</string>
+
+    <!-- NewsFragment.java -->
+    <string name="footer_load_move">上拉加載更多數據</string>
+    <string name="footer_no_move">沒有更多數據了</string>
     
 </resources>

@@ -22,6 +22,11 @@ public class QueryLatestNews extends AsyncTask<Integer, Void, Void> {
 
     public QueryLatestNews(ArrayList<News> news) {
         this.news = news;
+        NEWS_PAGES = Integer.MAX_VALUE;
+    }
+
+    public static int getNewsPages() {
+        return NEWS_PAGES;
     }
 
     @Override
@@ -44,6 +49,7 @@ public class QueryLatestNews extends AsyncTask<Integer, Void, Void> {
             JSONObject resBody = data.optJSONObject("showapi_res_body");
             JSONObject pageBean = resBody.optJSONObject("pagebean");
             JSONArray contentList = pageBean.optJSONArray("contentlist");
+            NEWS_PAGES = pageBean.optInt("allPages");
 
             final int contentSize = contentList.length();
             if(0 < contentSize) {
@@ -59,6 +65,8 @@ public class QueryLatestNews extends AsyncTask<Integer, Void, Void> {
             e.printStackTrace();
         }
     }
+
+    private static int NEWS_PAGES;// 新闻的总页数（每页约20条数据）
 
     private ArrayList<News> news;
 }

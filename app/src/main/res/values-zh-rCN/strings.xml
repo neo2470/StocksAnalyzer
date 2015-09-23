@@ -80,4 +80,8 @@
     <string name="news_time_minute" >分钟前</string>
     <string name="news_time_hour" >小时前</string>
 
+    <!-- NewsFragment.java -->
+    <string name="footer_load_move">上拉加载更多数据</string>
+    <string name="footer_no_move">没有更多数据了</string>
+
 </resources>

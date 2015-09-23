@@ -30,7 +30,13 @@ public class NewsListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+
+        int index = position;
+        if(news.size() <= index) {
+            index = news.size() - 1;
+        }
+
+        return news.get(index);
     }
 
     @Override

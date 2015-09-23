@@ -80,4 +80,8 @@
     <string name="news_time_minute" >minutes ago</string>
     <string name="news_time_hour" >hours ago</string>
 
+    <!-- NewsFragment.java -->
+    <string name="footer_load_move">Swipe up to load more data</string>
+    <string name="footer_no_move">No more data</string>
+
 </resources>
