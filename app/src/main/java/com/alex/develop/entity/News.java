@@ -7,6 +7,8 @@ import com.alex.develop.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 /**
  * Created by alex on 15年9月21日.
  * 新闻类
@@ -21,9 +23,9 @@ public class News {
 
         // 解析新闻配图
         final String imageUrls = "imageurls";
-        if(data.has(imageUrls)) {
+        if (data.has(imageUrls)) {
             final JSONArray array = data.optJSONArray(imageUrls);
-            if(1 <= array.length()) {
+            if (1 <= array.length()) {
                 final JSONObject obj = array.optJSONObject(0);
                 imgUrl = obj.optString("url");
             } else {
@@ -71,6 +73,11 @@ public class News {
 
     public String getPubDateFromNow() {
         return DateHelper.getDateFromNow(pubDate);
+    }
+
+    @Override
+    public boolean equals(Object news) {
+        return news instanceof News && nid.equals(((News) news).getNid());
     }
 
     private String nid;// 新闻ID

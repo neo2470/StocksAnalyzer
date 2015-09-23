@@ -138,17 +138,17 @@ public class NewsFragment extends BaseFragment {
             }
 
             @Override
-            protected Void doInBackground(Integer... params) {
-                if(1 == page) {
-                    return null;
-                } else {
+            protected Boolean doInBackground(Integer... params) {
+//                if(1 == page) {
+//                    return null;
+//                } else {
                     return super.doInBackground(params);
-                }
+//                }
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            protected void onPostExecute(Boolean flag) {
+                super.onPostExecute(flag);
 
                 // 下拉加载最新数据
                 if(1 == page) {
@@ -169,6 +169,8 @@ public class NewsFragment extends BaseFragment {
                     footerText.setVisibility(View.VISIBLE);
                     footerLoadCircle.setVisibility(View.GONE);
                 }
+
+                newsAdapter.notifyDataSetChanged();
             }
         }.execute(page);
     }
