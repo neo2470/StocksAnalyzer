@@ -77,7 +77,6 @@ public class NewsFragment extends BaseFragment {
                 if(scrollState == SCROLL_STATE_IDLE) {
                     final int lvp = newsList.getLastVisiblePosition();
                     final int size = news.size();
-                    Log.d("Print", lvp + ", " + size);
                     if(lvp == size + 1) {
                         queryNewsByShowAPI(++currentPageIndex);
                     }
