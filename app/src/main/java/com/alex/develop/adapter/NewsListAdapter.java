@@ -68,6 +68,12 @@ public class NewsListAdapter extends BaseAdapter {
             holder.newsImg.setVisibility(View.GONE);
         }
 
+        if(item.getDesc().isEmpty()) {
+            holder.newsDesc.setVisibility(View.GONE);
+        } else {
+            holder.newsDesc.setVisibility(View.VISIBLE);
+        }
+
         holder.newsTitle.setText(item.getTitle());
         holder.newsDesc.setText(item.getDesc());
 
