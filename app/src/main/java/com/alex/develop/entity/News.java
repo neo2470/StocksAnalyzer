@@ -1,13 +1,9 @@
 package com.alex.develop.entity;
 
-import android.util.Log;
-
 import com.alex.develop.util.DateHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.Objects;
 
 /**
  * Created by alex on 15年9月21日.
@@ -75,6 +71,14 @@ public class News {
         return DateHelper.getDateFromNow(pubDate);
     }
 
+    public boolean isAppeared() {
+        return appeared;
+    }
+
+    public void setAppeared(boolean appeared) {
+        this.appeared = appeared;
+    }
+
     @Override
     public boolean equals(Object news) {
         return news instanceof News && nid.equals(((News) news).getNid());
@@ -87,4 +91,5 @@ public class News {
     private String imgUrl;// 新闻配图
     private String source;// 新闻来源
     private String pubDate;// 发布时间
+    private boolean appeared;// 是否已呈现
 }

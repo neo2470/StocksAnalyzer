@@ -5,9 +5,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,9 +82,7 @@ public class NewsFragment extends BaseFragment {
             }
 
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
         });
 
         // 下拉刷新组件
@@ -134,15 +130,6 @@ public class NewsFragment extends BaseFragment {
                     footerText.setVisibility(View.GONE);
                     footerLoadCircle.setVisibility(View.VISIBLE);
                 }
-            }
-
-            @Override
-            protected Boolean doInBackground(Integer... params) {
-//                if(1 == page) {
-//                    return null;
-//                } else {
-                    return super.doInBackground(params);
-//                }
             }
 
             @Override

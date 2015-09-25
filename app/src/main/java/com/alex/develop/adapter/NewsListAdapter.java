@@ -3,6 +3,8 @@ package com.alex.develop.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -80,6 +82,12 @@ public class NewsListAdapter extends BaseAdapter {
         String timeSource = Analyzer.getContext().getString(R.string.news_time_source);
         timeSource = String.format(timeSource, item.getPubDateFromNow(), item.getSource());
         holder.newsTimeASource.setText(timeSource);
+
+        if(!item.isAppeared()) {
+            Animation anim = AnimationUtils.loadAnimation(Analyzer.getContext(), R.anim.up_from_bottom);
+            convertView.startAnimation(anim);
+            item.setAppeared(true);
+        }
 
         return convertView;
     }

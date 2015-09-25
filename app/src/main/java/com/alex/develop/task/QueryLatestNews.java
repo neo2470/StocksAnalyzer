@@ -54,7 +54,7 @@ public class QueryLatestNews extends AsyncTask<Integer, Void, Boolean> {
             final String content = NetworkHelper.getWebContent(newsUrl, header, ApiStore.SHOW_API_CHARSET);
             final Status status = fromJSON(content);
 
-            Log.d("Print-News-While", pageCp + ", " + status + " ============================");
+//            Log.d("Print-News-While", pageCp + ", " + status + " ============================");
 
             if (1 == page) {
                 if (Status.refreshSuccess == status) {//下拉刷新成功
@@ -99,14 +99,14 @@ public class QueryLatestNews extends AsyncTask<Integer, Void, Boolean> {
             if (0 < contentSize) {
                 for (int i = 0; i < contentSize; ++i) {
                     JSONObject newsObj = contentList.optJSONObject(i);
-                    Log.d("Print-News-Json", newsObj.toString());
+//                    Log.d("Print-News-Json", newsObj.toString());
 
                     if (1 == page) {
 
                         // TODO 下拉刷新 not be tested
                         final String nid = newsObj.optString("nid");
                         News latestNews = news.get(0);
-                        Log.d("Print-News-Foreach", nid + " , " + latestNews.getNid() + ", " + nid.equals(latestNews.getNid()));
+//                        Log.d("Print-News-Foreach", nid + " , " + latestNews.getNid() + ", " + nid.equals(latestNews.getNid()));
                         if (nid.equals(latestNews.getNid())) {
                             news.addAll(0, cache);
                             cache.clear();
