@@ -16,6 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alex.develop.adapter.NewsListAdapter;
+import com.alex.develop.cache.ImageCache;
+import com.alex.develop.cache.ImageFetcher;
+import com.alex.develop.cache.Utils;
 import com.alex.develop.entity.News;
 import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.task.QueryLatestNews;
@@ -28,6 +31,24 @@ import java.util.List;
  * 新闻列表
  */
 public class NewsFragment extends BaseFragment {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(null == news) {
+            news = new ArrayList<>();
+        } else {
+            news.clear();
+        }
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(act, IMAGE_CACHE_DIR);
+        cacheParams.setMemCacheSizePercent(0.25f);
+
+        mImageFetcher = new ImageFetcher(act, 300, 200);
+        mImageFetcher.setLoadingImage(R.drawable.news_image_holder);
+        mImageFetcher.addImageCache(act.getSupportFragmentManager(), cacheParams);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +66,7 @@ public class NewsFragment extends BaseFragment {
         View footer = inflater.inflate(R.layout.news_footer, null, false);
         footerText = (TextView) footer.findViewById(R.id.footerText);
         footerLoadCircle = (ProgressBar) footer.findViewById(R.id.footerLoadCircle);
-        newsAdapter = new NewsListAdapter(news);
+        newsAdapter = new NewsListAdapter(news, mImageFetcher);
         newsList.addHeaderView(header);
         newsList.addFooterView(footer);
         newsList.setAdapter(newsAdapter);
@@ -72,12 +93,20 @@ public class NewsFragment extends BaseFragment {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
-                if(scrollState == SCROLL_STATE_IDLE) {
+                if(SCROLL_STATE_IDLE == scrollState) {
                     final int lvp = newsList.getLastVisiblePosition();
                     final int size = news.size();
                     if(lvp == size + 1) {
                         queryNewsByShowAPI(++currentPageIndex);
                     }
+                }
+
+                if(SCROLL_STATE_FLING == scrollState) {
+                    if(!Utils.hasHoneycomb()) {
+                        mImageFetcher.setPauseWork(true);
+                    }
+                } else {
+                    mImageFetcher.setPauseWork(false);
                 }
             }
 
@@ -99,6 +128,26 @@ public class NewsFragment extends BaseFragment {
         queryNewsByShowAPI(currentPageIndex++);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mImageFetcher.setExitTasksEarly(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mImageFetcher.setPauseWork(false);
+        mImageFetcher.setExitTasksEarly(true);
+        mImageFetcher.flushCache();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mImageFetcher.closeCache();
     }
 
     /**
@@ -167,6 +216,9 @@ public class NewsFragment extends BaseFragment {
     private TextView footerText;
     private ProgressBar footerLoadCircle;
 
+    private ImageFetcher mImageFetcher;
     private NewsListAdapter newsAdapter;
     private SwipeRefreshLayout refreshLayout;
+
+    private static final String IMAGE_CACHE_DIR = "cache";
 }

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alex.develop.cache.ImageFetcher;
 import com.alex.develop.entity.News;
 import com.alex.develop.stockanalyzer.Analyzer;
 import com.alex.develop.stockanalyzer.R;
@@ -21,8 +22,9 @@ import java.util.ArrayList;
  */
 public class NewsListAdapter extends BaseAdapter {
 
-    public NewsListAdapter(ArrayList<News> news) {
+    public NewsListAdapter(ArrayList<News> news, ImageFetcher mImageFetcher) {
         this.news = news;
+        this.mImageFetcher = mImageFetcher;
     }
 
     @Override
@@ -65,6 +67,7 @@ public class NewsListAdapter extends BaseAdapter {
         News item = news.get(position);
 
         if(item.hasImage()) {
+            mImageFetcher.loadImage(item.getImgUrl(), holder.newsImg);
             holder.newsImg.setVisibility(View.VISIBLE);
         } else {
             holder.newsImg.setVisibility(View.GONE);
@@ -100,4 +103,5 @@ public class NewsListAdapter extends BaseAdapter {
     }
 
     private ArrayList<News> news;
+    private ImageFetcher mImageFetcher;
 }

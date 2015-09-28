@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:src="@drawable/beautiful_girl" />
+        android:src="@drawable/news_image_holder" />
 
     <TextView
         android:id="@+id/newsTitle"

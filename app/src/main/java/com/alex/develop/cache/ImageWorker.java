@@ -393,9 +393,9 @@ public abstract class ImageWorker {
 
                             // Edit by alex
                             // before
-//                            new ColorDrawable(android.R.color.transparent),
+                            new ColorDrawable(android.R.color.transparent),
                             // after
-                            new ColorDrawable(Color.parseColor("#00000000")),
+//                            new ColorDrawable(Color.parseColor("#00000000")),
                             // end
 
                             drawable
