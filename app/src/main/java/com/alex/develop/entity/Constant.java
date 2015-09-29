@@ -42,4 +42,16 @@ public final class Constant {
     public static final float SINA_MONEY_FACTOR = 100000000.0F;
 
     public static final float SOHU_MONEY_FACTOR = 10000.0F;
+
+    /**
+     * 默认绘制的均线数量
+     * 5，10，20，30，60
+     */
+    public static final int MA_COUNT = 5;
+
+    public static final int MA_0 = 5;
+    public static final int MA_1 = 10;
+    public static final int MA_2 = 20;
+    public static final int MA_3 = 30;
+    public static final int MA_4 = 60;
 }

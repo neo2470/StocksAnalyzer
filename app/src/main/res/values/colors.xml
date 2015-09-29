@@ -16,4 +16,12 @@
     <color name="nav_bg">#252a33</color>
     <color name="list_item_selected_bg">#FF5722</color>
 
+    <!-- 移动平均线的颜色 -->
+    <color name="ma_color_0">#DEDEDE</color>
+    <color name="ma_color_1">#FDA701</color>
+    <color name="ma_color_2">#E36396</color>
+    <color name="ma_color_3">#38886F</color>
+    <color name="ma_color_4">#4951F8</color>
+    <color name="ma_color_5">#4951F8</color>
+
 </resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.alex.develop.entity.*;
 import com.alex.develop.entity.Enum;
+import com.alex.develop.stockanalyzer.R;
 import com.alex.develop.task.QueryStockHistory;
 import com.alex.develop.util.UnitHelper;
 
@@ -317,10 +319,22 @@ public class CandleView extends View {
                     candle.drawCandle(x, kCfg, canvas, pen);
                     candle.drawVOL(x, qCfg, canvas, pen);
                     x += Config.getItemWidth() + Config.getItemSpace();
+
+                    // 遍历开始的位置
+                    if(i == st.node && j == st.candle) {
+                        maPath[0].reset();
+                        maPath[0].moveTo(candle.getCenterXofArea(), kCfg.val2px(candle.getClose()));
+                    } else {
+                        maPath[0].lineTo(candle.getCenterXofArea(), kCfg.val2px(candle.getClose()));
+                    }
 //                    Log.d("Print Candlestick # " + j, candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
                 }
             }
         }
+
+        pen.setStyle(Paint.Style.STROKE);
+        pen.setColor(getResources().getColor(R.color.ma_color_0));
+        canvas.drawPath(maPath[0], pen);
     }
 
     private void drawTextAndLine(Canvas canvas) {
@@ -451,6 +465,11 @@ public class CandleView extends View {
         pen.setStyle(Paint.Style.FILL_AND_STROKE);
         pen.setStrokeWidth(UnitHelper.dp2px(1));
 
+        maPath = new Path[Constant.MA_COUNT];
+        for(int i=0; i<maPath.length; ++i) {
+            maPath[i] = new Path();
+        }
+
         down = new PointF();
         touch = new PointF();
         kArea = new RectF();
@@ -489,6 +508,7 @@ public class CandleView extends View {
     }
 
     private Paint pen;// 画笔
+    private Path[] maPath;
 
     private PointF down;// 落点
     private PointF touch;// 触点，当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线

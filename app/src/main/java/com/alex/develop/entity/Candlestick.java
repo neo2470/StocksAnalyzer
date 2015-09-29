@@ -298,6 +298,7 @@ public class Candlestick extends BaseObject {
     private String date;// 日期
     private RectF kArea;// K线的实体部分
     private RectF vArea;// VOL的实体部分
+    private float[] avgs;// 平均值
 
     private Enum.API from;// 数据来源与哪个API
 }
