@@ -19,6 +19,7 @@ public class Candlestick extends BaseObject {
     public Candlestick() {
         kArea = new RectF();
         vArea = new RectF();
+        ma = new float[Constant.MA_COUNT];
     }
 
     public Candlestick(String[] yahoo) {
@@ -164,6 +165,14 @@ public class Candlestick extends BaseObject {
         return kArea.top + kArea.height() / 2;
     }
 
+    public float getMaByIndex(int index) {
+        return ma[index];
+    }
+
+    public void setMaByIndex(int index, float value) {
+        ma[index] = value;
+    }
+
     public void setApiFrom(Enum.API from) {
         this.from = from;
     }
@@ -298,7 +307,7 @@ public class Candlestick extends BaseObject {
     private String date;// 日期
     private RectF kArea;// K线的实体部分
     private RectF vArea;// VOL的实体部分
-    private float[] avgs;// 平均值
+    private float[] ma;// 平均值
 
     private Enum.API from;// 数据来源与哪个API
 }

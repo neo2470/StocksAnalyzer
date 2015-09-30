@@ -38,7 +38,8 @@ public class CandleView extends View {
 
     public void setStock(final Stock stock) {
         this.stock = stock;
-        csr.setCandleList(this.stock.getCandleList());
+        cs.setCandleList(this.stock.getCandleList());
+        cd.setCandleList(this.stock.getCandleList());
 
         // 重置游标成功，则说明已经下载过数据，无需重复下载
         if(stock.resetCursor()) {
@@ -256,11 +257,11 @@ public class CandleView extends View {
             ++intSub;
         }
 
-        csr.copy(stock.getStart());
-        csr.move(intSub);
+        cs.copy(stock.getStart());
+        cs.move(intSub);
 
         CandleList data = stock.getCandleList();
-        Candlestick candle = data.get(csr.node).get(csr.candle);
+        Candlestick candle = data.get(cs.node).get(cs.candle);
 
         touch.x = candle.getCenterXofArea();
         mListener.onSelected(candle);
@@ -305,6 +306,10 @@ public class CandleView extends View {
         CandleList data = stock.getCandleList();
         Cursor ed = stock.getEnd();
         Cursor st = stock.getStart();
+        cd.copy(st);
+
+        // 是否绘制MA
+        boolean[] drawMA = new boolean[Constant.MA_COUNT];
 
         if(0 < data.size()) {
             for (int i = st.node; i >= ed.node; --i) {
@@ -320,28 +325,41 @@ public class CandleView extends View {
                     candle.drawVOL(x, qCfg, canvas, pen);
                     x += Config.getItemWidth() + Config.getItemSpace();
 
-                    // 遍历开始的位置
-                    if(i == st.node && j == st.candle) {
-                        maPath[0].reset();
-                        maPath[0].moveTo(candle.getCenterXofArea(), kCfg.val2px(candle.getClose()));
-                    } else {
-                        maPath[0].lineTo(candle.getCenterXofArea(), kCfg.val2px(candle.getClose()));
+                    cd.node = i;
+                    cd.candle = j;
+                    cd.calculateMA();
+
+                    for(int k=0; k<maPath.length; ++k) {
+                        final float ma = candle.getMaByIndex(k);
+                        if(drawMA[k]) {
+                            maPath[k].lineTo(candle.getCenterXofArea(), kCfg.val2px(ma));
+                        } else {
+                            if(0.0f < ma) {
+                                maPath[k].reset();
+                                maPath[k].moveTo(candle.getCenterXofArea(), kCfg.val2px(ma));
+                                drawMA[k] = true;
+                            }
+                        }
                     }
-//                    Log.d("Print Candlestick # " + j, candle.getDate() + ", " + candle.getLow() + ", " + candle.getHigh() + ", " + candle.getIncreaseString());
                 }
             }
         }
 
         pen.setStyle(Paint.Style.STROKE);
-        pen.setColor(getResources().getColor(R.color.ma_color_0));
-        canvas.drawPath(maPath[0], pen);
+        for(int i=0; i<maPath.length; ++i) {
+
+            if(drawMA[i]) {
+                pen.setColor(getResources().getColor(colors[i]));
+                canvas.drawPath(maPath[i], pen);
+            }
+        }
     }
 
     private void drawTextAndLine(Canvas canvas) {
 
         CandleList data = stock.getCandleList();
 
-        // 绘制课时区域内股票的最高价和最低价
+        // 绘制可视区域内股票的最高价和最低价
         if(0 < data.size()) {
             Candlestick highest = data.getCandlestickHigh();
             Candlestick lowest = data.getCandlestickLow();
@@ -470,6 +488,15 @@ public class CandleView extends View {
             maPath[i] = new Path();
         }
 
+        colors = new int[] {
+                R.color.ma_color_0,
+                R.color.ma_color_1,
+                R.color.ma_color_2,
+                R.color.ma_color_3,
+                R.color.ma_color_4,
+                R.color.ma_color_5
+        };
+
         down = new PointF();
         touch = new PointF();
         kArea = new RectF();
@@ -496,7 +523,8 @@ public class CandleView extends View {
         lowestValue.setShowBorder(false);
         lowestValue.setAlpha(255);
 
-        csr = new Cursor();
+        cs = new Cursor();
+        cd = new Cursor();
 
         highLeft = new Random().nextBoolean();
         lowLeft = !highLeft;
@@ -509,6 +537,7 @@ public class CandleView extends View {
 
     private Paint pen;// 画笔
     private Path[] maPath;
+    private int[] colors;
 
     private PointF down;// 落点
     private PointF touch;// 触点，当用户点击K线图形时，绘制十字线，用于告知用户当前查看的是那一天的K线
@@ -524,7 +553,8 @@ public class CandleView extends View {
     private TextValue lowestValue;
 
     private Stock stock;
-    private Cursor csr;
+    private Cursor cs;// 指向当前K线的游标
+    private Cursor cd;// 指向当前正在被绘制的K线的游标
     private QueryStockHistory task;
 
     private onCandlestickSelectedListener mListener;

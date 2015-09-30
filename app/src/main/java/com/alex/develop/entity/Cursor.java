@@ -27,6 +27,46 @@ public class Cursor {
         candle = csr.candle;
     }
 
+    public void calculateMA() {
+        Candlestick candlestick = candleList.get(node).get(candle);
+
+        boolean cal = true;
+        int index = 0;
+        for(final int day : Constant.MA_DAY) {
+            if (0.0f < candlestick.getMaByIndex(index)) {
+            } else {
+                cal = false;
+            }
+            ++index;
+        }
+
+        // 计算过了就不重复计算
+        if(cal) {
+            return;
+        }
+
+        int count = 1;
+        float total = 0.0f;
+        for(int i=node; i<candleList.getNodes().size(); ++i) {
+            Node nde = candleList.get(i);
+
+            // 计算特殊情况下遍历的开始和结束的位置
+            for(int j = i == node ? candle : nde.size()-1;j>=0;--j) {
+                Candlestick cs = nde.get(j);
+                total += cs.getClose();
+
+                index = 0;
+                for(final int day : Constant.MA_DAY) {
+                    if(day == count) {
+                        candlestick.setMaByIndex(index, total/day);
+                    }
+                    ++index;
+                }
+                count++;
+            }
+        }
+    }
+
     public boolean isOldest() {
         final int node = candleList.size() - 1;
         final int candle = 0;

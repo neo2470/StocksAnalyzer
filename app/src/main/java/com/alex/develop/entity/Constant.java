@@ -8,7 +8,7 @@ public final class Constant {
     public static final String MARKET_OPEN = "09:30:00";
     public static final String MARKET_CLOSE = "15:00:00";
 
-    public static final int DATE_OFFSET_DAY = 60;
+    public static final int DATE_OFFSET_DAY = 180;
     public static final int DATE_OFFSET_WEEK = 180;
     public static final int DATE_OFFSET_MONTH = 730;
 
@@ -49,9 +49,5 @@ public final class Constant {
      */
     public static final int MA_COUNT = 5;
 
-    public static final int MA_0 = 5;
-    public static final int MA_1 = 10;
-    public static final int MA_2 = 20;
-    public static final int MA_3 = 30;
-    public static final int MA_4 = 60;
+    public static final int[] MA_DAY = new int[] {5, 10, 20, 30, 60};
 }
