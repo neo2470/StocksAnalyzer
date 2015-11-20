@@ -13,8 +13,5 @@ public class ShowActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_activity);
-
-        getTransaction()
-                .add(R.id.root, new SearchFragment()).commit();
     }
 }

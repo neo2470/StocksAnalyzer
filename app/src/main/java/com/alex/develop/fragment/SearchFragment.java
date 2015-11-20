@@ -1,7 +1,6 @@
 package com.alex.develop.fragment;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -39,7 +38,7 @@ public class SearchFragment extends Fragment implements SearchAdapter.OnStocksFi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.search_activity, container, false);
+        View view = inflater.inflate(R.layout.search_fragment, container, false);
 
         ActionBar actionBar = getActivity().getActionBar();
         if (null != actionBar) {

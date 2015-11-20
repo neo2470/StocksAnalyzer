@@ -84,4 +84,13 @@
     <string name="footer_load_move">Release finger to load more data</string>
     <string name="footer_no_move">No more data</string>
 
+    <!-- SignInFragment.java-->
+    <string name="sign_username">Username</string>
+    <string name="sign_password">Password</string>
+    <string name="sign_forgot">Forget password?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="toast_remember_pwd">Write username &amp; password into SharedPreference</string>
+    <string name="toast_not_input_data">Username or password not input</string>
+
 </resources>

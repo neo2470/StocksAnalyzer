@@ -85,9 +85,8 @@ public class MainActivity extends BaseActivity implements StockFragment.OnStockH
         switch (item.getItemId()) {
             case R.id.action_search:
                 Intent intent = new Intent();
-                intent.setClass(this, ShowActivity.class);
-                startActivity(intent);
-//                startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
+                intent.setClass(this, SearchActivity.class);
+                startActivityForResult(intent, StockFragment.REQUEST_SEARCH_STOCK);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

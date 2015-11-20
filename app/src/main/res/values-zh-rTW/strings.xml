@@ -83,5 +83,14 @@
     <!-- NewsFragment.java -->
     <string name="footer_load_move">釋放手指加載數據</string>
     <string name="footer_no_move">沒有數據了</string>
+
+    <!-- SignInFragment.java-->
+    <string name="sign_username">用戶名稱</string>
+    <string name="sign_password">用戶密碼</string>
+    <string name="sign_forgot">忘記密碼？</string>
+    <string name="sign_in">登錄</string>
+    <string name="sign_up">註冊</string>
+    <string name="toast_remember_pwd">將賬戶和密碼SharedPreference</string>
+    <string name="toast_not_input_data">用戶名稱或用戶密碼未填寫</string>
     
 </resources>

@@ -42,12 +42,12 @@ public class NewsFragment extends BaseFragment {
             news.clear();
         }
 
-        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(act, IMAGE_CACHE_DIR);
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
         cacheParams.setMemCacheSizePercent(0.25f);
 
-        mImageFetcher = new ImageFetcher(act, 300, 200);
+        mImageFetcher = new ImageFetcher(getActivity(), 300, 200);
         mImageFetcher.setLoadingImage(R.drawable.news_image_holder);
-        mImageFetcher.addImageCache(act.getSupportFragmentManager(), cacheParams);
+        mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class NewsFragment extends BaseFragment {
                     Uri page = Uri.parse(item.getLink());
                     Intent intent = new Intent(Intent.ACTION_VIEW, page);
 
-                    PackageManager pkgM = act.getPackageManager();
+                    PackageManager pkgM = getActivity().getPackageManager();
                     List<ResolveInfo> acts = pkgM.queryIntentActivities(intent, 0);
 
                     if(0 < acts.size()) {

@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:background="@android:color/black">
-    
+
     <!-- 启动画面 -->
     <ImageView
         android:id="@+id/splash"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/splash_logo_max_width"
+        android:layout_height="wrap_content"
         android:src="@drawable/alpha_logo"
-        android:scaleX="0.5"
-        android:scaleY="0.5"
-        android:contentDescription="@string/image_content"/>
+        android:contentDescription="@string/image_content"
+        android:layout_centerInParent="true"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:id="@+id/startTips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:layout_gravity="center_horizontal|bottom"
-        android:paddingBottom="30dp"
+        android:paddingBottom="20dp"
+        android:text="23423423"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
         android:visibility="gone"/>
-    
+
     <!-- 新特性介绍ViewPager -->
     <android.support.v4.view.ViewPager
         android:id="@+id/feature"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-    
-</FrameLayout>
+
+</RelativeLayout>

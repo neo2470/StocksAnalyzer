@@ -102,9 +102,9 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
                 stockListAdapter.selectView(position, checked);
 
                 String count = 0 == stockListAdapter.getSelectedCount() ? "" : " ["+stockListAdapter.getSelectedCount()+"]";
-                String text = String.format(act.getString(R.string.contextual_add_collect), count);
+                String text = String.format(getActivity().getString(R.string.contextual_add_collect), count);
                 if (isCollectView) {
-                    text = String.format(act.getString(R.string.contextual_remove_collect), count);
+                    text = String.format(getActivity().getString(R.string.contextual_remove_collect), count);
                 }
                 title.setText(text);
             }
@@ -112,7 +112,7 @@ public class StockFragment extends BaseFragment implements CompoundButton.OnChec
             @Override
             public boolean onCreateActionMode(final ActionMode mode, Menu menu) {
 
-                View view = View.inflate(act, R.layout.collect_contextual_layout, null);
+                View view = View.inflate(getActivity(), R.layout.collect_contextual_layout, null);
                 title = (TextView) view.findViewById(R.id.title);
                 ImageButton cancelBtn = (ImageButton) view.findViewById(R.id.cancel);
                 cancelBtn.setOnClickListener(new View.OnClickListener() {

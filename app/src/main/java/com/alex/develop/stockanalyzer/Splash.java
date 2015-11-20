@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.alex.develop.entity.Remote;
 import com.alex.develop.entity.Stock;
+import com.alex.develop.fragment.SignInFragment;
 import com.alex.develop.util.SQLiteHelper;
 
 import java.io.BufferedReader;
@@ -51,7 +52,7 @@ public class Splash extends BaseActivity {
 
 		initialize();
 		blockBack(true);
-		
+
 		if(isNetworkAvailable()) {
 			startApp();
 		}
